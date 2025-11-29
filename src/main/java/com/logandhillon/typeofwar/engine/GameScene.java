@@ -6,9 +6,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 
+import java.util.ArrayList;
+
+import com.logandhillon.typeofwar.entity.Entity;
+
 public abstract class GameScene {
     public static final int WINDOW_WIDTH = 1280;
     public static final int WINDOW_HEIGHT = 720;
+
+    private final ArrayList<Entity> entities = new ArrayList<>();
 
     private AnimationTimer lifecycle;
 
@@ -20,14 +26,22 @@ public abstract class GameScene {
 
     /**
      * Called every tick for non-graphics-related updates (Entity lifecycle, etc.)
+     * This implementation updates all entities.
      */
-    protected abstract void onUpdate();
+    protected void onUpdate() {
+        for (Entity e: entities)
+            e.onUpdate();
+    }
 
     /**
      * Called every tick to render the scene.
+     * This implementation renders all entities.
      * @param g the graphical context to render to.
      */
-    protected abstract void render(GraphicsContext g);
+    protected void render(GraphicsContext g) {
+        for (Entity e: entities)
+            e.render(g);
+    }
 
     /**
      * Creates a new JavaFX Scene for this GameScene.
@@ -54,6 +68,15 @@ public abstract class GameScene {
      * Called to discard this scene (i.e., stop its lifecycle, etc.)
      */
     public void discard() {
+        entities.clear();
         lifecycle.stop();
+    }
+
+    /**
+     * Adds a new entity to the scene, that will be rendered/updated every tick.
+     * @param e the entity to append.
+     */
+    protected void addEntity(Entity e) {
+        entities.add(e);
     }
 }
