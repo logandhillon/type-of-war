@@ -44,6 +44,13 @@ public abstract class GameScene {
     }
 
     /**
+     * Called when this GameScene is built to a scene with a lifecycle.
+     * Should be used to attach events to the scene.
+     * @param scene the JavaFX scene (NOT GameScene!) from {@link GameScene#build()}
+     */
+    protected void onBuild(Scene scene) {}
+
+    /**
      * Creates a new JavaFX Scene for this GameScene.
      * This should only be called once, as this method creates a new Scene every time.
      * @return Scene containing the GameScene's GUI elements
@@ -61,7 +68,9 @@ public abstract class GameScene {
         };
         lifecycle.start();
 
-        return new Scene(new StackPane(canvas), WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(new StackPane(canvas), WINDOW_WIDTH, WINDOW_HEIGHT);
+        onBuild(scene);
+        return scene;
     }
 
     /**
