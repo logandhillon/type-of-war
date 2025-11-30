@@ -5,7 +5,6 @@ import com.logandhillon.typeofwar.entity.RopeEntity;
 import com.logandhillon.typeofwar.entity.SentenceEntity;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
 public class TypeOfWarScene extends GameScene {
@@ -29,12 +28,9 @@ public class TypeOfWarScene extends GameScene {
         super.render(g);
     }
 
-    private void onKeyTyped(KeyEvent e) {
-        sentence.onKeyTyped(e);
-    }
-
     @Override
     protected void onBuild(Scene scene) {
-        scene.setOnKeyTyped(this::onKeyTyped);
+        scene.setOnKeyPressed(sentence::onKeyPressed);
+        scene.setOnKeyTyped(sentence::onKeyTyped);
     }
 }
