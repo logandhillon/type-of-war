@@ -6,75 +6,82 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.util.Arrays;
+
 public class SentenceEntity extends Entity {
 	private static final int CHAR_WIDTH = 18;
 	private static final Font FONT = Font.font("monospace", 32); // TODO: use a custom font instead
 
-	private String text;
-	private StringBuilder rawInput;
-	private StringBuilder correctInput;
-	private int currentCharIdx;
+	private String[] text;
+	private StringBuilder[] input;
+	private int currentWord;
 
-	public SentenceEntity(double x, double y) {
+    public SentenceEntity(double x, double y) {
 		super(x, y);
 	}
 
 	@Override
 	public void onUpdate() {
-
-	}
-
-	// FIXME: this stops working once the user makes ONE error; probably have to parse by-word? idk yet
-	private boolean isCharCorrect(int i) {
-		return text.length() > i && text.charAt(i) == rawInput.charAt(i);
 	}
 
 	@Override
 	public void onRender(GraphicsContext g, double x, double y) {
 		g.setFont(FONT);
 
-		double dx = x - (CHAR_WIDTH * Math.max(text.length(), rawInput.length())) / 2.0;
+		double dx = 64; // left-margin of text
 
-		// draw the user's input and validate it (show white or red depending on correctness)
-		for (int i = 0; i < rawInput.length(); i++) {
-			g.setFill(isCharCorrect(i) ? Color.WHITE : Color.RED);
-			g.fillText(String.valueOf(rawInput.charAt(i)), dx + i * CHAR_WIDTH, y);
-		}
+		// for each word
+		for (int i = 0; i < text.length; i++) {
+			// for each letter in each word
+			for (int j = 0; j < Math.max(text[i].length(), input[i].length()); j++) {
+				// if input is long enough
+				if (j < input[i].length()) {
+					// show WHITE if text is long enough and char is valid, otherwise red.
+					g.setFill(j < text[i].length() && text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
+					g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
 
-		// draw the remaining characters from the sentence
-		for (int i = correctInput.length(); i < text.length(); i++) {
-			g.setFill(Color.hsb(0, 0, 0.5));
-			g.fillText(String.valueOf(text.charAt(i)), dx + (i - correctInput.length() + rawInput.length()) * CHAR_WIDTH, y);
+				// if text is long enough
+				} else {
+					g.setFill(Color.GRAY);
+					g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
+				}
+
+				dx += CHAR_WIDTH;
+			}
+
+			dx += CHAR_WIDTH;
 		}
 	}
 
 	public void setText(String text) {
-		this.text = text;
-		currentCharIdx = 0;
+		this.text = text.split(" ");
 
 		// reset user input
-		correctInput = new StringBuilder();
-		rawInput = new StringBuilder();
-	}
+		input = new StringBuilder[this.text.length];
+		Arrays.setAll(input, i -> new StringBuilder());
+
+		currentWord = 0;
+    }
 
 	public void onKeyPressed(KeyEvent e) {
 		if (e.getCode() == KeyCode.BACK_SPACE) {
-			if (rawInput.length() == correctInput.length())
-				correctInput.deleteCharAt(rawInput.length() - 1);
-			rawInput.deleteCharAt(rawInput.length() - 1);
-		}
+			if (input[currentWord].isEmpty()) currentWord--;
+			input[currentWord].deleteCharAt(input[currentWord].length() - 1);
+        }
 	}
 
 	public void onKeyTyped(KeyEvent e) {
 		String c = e.getCharacter();
 
 		// ignore blank/control characters
-		if (c.isEmpty() || Character.isISOControl(c.charAt(0))) return;
+        if (c.isEmpty() || Character.isISOControl(c.charAt(0))) return;
 
-		rawInput.append(c);
-		if (String.valueOf(text.charAt(currentCharIdx)).equals(c)) {
-			correctInput.append(c);
-			currentCharIdx++;
+		// handle spaces (new words); increment word counter only if current word isn't blank
+        if (c.equals(" ")) {
+			if (!input[currentWord].isEmpty()) currentWord++;
+			return;
 		}
-	}
+
+		input[currentWord].append(c);
+    }
 }
