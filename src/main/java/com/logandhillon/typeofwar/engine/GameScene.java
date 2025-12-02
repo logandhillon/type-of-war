@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.engine;
 
+import com.logandhillon.typeofwar.entity.Entity;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -8,8 +9,14 @@ import javafx.scene.layout.StackPane;
 
 import java.util.ArrayList;
 
-import com.logandhillon.typeofwar.entity.Entity;
-
+/**
+ * A GameScene is the lowest-level of the engine; controlling the game's lifecycle, rendering, and creating a game loop.
+ * It represents a "scene" of the game, that being a section of the game that is related (e.g. a game level, the main
+ * menu, etc.) GameScenes are rendered with {@link GameScene#build()}, which prepares the engine code for JavaFX,
+ * allowing it to be executed and ran.
+ *
+ * @author Logan Dhillon
+ */
 public abstract class GameScene {
     public static final int WINDOW_WIDTH = 1280;
     public static final int WINDOW_HEIGHT = 720;
@@ -20,13 +27,14 @@ public abstract class GameScene {
 
     /**
      * Do not instantiate this class.
+     *
      * @see GameScene#build()
      */
-    protected GameScene(){}
+    protected GameScene() {}
 
     /**
-     * Called every tick for non-graphics-related updates (Entity lifecycle, etc.)
-     * This implementation updates all entities.
+     * Called every tick for non-graphics-related updates (Entity lifecycle, etc.) This implementation updates all
+     * entities.
      */
     protected void onUpdate() {
         for (Entity e: entities)
@@ -34,8 +42,8 @@ public abstract class GameScene {
     }
 
     /**
-     * Called every tick to render the scene.
-     * This implementation renders all entities.
+     * Called every tick to render the scene. This implementation renders all entities.
+     *
      * @param g the graphical context to render to.
      */
     protected void render(GraphicsContext g) {
@@ -44,15 +52,16 @@ public abstract class GameScene {
     }
 
     /**
-     * Called when this GameScene is built to a scene with a lifecycle.
-     * Should be used to attach events to the scene.
+     * Called when this GameScene is built to a scene with a lifecycle. Should be used to attach events to the scene.
+     *
      * @param scene the JavaFX scene (NOT GameScene!) from {@link GameScene#build()}
      */
     protected void onBuild(Scene scene) {}
 
     /**
-     * Creates a new JavaFX Scene for this GameScene.
-     * This should only be called once, as this method creates a new Scene every time.
+     * Creates a new JavaFX Scene for this GameScene. This should only be called once, as this method creates a new
+     * Scene every time.
+     *
      * @return Scene containing the GameScene's GUI elements
      */
     public Scene build() {
@@ -83,6 +92,7 @@ public abstract class GameScene {
 
     /**
      * Adds a new entity to the scene, that will be rendered/updated every tick.
+     *
      * @param e the entity to append.
      */
     protected void addEntity(Entity e) {

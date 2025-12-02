@@ -5,12 +5,22 @@ import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * This is the main entrypoint for Type of War, handling low-level game engine code and GameScene management.
+ * 
+ * @author Logan Dhillon
+ * @see TypeOfWarScene
+ */
 public class TypeOfWar extends Application {
     public static final String GAME_NAME = "Type of War";
 
     private Stage stage;
     private GameScene activeScene;
 
+    /**
+     * Handles communication with JavaFX when this program is signalled to start.
+     * @param stage the primary stage for this application, provided by the JavaFX framework.
+     */
     @Override
     public void start(Stage stage) {
         this.stage = stage;
@@ -20,6 +30,12 @@ public class TypeOfWar extends Application {
         stage.show();
     }
 
+    /**
+     * Handles bootstrap and launching the framework + engine.
+     * @param args command-line arguments to the Java program.
+     *             
+     * @see TypeOfWar#start(Stage) 
+     */
     public static void main(String[] args) {
         launch();
     }

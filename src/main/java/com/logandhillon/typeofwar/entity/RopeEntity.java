@@ -5,6 +5,12 @@ import javafx.scene.paint.Color;
 
 import static com.logandhillon.typeofwar.engine.GameScene.WINDOW_WIDTH;
 
+/**
+ * The rope is the part of the main game loop that visualizes who's winning, the players, etc.
+ *
+ * @author Logan Dhillon
+ * @see com.logandhillon.typeofwar.game.TypeOfWarScene
+ */
 public class RopeEntity extends Entity {
 	private static final double HEIGHT = 16;
 

@@ -2,10 +2,23 @@ package com.logandhillon.typeofwar.entity;
 
 import javafx.scene.canvas.GraphicsContext;
 
+/**
+ * An entity is the most basic paradigm that can be handled by the game engine.
+ * It provides methods for {@link Entity#onUpdate()} and {@link Entity#onRender(GraphicsContext, double, double)}, which
+ * must be implemented by your subclass.
+ *
+ * @author Logan Dhillon
+ * @see com.logandhillon.typeofwar.engine.GameScene
+ */
 public abstract class Entity {
 	protected double x;
 	protected double y;
 
+	/**
+	 * Creates an entity at the specified position.
+	 * @param x x-position (from left)
+	 * @param y y-position (from top)
+	 */
 	public Entity(double x, double y) {
 		this.x = x;
 		this.y = y;

@@ -7,6 +7,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+/**
+ * The main game loop for Type of War.
+ * @author Logan Dhillon
+ */
 public class TypeOfWarScene extends GameScene {
     private final SentenceEntity sentence;
 
