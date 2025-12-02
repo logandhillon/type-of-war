@@ -9,6 +9,14 @@ import javafx.scene.text.Font;
 
 import java.util.Arrays;
 
+/**
+ * A SentenceEntity is the entity responsible for displaying the sentence and user input.
+ * Handles keyboard input and text validation.
+ *
+ * @author Logan Dhillon
+ * @see SentenceEntity#onKeyTyped(KeyEvent)
+ * @see SentenceEntity#onKeyPressed(KeyEvent)
+ */
 public class SentenceEntity extends Entity {
 	private static final int CHAR_WIDTH = 18;
 	private static final int LINE_HEIGHT = 28;
