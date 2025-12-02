@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -17,6 +18,12 @@ public class SentenceEntity extends Entity {
 	private StringBuilder[] input;
 	private int currentWord;
 
+	/**
+	 * Creates a new SentenceEntity at the provided coordinates.
+	 * @apiNote {@link SentenceEntity#setText(String)} must be called before using this entity.
+	 * @param x distance from left
+	 * @param y distance from top
+	 */
     public SentenceEntity(double x, double y) {
 		super(x, y);
 	}
@@ -45,7 +52,8 @@ public class SentenceEntity extends Entity {
 
 				// if text is long enough
 				} else {
-					g.setFill(Color.GRAY);
+					// show dark red if word current word is ahead of this word (thus word incomplete) otherwise gray
+					g.setFill(i >= currentWord ? Color.GRAY : Color.DARKRED);
 					g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
 				}
 
@@ -65,6 +73,11 @@ public class SentenceEntity extends Entity {
 		g.fillRect(cursorX + CHAR_WIDTH, y - (LINE_HEIGHT*0.8), 1, LINE_HEIGHT);
 	}
 
+	/**
+	 * Sets this entity's sentence text that must be typed out.
+	 * This will also reset user input.
+	 * @param text The new text
+	 */
 	public void setText(String text) {
 		this.text = text.split(" ");
 
@@ -75,6 +88,11 @@ public class SentenceEntity extends Entity {
 		currentWord = 0;
     }
 
+	/**
+	 * Runs when any key is pressed;
+	 * handles backspaces by deleting characters and decrementing words.
+	 * @param e KeyEvent from {@link Scene#onKeyPressedProperty()}
+	 */
 	public void onKeyPressed(KeyEvent e) {
 		if (e.getCode() == KeyCode.BACK_SPACE) {
 			if (input[currentWord].isEmpty() && currentWord > 0) {
@@ -85,6 +103,11 @@ public class SentenceEntity extends Entity {
         }
 	}
 
+	/**
+	 * Runs when any key is typed;
+	 * handles typed characters and new words (spaces)
+	 * @param e KeyEvent from {@link Scene#onKeyTypedProperty()}
+	 */
 	public void onKeyTyped(KeyEvent e) {
 		String c = e.getCharacter();
 
