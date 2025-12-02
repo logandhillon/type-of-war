@@ -7,4 +7,6 @@ module com.logandhillon.typeofwar {
 
     opens com.logandhillon.typeofwar to javafx.fxml;
     exports com.logandhillon.typeofwar;
+
+    exports com.logandhillon.typeofwar.engine;
 }
