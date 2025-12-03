@@ -53,9 +53,17 @@ public class SentenceEntity extends Entity {
 			for (int j = 0; j < Math.max(text[i].length(), input[i].length()); j++) {
 				// if input is long enough
 				if (j < input[i].length()) {
-					// show WHITE if text is long enough and char is valid, otherwise red.
-					g.setFill(j < text[i].length() && text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
-					g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
+                    // if input is in word
+                    if (j < text[i].length()) {
+                        // fill white for correct characters, red for incorrect
+                        g.setFill(text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
+                        g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
+                        cursorX = dx;
+                    } else {
+                        // fill dark red if text entends too long
+                        g.setFill(Color.DARKRED);
+                        g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
+                    }
 					cursorX = dx;
 
 				// if text is long enough
@@ -77,6 +85,7 @@ public class SentenceEntity extends Entity {
 			else cursorX += (text[currentWord-1].length() - input[currentWord-1].length()+1) * CHAR_WIDTH;
 		}
 
+        // render cursor
 		g.setFill(Color.WHITE);
 		g.fillRect(cursorX + CHAR_WIDTH, y - (LINE_HEIGHT*0.8), 1, LINE_HEIGHT);
 	}
