@@ -33,7 +33,7 @@ public class PlayerObject extends GameObject {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(float dt) {
 
     }
 

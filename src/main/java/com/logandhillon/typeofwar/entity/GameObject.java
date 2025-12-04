@@ -19,8 +19,10 @@ import javafx.scene.canvas.GraphicsContext;
 public abstract class GameObject {
     /**
      * Called every tick for non-graphics-related updates (Entity lifecycle, etc.)
+     *
+     * @param dt the delta time: change in time (seconds) since the last frame
      */
-    public abstract void onUpdate();
+    public abstract void onUpdate(float dt);
 
     /**
      * Called every tick to render the entity; responsible for rendering this entity to the provided graphics context.

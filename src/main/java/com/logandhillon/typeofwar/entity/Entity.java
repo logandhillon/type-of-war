@@ -4,8 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 /**
  * An entity is the most basic paradigm that can be handled by the game engine. It provides methods for
- * {@link Entity#onUpdate()} and {@link Entity#onRender(GraphicsContext, float, float)}, which must be implemented by
- * your subclass.
+ * {@link Entity#onUpdate(float)} and {@link Entity#onRender(GraphicsContext, float, float)}, which must be implemented
+ * by your subclass.
  *
  * @author Logan Dhillon
  * @see com.logandhillon.typeofwar.engine.GameScene

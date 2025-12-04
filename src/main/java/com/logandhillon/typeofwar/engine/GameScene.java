@@ -41,9 +41,9 @@ public abstract class GameScene {
      * Called every tick for non-graphics-related updates (Entity lifecycle, etc.) This implementation updates all
      * entities.
      */
-    protected void onUpdate() {
+    protected void onUpdate(float dt) {
         for (Entity e: entities)
-            e.onUpdate();
+            e.onUpdate(dt);
     }
 
     /**
@@ -75,10 +75,17 @@ public abstract class GameScene {
         Canvas canvas = new Canvas(WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
         GraphicsContext g = canvas.getGraphicsContext2D();
 
+        // use one-element array as address cannot change once anonymously passed to lifecycle
+        final long[] lastTime = { 0 };
+
         lifecycle = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                onUpdate();
+                if (lastTime[0] == 0) lastTime[0] = now; // set initial value to now
+                float dt = (now - lastTime[0]) / 1_000_000_000f; // nanoseconds to seconds
+                lastTime[0] = now;
+
+                onUpdate(dt);
                 render(g);
             }
         };

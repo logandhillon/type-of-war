@@ -29,7 +29,7 @@ public class RopeEntity extends Entity {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(float dt) {
     }
 
     @Override

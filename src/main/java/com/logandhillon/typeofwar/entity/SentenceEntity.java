@@ -41,7 +41,7 @@ public class SentenceEntity extends Entity {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(float dt) {
     }
 
     @Override
