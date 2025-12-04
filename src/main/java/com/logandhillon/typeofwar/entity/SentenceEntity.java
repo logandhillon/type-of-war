@@ -147,6 +147,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         if (e.getCode() == KeyCode.BACK_SPACE) {
             if (input[currentWord].isEmpty() && currentWord > 0) {
                 currentWord--;
+                correctWords--;
             } else if (!input[currentWord].isEmpty()) {
                 input[currentWord].deleteCharAt(input[currentWord].length() - 1);
             }
@@ -175,20 +176,20 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
                 currentWord++; // increment word counter LAST so we can do statistics checks
             }
-            return;
+        }
+        // handle the other characters
+        else {
+            input[currentWord].append(c);
+            typedChars++;
+            // if this char was correct, increase the correct char count.
+            if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
+                && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
+                correctChars++;
+            }
         }
 
-        input[currentWord].append(c);
-        typedChars++;
-        // if this char was correct, increase the correct char count.
-        if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
-            && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
-            correctChars++;
-        }
-
-        // if the last word is correct,
-        if (currentWord == text.length - 1 &&
-            text[currentWord].contentEquals(input[currentWord]))
+        // does the last word match the sentence
+        if (currentWord == text.length - 1 && text[currentWord].contentEquals(input[currentWord]))
             correctWords++;
 
         // if all words are correct then finish the session
