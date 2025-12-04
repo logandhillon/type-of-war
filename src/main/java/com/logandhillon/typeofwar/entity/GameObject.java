@@ -1,6 +1,5 @@
 package com.logandhillon.typeofwar.entity;
 
-import com.logandhillon.typeofwar.engine.GameScene;
 import javafx.scene.canvas.GraphicsContext;
 
 /**

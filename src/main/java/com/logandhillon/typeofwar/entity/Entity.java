@@ -8,7 +8,6 @@ import javafx.scene.canvas.GraphicsContext;
  * {@link Entity#onUpdate(float)} and {@link Entity#onRender(GraphicsContext, float, float)}, which must be implemented
  * by your subclass.
  *
- * @param <T> the type of GameScene that this entity may attach to.
  * @author Logan Dhillon
  * @see com.logandhillon.typeofwar.engine.GameScene
  */
