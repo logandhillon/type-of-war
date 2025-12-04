@@ -86,6 +86,8 @@ public abstract class GameScene {
      * Called to discard this scene (i.e., stop its lifecycle, etc.)
      */
     public void discard() {
+        // schedule all entities for destruction
+        for (Entity e: entities) e.onDestroy();
         entities.clear();
         lifecycle.stop();
     }

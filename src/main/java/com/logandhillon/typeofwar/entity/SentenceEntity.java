@@ -42,6 +42,11 @@ public class SentenceEntity extends Entity {
 	}
 
 	@Override
+	public void onDestroy() {
+
+	}
+
+	@Override
 	public void onRender(GraphicsContext g, double x, double y) {
 		g.setFont(FONT);
 
