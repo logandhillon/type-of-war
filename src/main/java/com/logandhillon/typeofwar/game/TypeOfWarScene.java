@@ -32,14 +32,18 @@ public class TypeOfWarScene extends GameScene {
             new Stop(0.33, Color.BLACK));
 
     private final SentenceEntity sentence;
-    private final RopeEntity     rope;
+    private final RopeEntity rope;
+    private final GameStatisticsEntity stats;
 
     private boolean isWinning = true;
 
     public TypeOfWarScene() {
+        stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
+        addEntity(stats);
+
         sentence = new SentenceEntity(WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
-        sentence.setText("The quick brown fox jumps over the lazy dog.");
         addEntity(sentence);
+        sentence.setText("The quick brown fox jumps over the lazy dog.");
 
         PlayerObject testPlayer = new PlayerObject("Player1", Color.CYAN);
 
@@ -48,8 +52,6 @@ public class TypeOfWarScene extends GameScene {
         rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
         rope.addPlayer(testPlayer, RopeEntity.Team.RIGHT);
         addEntity(rope);
-
-        addEntity(new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue()-128));
     }
 
     @Override
@@ -66,5 +68,33 @@ public class TypeOfWarScene extends GameScene {
     protected void onBuild(Scene scene) {
         scene.setOnKeyPressed(sentence::onKeyPressed);
         scene.setOnKeyTyped(sentence::onKeyTyped);
+    }
+
+    /**
+     * Propagates an update in the {@link GameStatisticsEntity} instance.
+     *
+     * @param correctChars amount of correct characters the user has typed
+     * @param typedChars   amount of total characters the user has typed in this session
+     * @param correctWords net correct words the user has finished
+     * @param typedWords   amount of total words the user has typed, including erased ones (correct or not)
+     */
+    public void updateStats(int correctChars, int typedChars, int correctWords, int typedWords) {
+        stats.updateStats(correctChars, typedChars, correctWords, typedWords, isWinning);
+    }
+
+    /**
+     * Sets the word count in the {@link GameStatisticsEntity} instance.
+     *
+     * @param wordCount new word count of the sentence
+     */
+    public void setWordCount(int wordCount) {
+        stats.setWordCount(wordCount);
+    }
+
+    /**
+     * Resets the timer used for calculating WPM in the {@link GameStatisticsEntity}.
+     */
+    public void resetWPMTimer() {
+        stats.resetTimer();
     }
 }

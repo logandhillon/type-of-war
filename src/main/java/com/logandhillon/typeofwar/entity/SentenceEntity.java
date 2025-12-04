@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -14,12 +15,15 @@ import java.util.Arrays;
 /**
  * A SentenceEntity is the entity responsible for displaying the sentence and user input. Handles keyboard input and
  * text validation.
+ * <p>
+ * Moreover, SentenceEntity communicates with its parent class, {@link TypeOfWarScene}, to update statistics within the
+ * scene. This entity can only be used within a {@link TypeOfWarScene}.
  *
  * @author Logan Dhillon
  * @see SentenceEntity#onKeyTyped(KeyEvent)
  * @see SentenceEntity#onKeyPressed(KeyEvent)
  */
-public class SentenceEntity extends Entity {
+public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private static final int  CHAR_WIDTH  = 18;
     private static final int  LINE_HEIGHT = 28;
     private static final Font FONT        = Font.font(Fonts.DM_MONO, 32);
@@ -27,6 +31,13 @@ public class SentenceEntity extends Entity {
     private String[]        text;
     private StringBuilder[] input;
     private int             currentWord;
+
+    private int typedChars;
+    private int correctChars;
+    private int typedWords;
+    private int correctWords;
+
+    private boolean isFirstKeyPress;
 
     /**
      * Creates a new SentenceEntity at the provided coordinates.
@@ -96,15 +107,25 @@ public class SentenceEntity extends Entity {
      * Sets this entity's sentence text that must be typed out. This will also reset user input.
      *
      * @param text The new text
+     *
+     * @apiNote This entity must be attached to a parent BEFORE calling this method!
      */
     public void setText(String text) {
         this.text = text.split(" ");
+        parent.setWordCount(this.text.length);
 
         // reset user input
         input = new StringBuilder[this.text.length];
         Arrays.setAll(input, i -> new StringBuilder());
+        isFirstKeyPress = true;
 
         currentWord = 0;
+
+        // reset user stats
+        correctChars = 0;
+        typedChars = 0;
+        typedWords = 0;
+        correctWords = 0;
     }
 
     /**
@@ -113,6 +134,10 @@ public class SentenceEntity extends Entity {
      * @param e KeyEvent from {@link Scene#onKeyPressedProperty()}
      */
     public void onKeyPressed(KeyEvent e) {
+        // restart timer if this is first key press
+        if (isFirstKeyPress) parent.resetWPMTimer();
+
+        // handle backspace
         if (e.getCode() == KeyCode.BACK_SPACE) {
             if (input[currentWord].isEmpty() && currentWord > 0) {
                 currentWord--;
@@ -120,6 +145,9 @@ public class SentenceEntity extends Entity {
                 input[currentWord].deleteCharAt(input[currentWord].length() - 1);
             }
         }
+
+        // update typing statistics
+        parent.updateStats(correctChars, typedChars, correctWords, typedWords);
     }
 
     /**
@@ -135,10 +163,22 @@ public class SentenceEntity extends Entity {
 
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
-            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) currentWord++;
+            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
+                // increment correct word count if the input matches the sentence
+                if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
+
+                typedWords++;
+                currentWord++; // increment word counter LAST so we can do statistics checks
+            }
             return;
         }
 
         input[currentWord].append(c);
+        typedChars++;
+        // if this char was correct, increase the correct char count.
+        if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
+            && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
+            correctChars++;
+        }
     }
 }

@@ -125,5 +125,6 @@ public abstract class GameScene {
      */
     protected void addEntity(Entity e) {
         entities.add(e);
+        e.onAttach(this);
     }
 }

@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.engine.GameScene;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
@@ -7,12 +8,14 @@ import javafx.scene.canvas.GraphicsContext;
  * {@link Entity#onUpdate(float)} and {@link Entity#onRender(GraphicsContext, float, float)}, which must be implemented
  * by your subclass.
  *
+ * @param <T> the type of GameScene that this entity may attach to.
  * @author Logan Dhillon
  * @see com.logandhillon.typeofwar.engine.GameScene
  */
 public abstract class Entity extends GameObject {
-    protected float x;
-    protected float y;
+    protected GameScene parent;
+    protected float     x;
+    protected float     y;
 
     /**
      * Creates an entity at the specified position.
@@ -35,6 +38,17 @@ public abstract class Entity extends GameObject {
      */
     public void render(GraphicsContext g) {
         this.onRender(g, this.x, this.y);
+    }
+
+    /**
+     * Runs when this object is attached to a parent.
+     *
+     * @param parent the parent that this object is now attached to.
+     *
+     * @see GameScene
+     */
+    public void onAttach(GameScene parent) {
+        this.parent = parent;
     }
 
     /**

@@ -24,13 +24,16 @@ public class GameStatisticsEntity extends Entity {
     private float updateTimer; // used to recalculate stats every second
 
     private String wpm              = "0";
-    private int    typedWords       = 100;
     private String accuracyText     = "-";
     private String completionText   = "-";
     private String speedRankText    = "-";
     private String accuracyRankText = "-";
 
     private boolean isWinning;
+    private int     rawWpm;
+    private float   accuracy;
+    private int     typedWords = 0;
+    private int     wordCount;
 
     /**
      * Creates an entity at the specified position.
@@ -55,8 +58,8 @@ public class GameStatisticsEntity extends Entity {
 
         if (updateTimer >= 1.0f) {
             updateTimer -= 1.0f;
-
-            wpm = String.valueOf((int)(typedWords / (elapsedSeconds / 60f)));
+            rawWpm = (int)(typedWords / (elapsedSeconds / 60f));
+            wpm = String.valueOf((int)(rawWpm * accuracy));
         }
     }
 
@@ -65,6 +68,7 @@ public class GameStatisticsEntity extends Entity {
         g.setFill(Color.WHITE);
         g.setTextAlign(TextAlignment.LEFT);
 
+        // left side stats
         g.setFont(FONT_WPM);
         g.fillText(wpm, x, y);
 
@@ -75,6 +79,7 @@ public class GameStatisticsEntity extends Entity {
         g.fillText(accuracyText, x, y + BODY_LINE_HEIGHT);
         g.fillText(completionText, x, y + 2 * BODY_LINE_HEIGHT);
 
+        // right side stats
         g.setTextAlign(TextAlignment.RIGHT);
 
         g.fillText(speedRankText, x + width, y + BODY_LINE_HEIGHT);
@@ -95,21 +100,39 @@ public class GameStatisticsEntity extends Entity {
      * whenever the statistics change.
      *
      * @param correctChars amount of correct characters the user has typed
-     * @param totalChars   amount of total characters in the sentence
+     * @param typedChars   amount of total characters the user has typed in this session
      * @param correctWords net correct words the user has finished
      * @param typedWords   amount of total words the user has typed, including erased ones (correct or not)
-     * @param totalWords   amount of total words in the sentence
      * @param isWinning    if the player's team is winning
      */
-    public void updateStats(int correctChars, int totalChars, int correctWords, int typedWords, int totalWords,
-                            boolean isWinning) {
+    public void updateStats(int correctChars, int typedChars, int correctWords, int typedWords, boolean isWinning) {
         this.typedWords = typedWords;
-        accuracyText = correctChars / totalChars * 100 + "% accuracy";
-        completionText = correctWords + "/" + totalWords + " words";
+        this.accuracy = typedChars == 0 ? 0 : (float)correctChars / typedChars;
+        this.accuracyText = (int)(accuracy * 100) + "% accuracy";
+        this.completionText = this.wordCount == 0 ? "-" : correctWords + "/" + this.wordCount + " words";
         this.isWinning = isWinning;
 
         // TODO: placeholder values, impl. these when multiplayer comes
-        speedRankText = "#0 in speed";
-        accuracyRankText = "#0 in accuracy";
+        this.speedRankText = "#0 in speed";
+        this.accuracyRankText = "#0 in accuracy";
+    }
+
+    /**
+     * Sets the word count of the current {@link SentenceEntity}. This should be called only when the sentence changes.
+     *
+     * @param wordCount new word count
+     */
+    public void setWordCount(int wordCount) {
+        this.wordCount = wordCount;
+    }
+
+    /**
+     * Resets the timer that is used to calculate WPM to 0.
+     *
+     * @apiNote Should be used whenever (a) the sentence changes or (b) the user starts typing for the first time (so
+     * the dead time before they started typing isn't counted).
+     */
+    public void resetTimer() {
+        elapsedSeconds = 0;
     }
 }
