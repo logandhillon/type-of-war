@@ -37,6 +37,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int correctWords;
 
     private boolean isFirstKeyPress;
+    private boolean isComplete;
 
     /**
      * Creates a new SentenceEntity at the provided coordinates.
@@ -122,6 +123,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         input = new StringBuilder[this.text.length];
         Arrays.setAll(input, i -> new StringBuilder());
         isFirstKeyPress = true;
+        isComplete = false;
 
         currentWord = 0;
 
@@ -137,6 +139,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
      * @param e KeyEvent from {@link Scene#onKeyPressedProperty()}
      */
     public void onKeyPressed(KeyEvent e) {
+        // don't allow updates if session is complete
+        if (isComplete) return;
+
         // restart timer if this is first key press
         if (isFirstKeyPress) {
             parent.resetWPMTimer();
@@ -145,6 +150,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle backspace
         if (e.getCode() == KeyCode.BACK_SPACE) {
+            // decrease correct word count if word was correct
+            if (text[currentWord].contentEquals(input[currentWord])) {
+                correctWords--;
+            }
+
+            // decrement word counters if current word is empty OR if this is the last word and it was full
             if (input[currentWord].isEmpty() && currentWord > 0) {
                 currentWord--;
             } else if (!input[currentWord].isEmpty()) {
@@ -162,6 +173,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
      * @param e KeyEvent from {@link Scene#onKeyTypedProperty()}
      */
     public void onKeyTyped(KeyEvent e) {
+        // don't allow updates if session is complete
+        if (isComplete) return;
+
         String c = e.getCharacter();
 
         // ignore blank/control characters
@@ -169,21 +183,27 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
-            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
-                // increment correct word count if the input matches the sentence
-                if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
-
+            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
                 currentWord++; // increment word counter LAST so we can do statistics checks
+        }
+        // handle the other characters
+        else {
+            input[currentWord].append(c);
+            typedChars++;
+            // if this char was correct, increase the correct char count.
+            if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
+                && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
+                correctChars++;
             }
-            return;
         }
 
-        input[currentWord].append(c);
-        typedChars++;
-        // if this char was correct, increase the correct char count.
-        if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
-            && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
-            correctChars++;
+        // increment correct word count if the input matches the sentence
+        if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
+
+        // if all words are correct then finish the session
+        if (correctWords == text.length) {
+            isComplete = true;
+            parent.onTypingFinished();
         }
     }
 }

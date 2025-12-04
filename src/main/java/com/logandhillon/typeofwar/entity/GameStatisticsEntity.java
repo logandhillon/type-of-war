@@ -30,6 +30,7 @@ public class GameStatisticsEntity extends Entity {
     private String accuracyRankText = "-";
 
     private boolean isWinning;
+    private boolean isComplete;
     private int     rawWpm;
     private float   accuracy;
     private int     typedChars = 0;
@@ -49,10 +50,13 @@ public class GameStatisticsEntity extends Entity {
         // reset counters
         this.elapsedSeconds = 0;
         this.updateTimer = 0;
+        this.isComplete = false;
     }
 
     @Override
     public void onUpdate(float dt) {
+        if (isComplete) return;
+
         elapsedSeconds += dt;
         updateTimer += dt;
 
@@ -92,6 +96,14 @@ public class GameStatisticsEntity extends Entity {
         g.setFont(FONT_HEADER);
         g.setFill(isWinning ? Colors.GOLD_GRADIENT : Color.RED);
         g.fillText(isWinning ? "You're in the lead!" : "Catch-up!", x + width, y);
+
+        // completed message
+        if (isComplete) {
+            g.setFont(FONT_BODY);
+            g.setFill(Color.GRAY);
+            g.setTextAlign(TextAlignment.CENTER);
+            g.fillText("Waiting for others to finish...", x+ width/2 ,y);
+        }
     }
 
     @Override
@@ -109,6 +121,10 @@ public class GameStatisticsEntity extends Entity {
      * @param isWinning    if the player's team is winning
      */
     public void updateStats(int correctChars, int typedChars, int correctWords, boolean isWinning) {
+        // do not allow updates if the session is complete.
+        // TODO: once logging is implemented, show a WARN to the console.
+        if (isComplete) return;
+
         this.typedChars = typedChars;
         this.accuracy = typedChars == 0 ? 0 : (float)correctChars / typedChars;
         this.accuracyText = (int)(accuracy * 100) + "% accuracy";
@@ -130,12 +146,25 @@ public class GameStatisticsEntity extends Entity {
     }
 
     /**
-     * Resets the timer that is used to calculate WPM to 0.
+     * Restarts the session, allowing updates to propagate and resetting the timer to 0.
      *
      * @apiNote Should be used whenever (a) the sentence changes or (b) the user starts typing for the first time (so
      * the dead time before they started typing isn't counted).
      */
-    public void resetTimer() {
+    public void restartSession() {
         elapsedSeconds = 0;
+        isComplete = false;
+    }
+
+    /**
+     * Marks this session as complete, stopping all timers and freezing the statistics, so they don't change.
+     * <p>
+     * {@link GameStatisticsEntity#updateStats(int, int, int, boolean)} cannot be called once the session is finished,
+     * and the session must be restarted with {@link GameStatisticsEntity#restartSession()}.
+     */
+    public void finishSession() {
+        isComplete = true;
+        // set the "correct words" to the amount of words (assume the user is done)
+        this.completionText = this.wordCount + "/" + this.wordCount + " words";
     }
 }
