@@ -73,13 +73,18 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             for (int j = 0; j < Math.max(text[i].length(), input[i].length()); j++) {
                 // if input is long enough
                 if (j < input[i].length()) {
-                    // show WHITE if text is long enough and char is valid, otherwise red.
-                    g.setFill(
-                            j < text[i].length() && text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
-                    g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
-                    cursorX = dx;
+                    // if input is in word
+                    if (j < text[i].length()) {
+                        // fill white for correct characters, red for incorrect
+                        g.setFill(text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
+                        g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
+                    } else {
+                        // fill dark red if text entends too long
+                        g.setFill(Color.DARKRED);
+                        g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
+                    }
 
-                    // if text is long enough
+                    cursorX = dx;
                 } else {
                     // show dark red if word current word is ahead of this word (thus word incomplete) otherwise gray
                     g.setFill(i >= currentWord ? Color.GRAY : Color.DARKRED);
