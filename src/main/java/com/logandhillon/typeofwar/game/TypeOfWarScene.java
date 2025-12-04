@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.entity.RopeEntity;
 import com.logandhillon.typeofwar.entity.SentenceEntity;
@@ -47,6 +48,8 @@ public class TypeOfWarScene extends GameScene {
         rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
         rope.addPlayer(testPlayer, RopeEntity.Team.RIGHT);
         addEntity(rope);
+
+        addEntity(new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue()-128));
     }
 
     @Override
