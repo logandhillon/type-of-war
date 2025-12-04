@@ -78,13 +78,13 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                         // fill white for correct characters, red for incorrect
                         g.setFill(text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
                         g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
-                        cursorX = dx;
                     } else {
                         // fill dark red if text entends too long
                         g.setFill(Color.DARKRED);
                         g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
                     }
 
+                    cursorX = dx;
                 } else {
                     // show dark red if word current word is ahead of this word (thus word incomplete) otherwise gray
                     g.setFill(i >= currentWord ? Color.GRAY : Color.DARKRED);
