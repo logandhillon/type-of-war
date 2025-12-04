@@ -2,33 +2,38 @@ package com.logandhillon.typeofwar.engine;
 
 import com.logandhillon.typeofwar.entity.Entity;
 import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
+
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 /**
  * A GameScene is the lowest-level of the engine; controlling the game's lifecycle, rendering, and creating a game loop.
  * It represents a "scene" of the game, that being a section of the game that is related (e.g. a game level, the main
- * menu, etc.) GameScenes are rendered with {@link GameScene#build()}, which prepares the engine code for JavaFX,
+ * menu, etc.) GameScenes are rendered with {@link GameScene#build(Stage)}, which prepares the engine code for JavaFX,
  * allowing it to be executed and ran.
  *
  * @author Logan Dhillon
  */
 public abstract class GameScene {
-    public static final int WINDOW_WIDTH = 1280;
-    public static final int WINDOW_HEIGHT = 720;
-
     private final ArrayList<Entity> entities = new ArrayList<>();
 
-    private AnimationTimer lifecycle;
+    private AnimationTimer         lifecycle;
+    private Stage                  stage;
+    private ChangeListener<Number> widthListener;
+    private ChangeListener<Number> heightListener;
 
     /**
      * Do not instantiate this class.
      *
-     * @see GameScene#build()
+     * @see GameScene#build(Stage)
      */
     protected GameScene() {}
 
@@ -36,9 +41,9 @@ public abstract class GameScene {
      * Called every tick for non-graphics-related updates (Entity lifecycle, etc.) This implementation updates all
      * entities.
      */
-    protected void onUpdate() {
+    protected void onUpdate(float dt) {
         for (Entity e: entities)
-            e.onUpdate();
+            e.onUpdate(dt);
     }
 
     /**
@@ -54,7 +59,7 @@ public abstract class GameScene {
     /**
      * Called when this GameScene is built to a scene with a lifecycle. Should be used to attach events to the scene.
      *
-     * @param scene the JavaFX scene (NOT GameScene!) from {@link GameScene#build()}
+     * @param scene the JavaFX scene (NOT GameScene!) from {@link GameScene#build(Stage)}
      */
     protected void onBuild(Scene scene) {}
 
@@ -64,20 +69,36 @@ public abstract class GameScene {
      *
      * @return Scene containing the GameScene's GUI elements
      */
-    public Scene build() {
-        Canvas canvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
+    public Scene build(Stage stage) {
+        this.stage = stage;
+
+        Canvas canvas = new Canvas(WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
         GraphicsContext g = canvas.getGraphicsContext2D();
+
+        // use one-element array as address cannot change once anonymously passed to lifecycle
+        final long[] lastTime = { 0 };
 
         lifecycle = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                onUpdate();
+                if (lastTime[0] == 0) lastTime[0] = now; // set initial value to now
+                float dt = (now - lastTime[0]) / 1_000_000_000f; // nanoseconds to seconds
+                lastTime[0] = now;
+
+                onUpdate(dt);
                 render(g);
             }
         };
         lifecycle.start();
 
-        Scene scene = new Scene(new StackPane(canvas), WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(new StackPane(canvas), WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+
+        // resize canvas when window changes
+        widthListener = (obs, oldV, newV) -> canvas.setWidth(newV.doubleValue());
+        heightListener = (obs, oldV, newV) -> canvas.setHeight(newV.doubleValue());
+        WINDOW_WIDTH.addListener(widthListener);
+        WINDOW_HEIGHT.addListener(heightListener);
+
         onBuild(scene);
         return scene;
     }
@@ -86,8 +107,15 @@ public abstract class GameScene {
      * Called to discard this scene (i.e., stop its lifecycle, etc.)
      */
     public void discard() {
+        // schedule all entities for destruction
+        for (Entity e: entities) e.onDestroy();
         entities.clear();
+
         lifecycle.stop();
+
+        // remove window resize listeners from stage
+        stage.widthProperty().removeListener(widthListener);
+        stage.heightProperty().removeListener(heightListener);
     }
 
     /**
@@ -97,5 +125,6 @@ public abstract class GameScene {
      */
     protected void addEntity(Entity e) {
         entities.add(e);
+        e.onAttach(this);
     }
 }
