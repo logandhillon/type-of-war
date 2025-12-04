@@ -18,7 +18,7 @@ public class TypeOfWarScene extends GameScene {
     private final RopeEntity     rope;
 
     public TypeOfWarScene() {
-        sentence = new SentenceEntity(WINDOW_WIDTH / 2.0, (WINDOW_HEIGHT + 192) / 2.0);
+        sentence = new SentenceEntity(WINDOW_WIDTH / 2f, (WINDOW_HEIGHT + 192) / 2f);
         sentence.setText("The quick brown fox jumps over the lazy dog.");
         addEntity(sentence);
 

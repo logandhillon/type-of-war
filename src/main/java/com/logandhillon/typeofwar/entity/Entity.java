@@ -4,15 +4,15 @@ import javafx.scene.canvas.GraphicsContext;
 
 /**
  * An entity is the most basic paradigm that can be handled by the game engine. It provides methods for
- * {@link Entity#onUpdate()} and {@link Entity#onRender(GraphicsContext, double, double)}, which must be implemented by
+ * {@link Entity#onUpdate()} and {@link Entity#onRender(GraphicsContext, float, float)}, which must be implemented by
  * your subclass.
  *
  * @author Logan Dhillon
  * @see com.logandhillon.typeofwar.engine.GameScene
  */
 public abstract class Entity extends GameObject {
-    protected double x;
-    protected double y;
+    protected float x;
+    protected float y;
 
     /**
      * Creates an entity at the specified position.
@@ -20,7 +20,7 @@ public abstract class Entity extends GameObject {
      * @param x x-position (from left)
      * @param y y-position (from top)
      */
-    public Entity(double x, double y) {
+    public Entity(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -43,7 +43,7 @@ public abstract class Entity extends GameObject {
      * @param x new x-position
      * @param y new y-position
      */
-    public void setPosition(double x, double y) {
+    public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
     }

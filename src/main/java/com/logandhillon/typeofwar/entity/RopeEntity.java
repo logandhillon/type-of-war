@@ -21,7 +21,7 @@ public class RopeEntity extends Entity {
     private final ArrayList<PlayerObject> leftTeam;
     private final ArrayList<PlayerObject> rightTeam;
 
-    public RopeEntity(double x, double y) {
+    public RopeEntity(float x, float y) {
         super(x, y);
         leftTeam = new ArrayList<>();
         rightTeam = new ArrayList<>();
@@ -32,7 +32,7 @@ public class RopeEntity extends Entity {
     }
 
     @Override
-    public void onRender(GraphicsContext g, double x, double y) {
+    public void onRender(GraphicsContext g, float x, float y) {
         g.setFill(Color.WHITE);
         g.fillRect(x, (y + HEIGHT) / 2, WIDTH, HEIGHT);
 

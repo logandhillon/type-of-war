@@ -36,7 +36,7 @@ public class SentenceEntity extends Entity {
      *
      * @apiNote {@link SentenceEntity#setText(String)} must be called before using this entity.
      */
-    public SentenceEntity(double x, double y) {
+    public SentenceEntity(float x, float y) {
         super(x, y);
     }
 
@@ -50,12 +50,12 @@ public class SentenceEntity extends Entity {
     }
 
     @Override
-    public void onRender(GraphicsContext g, double x, double y) {
+    public void onRender(GraphicsContext g, float x, float y) {
         g.setFont(FONT);
         g.setTextAlign(TextAlignment.LEFT);
 
-        double dx = 64; // left-margin of text
-        double cursorX = dx - 2 * CHAR_WIDTH;
+        float dx = 64; // left-margin of text
+        float cursorX = dx - 2 * CHAR_WIDTH;
 
         // for each word
         for (int i = 0; i < text.length; i++) {

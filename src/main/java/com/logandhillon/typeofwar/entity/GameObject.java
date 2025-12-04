@@ -33,7 +33,7 @@ public abstract class GameObject {
      * @implNote implement this method to change the render behaviour of your entity.
      * @see Entity#render(GraphicsContext)
      */
-    protected abstract void onRender(GraphicsContext g, double x, double y);
+    protected abstract void onRender(GraphicsContext g, float x, float y);
 
     /**
      * Called when this entity is scheduled to be destroyed.
