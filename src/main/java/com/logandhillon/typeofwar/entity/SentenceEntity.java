@@ -150,9 +150,14 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle backspace
         if (e.getCode() == KeyCode.BACK_SPACE) {
+            // decrease correct word count if word was correct
+            if (text[currentWord].contentEquals(input[currentWord])) {
+                correctWords--;
+            }
+
+            // decrement word counters if current word is empty OR if this is the last word and it was full
             if (input[currentWord].isEmpty() && currentWord > 0) {
                 currentWord--;
-                correctWords--;
             } else if (!input[currentWord].isEmpty()) {
                 input[currentWord].deleteCharAt(input[currentWord].length() - 1);
             }
@@ -178,12 +183,8 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
-            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
-                // increment correct word count if the input matches the sentence
-                if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
-
+            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
                 currentWord++; // increment word counter LAST so we can do statistics checks
-            }
         }
         // handle the other characters
         else {
@@ -196,9 +197,8 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             }
         }
 
-        // does the last word match the sentence
-        if (currentWord == text.length - 1 && text[currentWord].contentEquals(input[currentWord]))
-            correctWords++;
+        // increment correct word count if the input matches the sentence
+        if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
 
         // if all words are correct then finish the session
         if (correctWords == text.length) {
