@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -20,7 +21,7 @@ import java.util.Arrays;
 public class SentenceEntity extends Entity {
 	private static final int CHAR_WIDTH = 18;
 	private static final int LINE_HEIGHT = 28;
-	private static final Font FONT = Font.font("monospace", 32); // TODO: use a custom font instead
+	private static final Font FONT = Font.font(Fonts.DM_MONO, 32);
 
 	private String[] text;
 	private StringBuilder[] input;
