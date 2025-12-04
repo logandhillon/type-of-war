@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-import static com.logandhillon.typeofwar.engine.GameScene.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 /**
  * The rope is the part of the main game loop that visualizes who's winning, the players, etc.
@@ -15,7 +15,7 @@ import static com.logandhillon.typeofwar.engine.GameScene.WINDOW_WIDTH;
  */
 public class RopeEntity extends Entity {
     private static final int THICKNESS      = 3;
-    private static final int WIDTH          = WINDOW_WIDTH - 128;
+    private static final int WIDTH          = WINDOW_WIDTH.intValue() - 128;
     private static final int PLAYER_MARGIN  = 16;
     private static final int DIVIDER_HEIGHT = 144;
 
@@ -39,9 +39,9 @@ public class RopeEntity extends Entity {
         g.setLineWidth(2);
         g.setLineDashes(8);
         g.strokeLine(
-                WINDOW_WIDTH / 2f,
+                WINDOW_WIDTH.floatValue() / 2f,
                 (y - DIVIDER_HEIGHT) / 2f,
-                WINDOW_WIDTH / 2f,
+                WINDOW_WIDTH.floatValue() / 2f,
                 (y + DIVIDER_HEIGHT) / 2f
         );
 

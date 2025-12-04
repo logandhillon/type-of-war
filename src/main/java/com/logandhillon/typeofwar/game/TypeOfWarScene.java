@@ -11,6 +11,9 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+
 /**
  * The main game loop for Type of War.
  *
@@ -33,13 +36,13 @@ public class TypeOfWarScene extends GameScene {
     private boolean isWinning = true;
 
     public TypeOfWarScene() {
-        sentence = new SentenceEntity(WINDOW_WIDTH / 2f, (WINDOW_HEIGHT + 300) / 2f);
+        sentence = new SentenceEntity(WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
         sentence.setText("The quick brown fox jumps over the lazy dog.");
         addEntity(sentence);
 
         PlayerObject testPlayer = new PlayerObject("Player1", Color.CYAN);
 
-        rope = new RopeEntity(64, WINDOW_HEIGHT);
+        rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
         rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
         rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
         rope.addPlayer(testPlayer, RopeEntity.Team.RIGHT);
@@ -50,7 +53,7 @@ public class TypeOfWarScene extends GameScene {
     protected void render(GraphicsContext g) {
         // background
         g.setFill(isWinning ? BG_WINNING : BG_LOSING);
-        g.fillRect(0, 0, 1280, 720);
+        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
 
         // render all other entities
         super.render(g);
