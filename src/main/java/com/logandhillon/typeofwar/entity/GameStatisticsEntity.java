@@ -32,7 +32,7 @@ public class GameStatisticsEntity extends Entity {
     private boolean isWinning;
     private int     rawWpm;
     private float   accuracy;
-    private int     typedWords = 0;
+    private int     typedChars = 0;
     private int     wordCount;
 
     /**
@@ -56,9 +56,13 @@ public class GameStatisticsEntity extends Entity {
         elapsedSeconds += dt;
         updateTimer += dt;
 
+        // only run the code in this block ONCE per second.
         if (updateTimer >= 1.0f) {
             updateTimer -= 1.0f;
-            rawWpm = (int)(typedWords / (elapsedSeconds / 60f));
+
+            // raw WPM is defined as (total characters / 5) per delta minutes
+            rawWpm = (int)((typedChars / 5f) / (elapsedSeconds / 60f));
+            // net WPM is a function of rWPM and accuracy
             wpm = String.valueOf((int)(rawWpm * accuracy));
         }
     }
@@ -102,11 +106,10 @@ public class GameStatisticsEntity extends Entity {
      * @param correctChars amount of correct characters the user has typed
      * @param typedChars   amount of total characters the user has typed in this session
      * @param correctWords net correct words the user has finished
-     * @param typedWords   amount of total words the user has typed, including erased ones (correct or not)
      * @param isWinning    if the player's team is winning
      */
-    public void updateStats(int correctChars, int typedChars, int correctWords, int typedWords, boolean isWinning) {
-        this.typedWords = typedWords;
+    public void updateStats(int correctChars, int typedChars, int correctWords, boolean isWinning) {
+        this.typedChars = typedChars;
         this.accuracy = typedChars == 0 ? 0 : (float)correctChars / typedChars;
         this.accuracyText = (int)(accuracy * 100) + "% accuracy";
         this.completionText = this.wordCount == 0 ? "-" : correctWords + "/" + this.wordCount + " words";

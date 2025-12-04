@@ -34,7 +34,6 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
     private int typedChars;
     private int correctChars;
-    private int typedWords;
     private int correctWords;
 
     private boolean isFirstKeyPress;
@@ -124,7 +123,6 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         // reset user stats
         correctChars = 0;
         typedChars = 0;
-        typedWords = 0;
         correctWords = 0;
     }
 
@@ -135,7 +133,10 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
      */
     public void onKeyPressed(KeyEvent e) {
         // restart timer if this is first key press
-        if (isFirstKeyPress) parent.resetWPMTimer();
+        if (isFirstKeyPress) {
+            parent.resetWPMTimer();
+            isFirstKeyPress = false;
+        }
 
         // handle backspace
         if (e.getCode() == KeyCode.BACK_SPACE) {
@@ -147,7 +148,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         }
 
         // update typing statistics
-        parent.updateStats(correctChars, typedChars, correctWords, typedWords);
+        parent.updateStats(correctChars, typedChars, correctWords);
     }
 
     /**
@@ -167,7 +168,6 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 // increment correct word count if the input matches the sentence
                 if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
 
-                typedWords++;
                 currentWord++; // increment word counter LAST so we can do statistics checks
             }
             return;

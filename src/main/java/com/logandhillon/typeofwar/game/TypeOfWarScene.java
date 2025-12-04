@@ -76,10 +76,9 @@ public class TypeOfWarScene extends GameScene {
      * @param correctChars amount of correct characters the user has typed
      * @param typedChars   amount of total characters the user has typed in this session
      * @param correctWords net correct words the user has finished
-     * @param typedWords   amount of total words the user has typed, including erased ones (correct or not)
      */
-    public void updateStats(int correctChars, int typedChars, int correctWords, int typedWords) {
-        stats.updateStats(correctChars, typedChars, correctWords, typedWords, isWinning);
+    public void updateStats(int correctChars, int typedChars, int correctWords) {
+        stats.updateStats(correctChars, typedChars, correctWords, isWinning);
     }
 
     /**
