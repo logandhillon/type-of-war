@@ -37,6 +37,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int correctWords;
 
     private boolean isFirstKeyPress;
+    private boolean isComplete;
 
     /**
      * Creates a new SentenceEntity at the provided coordinates.
@@ -122,6 +123,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         input = new StringBuilder[this.text.length];
         Arrays.setAll(input, i -> new StringBuilder());
         isFirstKeyPress = true;
+        isComplete = false;
 
         currentWord = 0;
 
@@ -137,6 +139,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
      * @param e KeyEvent from {@link Scene#onKeyPressedProperty()}
      */
     public void onKeyPressed(KeyEvent e) {
+        // don't allow updates if session is complete
+        if (isComplete) return;
+
         // restart timer if this is first key press
         if (isFirstKeyPress) {
             parent.resetWPMTimer();
@@ -163,6 +168,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
      * @param e KeyEvent from {@link Scene#onKeyTypedProperty()}
      */
     public void onKeyTyped(KeyEvent e) {
+        // don't allow updates if session is complete
+        if (isComplete) return;
+
         String c = e.getCharacter();
 
         // ignore blank/control characters
@@ -193,6 +201,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             correctWords++;
 
         // if all words are correct then finish the session
-        if (correctWords == text.length) parent.onTypingFinished();
+        if (correctWords == text.length) {
+            isComplete = true;
+            parent.onTypingFinished();
+        }
     }
 }

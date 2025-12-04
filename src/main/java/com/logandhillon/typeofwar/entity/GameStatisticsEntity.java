@@ -96,6 +96,14 @@ public class GameStatisticsEntity extends Entity {
         g.setFont(FONT_HEADER);
         g.setFill(isWinning ? Colors.GOLD_GRADIENT : Color.RED);
         g.fillText(isWinning ? "You're in the lead!" : "Catch-up!", x + width, y);
+
+        // completed message
+        if (isComplete) {
+            g.setFont(FONT_BODY);
+            g.setFill(Color.GRAY);
+            g.setTextAlign(TextAlignment.CENTER);
+            g.fillText("Waiting for others to finish...", x+ width/2 ,y);
+        }
     }
 
     @Override
