@@ -14,9 +14,10 @@ import static com.logandhillon.typeofwar.engine.GameScene.WINDOW_WIDTH;
  * @see com.logandhillon.typeofwar.game.TypeOfWarScene
  */
 public class RopeEntity extends Entity {
-    private static final int HEIGHT        = 4;
-    private static final int WIDTH         = WINDOW_WIDTH - 128;
-    private static final int PLAYER_MARGIN = 16;
+    private static final int THICKNESS      = 3;
+    private static final int WIDTH          = WINDOW_WIDTH - 128;
+    private static final int PLAYER_MARGIN  = 16;
+    private static final int DIVIDER_HEIGHT = 144;
 
     private final ArrayList<PlayerObject> leftTeam;
     private final ArrayList<PlayerObject> rightTeam;
@@ -33,20 +34,39 @@ public class RopeEntity extends Entity {
 
     @Override
     public void onRender(GraphicsContext g, float x, float y) {
-        g.setFill(Color.WHITE);
-        g.fillRect(x, (y + HEIGHT) / 2, WIDTH, HEIGHT);
+        // middle (cross to win) line
+        g.setStroke(Color.hsb(0, 0, 0.5, 0.5));
+        g.setLineWidth(2);
+        g.setLineDashes(8);
+        g.strokeLine(
+                WINDOW_WIDTH / 2f,
+                (y - DIVIDER_HEIGHT) / 2f,
+                WINDOW_WIDTH / 2f,
+                (y + DIVIDER_HEIGHT) / 2f
+        );
 
-        // render the left team
+        // main rope
+        g.setStroke(Color.WHITE);
+        g.setLineWidth(THICKNESS);
+        g.setLineDashes(null);
+        g.strokeLine(
+                x,
+                (y + THICKNESS) / 2f,
+                x + WIDTH,
+                (y + THICKNESS) / 2f
+        );
+
+        // left team
         float dx = 0;
         for (PlayerObject player: leftTeam) {
-            player.onRender(g, x + dx, (y + HEIGHT) / 2);
+            player.onRender(g, x + dx, (y + THICKNESS) / 2);
             dx += PlayerObject.SIZE + PLAYER_MARGIN;
         }
 
-        // render the right team
+        // right team
         dx = 0;
         for (PlayerObject player: rightTeam) {
-            player.onRender(g, WIDTH - dx, (y + HEIGHT) / 2);
+            player.onRender(g, WIDTH - dx, (y + THICKNESS) / 2);
             dx += PlayerObject.SIZE + PLAYER_MARGIN;
         }
     }
