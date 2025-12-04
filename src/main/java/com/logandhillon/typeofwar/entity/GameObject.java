@@ -3,8 +3,8 @@ package com.logandhillon.typeofwar.entity;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
- * A GameObject is very the layer below {@link Entity}, which is an independent game object that can be added to
- * scenes. Unlike its independent counterpart, GameObject cannot be rendered on its own (it cannot be added to a
+ * A GameObject is very the layer below {@link Entity}, which is an independent game object that can be added to scenes.
+ * Unlike its independent counterpart, GameObject cannot be rendered on its own (it cannot be added to a
  * {@link com.logandhillon.typeofwar.engine.GameScene}).
  * <p>
  * A GameObject may be used over an (independent) Entity for objects that do not need to be handled by the GameScene,

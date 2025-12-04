@@ -1,0 +1,57 @@
+package com.logandhillon.typeofwar.entity;
+
+import com.logandhillon.typeofwar.resource.Fonts;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
+
+/**
+ * @author Logan Dhillon
+ */
+public class PlayerObject extends GameObject {
+    protected static final int SIZE          = 64;
+    private static final   int NAME_OFFSET_Y = 20;
+
+    private static final Font FONT = Font.font(Fonts.DM_MONO, 17);
+
+    private final String name;
+    private final Color  color;
+
+    /**
+     * Creates a new player with the specified color.
+     *
+     * @param name  the name of the player
+     * @param color the color of the player
+     *
+     * @apiNote the PlayerEntity should be controlled by a {@link RopeEntity}
+     * @see RopeEntity
+     */
+    public PlayerObject(String name, Color color) {
+        this.name = name;
+        this.color = color;
+    }
+
+    @Override
+    public void onUpdate() {
+
+    }
+
+    @Override
+    protected void onRender(GraphicsContext g, double x, double y) {
+        // render skin
+        g.setFill(color);
+        g.fillRect(x, y - (SIZE / 2.0), SIZE, SIZE);
+
+        // render name
+        g.setFill(Color.WHITE);
+        g.setFont(FONT);
+        g.setTextAlign(TextAlignment.CENTER);
+        g.fillText(name, x + (SIZE / 2.0), y - SIZE / 2.0 - NAME_OFFSET_Y);
+    }
+
+    @Override
+    public void onDestroy() {
+
+    }
+}
