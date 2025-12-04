@@ -185,5 +185,13 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
             correctChars++;
         }
+
+        // if the last word is correct,
+        if (currentWord == text.length - 1 &&
+            text[currentWord].contentEquals(input[currentWord]))
+            correctWords++;
+
+        // if all words are correct then finish the session
+        if (correctWords == text.length) parent.onTypingFinished();
     }
 }

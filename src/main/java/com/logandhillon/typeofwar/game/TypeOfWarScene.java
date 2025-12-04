@@ -94,6 +94,13 @@ public class TypeOfWarScene extends GameScene {
      * Resets the timer used for calculating WPM in the {@link GameStatisticsEntity}.
      */
     public void resetWPMTimer() {
-        stats.resetTimer();
+        stats.restartSession();
+    }
+
+    /**
+     * Marks this typing session as finished, and propagates that information to {@link GameStatisticsEntity}.
+     */
+    public void onTypingFinished() {
+        stats.finishSession();
     }
 }
