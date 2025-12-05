@@ -32,6 +32,13 @@ public class RopeEntity extends Entity {
     public void onUpdate(float dt) {
     }
 
+    /**
+     * Renders the rope, the "cross-to-win" dividing line, and the players on the rope.
+     *
+     * @param g the graphical context to render to.
+     * @param x the x position to render the entity at
+     * @param y the y position to render the entity at
+     */
     @Override
     public void onRender(GraphicsContext g, float x, float y) {
         // middle (cross to win) line
@@ -87,12 +94,20 @@ public class RopeEntity extends Entity {
             rightTeam.add(player);
     }
 
+    /**
+     * Clears the teams that have the player objects.
+     */
     @Override
     public void onDestroy() {
         leftTeam.clear();
         rightTeam.clear();
     }
 
+    /**
+     * The team is the position of the rope that a {@link PlayerObject} should appear on.
+     * <p>
+     * The player on this client should always be on the left, and the relative enemy team should appear on the right.
+     */
     public enum Team {
         LEFT, RIGHT
     }

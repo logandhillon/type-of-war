@@ -60,6 +60,16 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
     }
 
+    /**
+     * Renders the original sentence and the user's input, which is automatically handled by the event handlers within this file.
+     *
+     * The position of the characters within
+     *
+     * @param g the graphical context to render to.
+     * @param x the x position to render the entity at
+     * @param y the y position to render the entity at
+     *
+     */
     @Override
     public void onRender(GraphicsContext g, float x, float y) {
         g.setFont(FONT);

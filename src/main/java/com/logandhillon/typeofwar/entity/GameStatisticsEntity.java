@@ -8,7 +8,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
+ * The game statistics entity is a UI layer for the {@link com.logandhillon.typeofwar.game.TypeOfWarScene} that shows
+ * the current player's statistics.
+ * <p>
+ * The statistics are supplied by the parent scene, and are not retrieved automatically.
+ *
  * @author Logan Dhillon
+ * @see GameStatisticsEntity#updateStats(int, int, int, boolean)
  */
 public class GameStatisticsEntity extends Entity {
     private static final Font FONT_WPM    = Font.font(Fonts.DM_MONO_MEDIUM, 48);
@@ -53,6 +59,11 @@ public class GameStatisticsEntity extends Entity {
         this.isComplete = false;
     }
 
+    /**
+     * Update loop for the statistics, which ticks the timers and recalculates WPM every second.
+     *
+     * @param dt the delta time: change in time (seconds) since the last frame
+     */
     @Override
     public void onUpdate(float dt) {
         if (isComplete) return;
@@ -71,6 +82,16 @@ public class GameStatisticsEntity extends Entity {
         }
     }
 
+    /**
+     * Render loop for game statistics.
+     * <p>
+     * Displays the WPM and other typing related stats on the left, ranking stats on the right, and a message if the
+     * player is done typing in the center.
+     *
+     * @param g the graphical context to render to.
+     * @param x the x position to render the entity at
+     * @param y the y position to render the entity at
+     */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
         g.setFill(Color.WHITE);
@@ -102,7 +123,7 @@ public class GameStatisticsEntity extends Entity {
             g.setFont(FONT_BODY);
             g.setFill(Color.GRAY);
             g.setTextAlign(TextAlignment.CENTER);
-            g.fillText("Waiting for others to finish...", x+ width/2 ,y);
+            g.fillText("Waiting for others to finish...", x + width / 2, y);
         }
     }
 
