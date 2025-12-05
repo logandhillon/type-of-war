@@ -4,6 +4,8 @@ module com.logandhillon.typeofwar {
 
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
+    requires javafx.graphics;
+    requires com.logandhillon.typeofwar;
 
     opens com.logandhillon.typeofwar to javafx.fxml;
     exports com.logandhillon.typeofwar;
