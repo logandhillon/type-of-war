@@ -1,6 +1,5 @@
 package com.logandhillon.typeofwar.entity.ui;
 
-import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -32,15 +31,15 @@ public class ButtonEntity extends Clickable {
      * To create a ButtonEntity, use the {@link ButtonBuilder} class.
      */
     protected ButtonEntity(String label, Color buttonColor, Color labelColor, float x, float y, float w, float h,
-                           Runnable onClick, int fontSize, Style style) {
+                           Runnable onClick, Font font, Style style) {
         super(x, y, w, h);
         this.label = label;
         this.buttonColor = buttonColor;
         this.labelColor = labelColor;
         this.clickHandler = onClick;
         this.style = style;
+        this.font = font;
 
-        font = Font.font(Fonts.DM_MONO_MEDIUM, fontSize);
         cx = x + w / 2;
         cy = y + h / 2;
     }
@@ -74,7 +73,7 @@ public class ButtonEntity extends Clickable {
         if (style == Style.OUTLINE) {
             g.setStroke(buttonColor);
             g.setLineWidth(STROKE);
-            g.setLineDashes(null);
+            g.setLineDashes(0);
             g.strokeRect(x, y, w, h);
         } else if (style == Style.FILL) {
             g.setFill(buttonColor);

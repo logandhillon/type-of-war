@@ -1,6 +1,8 @@
 package com.logandhillon.typeofwar.entity.ui;
 
+import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 /**
  * Builds a new {@link ButtonEntity} with custom attributes. To build a button, you must:
@@ -15,16 +17,18 @@ import javafx.scene.paint.Color;
  * @author Logan Dhillon
  */
 public class ButtonBuilder {
+    private static final Font DEFAULT_FONT = Font.font(Fonts.DM_MONO, 18);
+
     private String             label;
     private Color              labelColor;
     private Color              buttonColor;
     private float              x;
     private float              y;
-    private float              w        = 192;
-    private float              h        = 64;
+    private float              w     = 192;
+    private float              h     = 64;
     private Runnable           onClick;
-    private int                fontSize = 18;
-    private ButtonEntity.Style style    = ButtonEntity.Style.FILL;
+    private Font               font;
+    private ButtonEntity.Style style = ButtonEntity.Style.FILL;
 
     public ButtonBuilder setLabel(String label) {
         this.label = label;
@@ -76,8 +80,8 @@ public class ButtonBuilder {
         return this;
     }
 
-    public ButtonBuilder setFontSize(int fontSize) {
-        this.fontSize = fontSize;
+    public ButtonBuilder setFont(Font font) {
+        this.font = font;
         return this;
     }
 
@@ -88,6 +92,7 @@ public class ButtonBuilder {
 
     /**
      * Builds the {@link ButtonEntity} with the values setup in this builder.
+     *
      * @return the button itself
      */
     public ButtonEntity build() {
@@ -101,6 +106,7 @@ public class ButtonBuilder {
         if (onClick == null)
             throw new NullPointerException("Button cannot be built with a null action (click handler)");
 
-        return new ButtonEntity(label, buttonColor, labelColor, x, y, w, h, onClick, fontSize, style);
+        return new ButtonEntity(
+                label, buttonColor, labelColor, x, y, w, h, onClick, font == null ? DEFAULT_FONT : font, style);
     }
 }
