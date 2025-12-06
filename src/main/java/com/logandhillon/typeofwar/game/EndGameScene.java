@@ -2,6 +2,7 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.entity.EndHeaderEntity;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -19,14 +20,17 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
  */
 public class EndGameScene extends GameScene {
     private static final float ENTITY_GAP = 136;
-    private boolean isWinning = true;
+    private boolean win;
 
     /**
      *
      * @param leftTeamResults is the sum of statistics for the team on the left of the rope
      * @param rightTeamResults is the sum of statistics for the team on the right of the rope
      */
-    public EndGameScene(EndResultEntity[] leftTeamResults, EndResultEntity[] rightTeamResults){
+    public EndGameScene(EndResultEntity[] leftTeamResults, EndResultEntity[] rightTeamResults, EndHeaderEntity header){
+
+        this.win = header.getResult();
+        addEntity(header);
 
         float dx = 0f;
         for(EndResultEntity p : leftTeamResults) {
@@ -45,12 +49,13 @@ public class EndGameScene extends GameScene {
         }
 
 
+
     }
     @Override
     protected void render(GraphicsContext g) {
 
         // fill background
-        g.setFill(isWinning ? BG_WINNING : BG_LOSING);
+        g.setFill(this.win ? BG_WINNING : BG_LOSING);
         g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
 
         // render all end screen entities

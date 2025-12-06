@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.entity.EndHeaderEntity;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.game.EndGameScene;
@@ -42,9 +43,10 @@ public class TypeOfWar extends Application {
         WINDOW_HEIGHT = stage.heightProperty();
 
 
-        EndResultEntity[] leftPlayers = new EndResultEntity[]{new EndResultEntity(100, 67, 41, new PlayerObject("Player 1" , Color.BLUE)), new EndResultEntity(100, 67, 41, new PlayerObject("Player 2" , Color.BLUE))};
-        EndResultEntity[] rightPlayers = new EndResultEntity[]{new EndResultEntity(100, 67, 41, new PlayerObject("Player 3" , Color.RED)), new EndResultEntity(100, 67, 41, new PlayerObject("Player 4" , Color.RED))};
-        setScene(new EndGameScene(leftPlayers, rightPlayers));
+        EndResultEntity[] leftPlayers = new EndResultEntity[]{new EndResultEntity(100, 67, 41, new PlayerObject("Player 1" , Color.BLUE)), new EndResultEntity(200, 67, 41, new PlayerObject("Player 2" , Color.BLUE))};
+        EndResultEntity[] rightPlayers = new EndResultEntity[]{new EndResultEntity(100, 41, 67, new PlayerObject("Player 3" , Color.RED)), new EndResultEntity(67, 41, 100, new PlayerObject("Player 4" , Color.RED))};
+        EndHeaderEntity header = new EndHeaderEntity(true);
+        setScene(new EndGameScene(leftPlayers, rightPlayers, header));
         stage.show();
     }
 
