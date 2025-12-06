@@ -20,6 +20,7 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
  */
 public class EndGameScene extends GameScene {
     private static final float ENTITY_GAP = 136;
+    private static final float BUFFER_GAP = 25;
     private boolean win;
 
     /**
@@ -34,8 +35,8 @@ public class EndGameScene extends GameScene {
 
         float dx = 0f;
         for(EndResultEntity p : leftTeamResults) {
-            // displace entities on left from center (increasing with more teammates per side)
-            p.setPosition((TypeOfWar.WINDOW_WIDTH.floatValue() / 2) - (leftTeamResults.length * ENTITY_GAP) + dx , 170);
+            // displace entities on left away from center, displacement increases per teammate
+            p.setPosition((TypeOfWar.WINDOW_WIDTH.floatValue() / 2) - (leftTeamResults.length * ENTITY_GAP) + dx - BUFFER_GAP, 170);
             dx += ENTITY_GAP;
             addEntity(p);
         }
@@ -43,7 +44,7 @@ public class EndGameScene extends GameScene {
         dx = 0f;
         for(EndResultEntity p : rightTeamResults) {
             // displace entities on right from center
-            p.setPosition((TypeOfWar.WINDOW_WIDTH.floatValue() / 2) + dx , 170);
+            p.setPosition((TypeOfWar.WINDOW_WIDTH.floatValue() / 2) + dx + BUFFER_GAP , 170);
             dx += ENTITY_GAP;
             addEntity(p);
         }

@@ -46,6 +46,12 @@ public class EndHeaderEntity extends Entity{
 
         g.setTextAlign(TextAlignment.CENTER);
         g.setFont(FONT_HEADER);
+
+        // render divider
+        g.setStroke(Color.GREY);
+        g.setLineWidth(1d);
+        g.strokeLine(midScreen, 280, midScreen, 615);
+
         if(win) {
             // set win settings
             text = "VICTORY!";
@@ -61,7 +67,7 @@ public class EndHeaderEntity extends Entity{
         // render text
         g.fillText(text, midScreen, 150);
 
-        // render line under text
+        // render line under header
         g.setLineWidth(2d);
         g.strokeLine(midScreen - FONT_HEADER.getSize() * (text.length() / 2f), 165, midScreen + FONT_HEADER.getSize() * (text.length() / 2f), 165);
     }
