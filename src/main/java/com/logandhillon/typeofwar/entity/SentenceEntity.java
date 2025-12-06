@@ -191,21 +191,26 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         // ignore blank/control characters
         if (c.isEmpty() || Character.isISOControl(c.charAt(0))) return;
 
+
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
+            if(input[currentWord].length() == text[currentWord].length()){
+                correctChars++;
+            }
             if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
-                currentWord++; // increment word counter LAST so we can do statistics checks
+                currentWord++;// increment word counter LAST so we can do statistics checks
         }
         // handle the other characters
         else {
             input[currentWord].append(c);
-            typedChars++;
             // if this char was correct, increase the correct char count.
-            if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
-                && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
-                correctChars++;
-            }
         }
+        if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
+                && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
+            correctChars++;
+
+        }
+        typedChars++;
 
         // increment correct word count if the input matches the sentence
         if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
