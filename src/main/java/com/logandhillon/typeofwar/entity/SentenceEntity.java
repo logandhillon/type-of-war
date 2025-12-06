@@ -88,9 +88,13 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                     if (j < text[i].length()) {
                         // fill white for correct characters, red for incorrect
                         g.setFill(text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
+                        if (input[i].length() == text[i].length()) {
+                            // fill green for completed correct words, red for completed incorrect words
+                            g.setFill(text[i].contentEquals(input[i]) ? Color.GREEN : Color.RED);
+                        }
                         g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
                     } else {
-                        // fill dark red if text entends too long
+                        // fill dark red if text extends too long
                         g.setFill(Color.DARKRED);
                         g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
                     }

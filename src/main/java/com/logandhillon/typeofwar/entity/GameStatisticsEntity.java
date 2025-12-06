@@ -84,9 +84,6 @@ public class GameStatisticsEntity extends Entity {
             wpmDisplay = wpm;
             accuracyTextDisplay = accuracyText;
         }
-        System.out.println(elapsedSeconds);
-        System.out.println(wpm);
-
     }
 
     /**
