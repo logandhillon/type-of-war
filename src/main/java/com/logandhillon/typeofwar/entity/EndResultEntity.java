@@ -1,6 +1,5 @@
 package com.logandhillon.typeofwar.entity;
 
-import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
@@ -48,23 +47,23 @@ public class EndResultEntity extends Entity{
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
 
-        // Render player icon
+        // render player icon + name
         player.onRender(g, x, y + 175);
 
         g.setFill(Color.WHITE);
         g.setTextAlign(TextAlignment.CENTER);
         g.setFont(FONT_STAT);
 
-        // Render wpm results
+        // render wpm results
         g.fillText(this.wpm, x + (WIDTH / 2) , 375 + (2 * GAP));
 
-        // Render accuracy results
+        // render accuracy results
         g.fillText(this.accuracy, x + (WIDTH / 2) , 375 + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
 
-        // Render words results
+        // render words results
         g.fillText(this.words, x + (WIDTH / 2) , 375 + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
 
-        // Render subtitles
+        // render subtitles
         g.setFont(FONT_SUBTEXT);
         g.fillText("wpm", x + (WIDTH / 2), 375 + (2 * GAP) + STAT_LINE_HEIGHT);
         g.fillText("accuracy", x + (WIDTH / 2), 375 + (3 * GAP) + (2 *STAT_LINE_HEIGHT) + SUBTEXT_LINE_HEIGHT);

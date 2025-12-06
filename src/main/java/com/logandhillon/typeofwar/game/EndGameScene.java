@@ -12,7 +12,7 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
 import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 
 /**
- * The game scene for {@link EndResultEntity} that show at the end of the game by communicating with parent class {@link GameScene}.
+ * The game scene for {@link EndResultEntity}s and {@link EndHeaderEntity}s that show at the end of the game by communicating with parent class {@link GameScene}.
  *
  * @author Jack Ross
  *
