@@ -86,8 +86,21 @@ public class ButtonBuilder {
         return this;
     }
 
-    // TODO: throw error if button is built with null values
+    /**
+     * Builds the {@link ButtonEntity} with the values setup in this builder.
+     * @return the button itself
+     */
     public ButtonEntity build() {
+        // throw error if the attrs without default values are null
+        if (label == null)
+            throw new NullPointerException("Button cannot be built with a null label");
+
+        if (labelColor == null || buttonColor == null)
+            throw new NullPointerException("Button cannot be built with null colors");
+
+        if (onClick == null)
+            throw new NullPointerException("Button cannot be built with a null action (click handler)");
+
         return new ButtonEntity(label, buttonColor, labelColor, x, y, w, h, onClick, fontSize, style);
     }
 }
