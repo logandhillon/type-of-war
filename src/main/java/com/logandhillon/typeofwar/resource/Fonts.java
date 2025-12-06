@@ -4,7 +4,6 @@ import javafx.scene.text.Font;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Arrays;
  */
 public class Fonts {
     // root path of all font resources
-    private static final Path ROOT = Path.of("/font");
+    private static final String ROOT = "/font/";
 
     public static final String DM_MONO = load("DM_Mono", "DMMono-Regular.ttf", "DMMono-Italic.ttf");
     public static final String DM_MONO_LIGHT = load("DM_Mono", "DMMono-Light.ttf", "DMMono-LightItalic.ttf");
@@ -31,13 +30,13 @@ public class Fonts {
      * @throws FontNotFoundException if the font cannot be found
      */
     private static String load(String parent, String... files) throws FontNotFoundException {
-        Path folder = ROOT.resolve(parent);
+        String folder = ROOT + parent + "/";
         String family = null;
 
         for (String file: files) {
-            Path path = folder.resolve(file);
+            String path = folder + file;
 
-            try (InputStream font = Fonts.class.getResourceAsStream(path.toString())) {
+            try (InputStream font = Fonts.class.getResourceAsStream(path)) {
                 if (font == null) throw new FontNotFoundException(path); // font didn't load? throw error
                 if (family == null) family = Font.loadFont(font, 0).getFamily(); // no family yet? define it
             } catch (IOException e) {
@@ -54,8 +53,8 @@ public class Fonts {
          * Exception if an individual font resource could not be found
          * @param path the tried path of the font
          */
-        public FontNotFoundException(Path path) {
-            super("Font resource at '" + path.toString() + "' does not exist or could not be found");
+        public FontNotFoundException(String path) {
+            super("Font resource at '" + path + "' does not exist or could not be found");
         }
 
         /**
