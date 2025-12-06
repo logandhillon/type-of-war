@@ -11,27 +11,31 @@ import javafx.scene.text.TextAlignment;
  * A button is a stylized {@link Clickable} entity that can have a button style, label, and action that runs when it's
  * clicked.
  * <p>
- * To create a button, use the {@link ButtonBuilder}.
+ * To create a button, use the {@link ButtonStyle}.
  *
  * @author Logan Dhillon
+ * @see ButtonStyle
  */
 public class ButtonEntity extends Clickable {
-    private static final int STROKE = 2;
+    private static final int STROKE          = 2;
+    private static final int ROUNDING_RADIUS = 16;
 
-    private final String   label;
-    private final Color    buttonColor;
-    private final Color    labelColor;
-    private final Runnable clickHandler;
-    private final Font     font;
-    private final float    cx; // horizontal center
-    private final float    cy; // vertical center
-    private final Style    style;
+    private final String       label;
+    private final Color        buttonColor;
+    private final Color        labelColor;
+    private final ClickHandler clickHandler;
+    private final Font         font;
+    private final Variant      style;
+    private final boolean isRounded;
+
+    private final float cx; // horizontal center
+    private final float cy; // vertical center
 
     /**
-     * To create a ButtonEntity, use the {@link ButtonBuilder} class.
+     * To create a ButtonEntity, use the {@link ButtonStyle} class.
      */
     protected ButtonEntity(String label, Color buttonColor, Color labelColor, float x, float y, float w, float h,
-                           Runnable onClick, Font font, Style style) {
+                           ClickHandler onClick, Font font, Variant style) {
         super(x, y, w, h);
         this.label = label;
         this.buttonColor = buttonColor;
@@ -39,6 +43,8 @@ public class ButtonEntity extends Clickable {
         this.clickHandler = onClick;
         this.style = style;
         this.font = font;
+
+        isRounded = style == Variant.ROUNDED_OUTLINE || style == Variant.ROUNDED_SOLID;
 
         cx = x + w / 2;
         cy = y + h / 2;
@@ -51,7 +57,7 @@ public class ButtonEntity extends Clickable {
      */
     @Override
     public void onClick(MouseEvent e) {
-        clickHandler.run();
+        clickHandler.onClick(e);
     }
 
     @Override
@@ -70,14 +76,17 @@ public class ButtonEntity extends Clickable {
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
         // render button background
-        if (style == Style.OUTLINE) {
+        if (style == Variant.OUTLINE || style == Variant.ROUNDED_OUTLINE) {
             g.setStroke(buttonColor);
             g.setLineWidth(STROKE);
             g.setLineDashes(0);
-            g.strokeRect(x, y, w, h);
-        } else if (style == Style.FILL) {
+
+            if (isRounded) g.strokeRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
+            else g.strokeRect(x, y, w, h);
+        } else {
             g.setFill(buttonColor);
-            g.fillRect(x, y, w, h);
+            if (isRounded) g.fillRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
+            else g.fillRect(x, y, w, h);
         }
 
         // render label
@@ -93,7 +102,11 @@ public class ButtonEntity extends Clickable {
 
     }
 
-    public enum Style {
-        FILL, OUTLINE
+    public enum Variant {
+        SOLID, OUTLINE, ROUNDED_SOLID, ROUNDED_OUTLINE
+    }
+
+    public interface ClickHandler {
+        void onClick(MouseEvent e);
     }
 }
