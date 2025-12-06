@@ -1,9 +1,13 @@
 package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.entity.EndResultEntity;
+import com.logandhillon.typeofwar.entity.PlayerObject;
+import com.logandhillon.typeofwar.game.EndGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -37,7 +41,10 @@ public class TypeOfWar extends Application {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-        setScene(new TypeOfWarScene());
+
+        EndResultEntity[] leftPlayers = new EndResultEntity[]{new EndResultEntity(100, 67, 41, new PlayerObject("Player 1" , Color.BLUE)), new EndResultEntity(100, 67, 41, new PlayerObject("Player 2" , Color.BLUE))};
+        EndResultEntity[] rightPlayers = new EndResultEntity[]{new EndResultEntity(100, 67, 41, new PlayerObject("Player 3" , Color.RED)), new EndResultEntity(100, 67, 41, new PlayerObject("Player 4" , Color.RED))};
+        setScene(new EndGameScene(leftPlayers, rightPlayers));
         stage.show();
     }
 
