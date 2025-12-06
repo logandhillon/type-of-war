@@ -6,6 +6,10 @@ import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Formatting of the end-game statistics that show on the {@link com.logandhillon.typeofwar.game.EndGameScene}
+ * @author Jack Ross
+ */
 public class EndResultEntity extends Entity{
     private static final float WIDTH = 64f;
     private static final float GAP = 24f;
@@ -34,6 +38,13 @@ public class EndResultEntity extends Entity{
 
     }
 
+    /**
+     *
+     * @param g the graphical context to render to.
+     * @param x the x position to render the entity at
+     * @param y the y position to render the entity at
+     *
+     */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
 
