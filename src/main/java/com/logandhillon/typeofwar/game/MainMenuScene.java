@@ -1,6 +1,5 @@
 package com.logandhillon.typeofwar.game;
 
-import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
 import javafx.scene.canvas.GraphicsContext;
@@ -33,7 +32,7 @@ public class MainMenuScene extends UIScene {
                 "Credits", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 3 * gapY, 256, 48, this::doNothing));
 
         addEntity(new MenuButton(
-                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 4 * gapY, 256, 48, this::doNothing));
+                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 4 * gapY, 256, 48, e -> System.exit(0)));
     }
 
     private void doNothing(MouseEvent e) {
