@@ -28,7 +28,7 @@ public class ButtonEntity extends Clickable {
     private MouseEventHandler mouseEnterHandler;
     private MouseEventHandler mouseLeaveHandler;
 
-    private Style style;
+    protected Style style;
 
     /**
      * Creates a new button entity.

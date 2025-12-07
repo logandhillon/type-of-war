@@ -12,6 +12,8 @@ public class DynamicButtonEntity extends ButtonEntity {
     private final Style defaultStyle;
     private final Style activeStyle;
 
+    private boolean isActive;
+
     /**
      * Creates a new dynamic button entity.
      *
@@ -31,11 +33,20 @@ public class DynamicButtonEntity extends ButtonEntity {
 
     @Override
     public void onMouseEnter(MouseEvent e) {
+        isActive = true;
         this.setStyle(activeStyle);
     }
 
     @Override
     public void onMouseLeave(MouseEvent e) {
+        isActive = false;
         this.setStyle(defaultStyle);
+    }
+
+    /**
+     * @return if the mouse is currently in this button (if the button is active)
+     */
+    public boolean isActive() {
+        return isActive;
     }
 }

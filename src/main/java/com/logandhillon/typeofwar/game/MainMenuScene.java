@@ -1,14 +1,10 @@
 package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.engine.UIScene;
-import com.logandhillon.typeofwar.entity.ui.ButtonEntity;
-import com.logandhillon.typeofwar.entity.ui.DynamicButtonEntity;
-import com.logandhillon.typeofwar.resource.Colors;
-import com.logandhillon.typeofwar.resource.Fonts;
+import com.logandhillon.typeofwar.entity.ui.MenuButton;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -19,27 +15,24 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    private static final ButtonEntity.Style BUTTON_STYLE_DEFAULT = new ButtonEntity.Style(
-            Color.WHITE, Colors.DEFAULT, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 20));
-    private static final ButtonEntity.Style BUTTON_STYLE_ACTIVE  = new ButtonEntity.Style(
-            Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 21));
-
     public MainMenuScene() {
-        addEntity(new DynamicButtonEntity(
-                "Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 300, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
+        int offsetY = 205;
+        int gapY = 48 + 16;
 
-        addEntity(new DynamicButtonEntity(
-                "Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 350, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
+        addEntity(new MenuButton(
+                "Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY, 256, 48, this::play));
 
-        addEntity(new DynamicButtonEntity(
-                "Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, 400, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
+        addEntity(new MenuButton(
+                "Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + gapY, 256, 48, this::play));
 
-        addEntity(new DynamicButtonEntity(
-                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, 450, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
+        addEntity(new MenuButton(
+                "Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 2 * gapY, 256, 48, this::play));
+
+        addEntity(new MenuButton(
+                "Credits", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 3 * gapY, 256, 48, this::play));
+
+        addEntity(new MenuButton(
+                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 4 * gapY, 256, 48, this::play));
     }
 
     private void play(MouseEvent e) {
