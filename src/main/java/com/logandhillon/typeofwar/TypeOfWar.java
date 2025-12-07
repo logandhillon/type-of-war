@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -37,7 +38,9 @@ public class TypeOfWar extends Application {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-        setScene(new TypeOfWarScene());
+        TypeOfWarScene game = new TypeOfWarScene();
+        MainMenuScene menu = new MainMenuScene(() -> setScene(game));
+        setScene(menu);
         stage.show();
     }
 

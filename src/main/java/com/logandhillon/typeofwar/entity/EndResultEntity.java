@@ -48,29 +48,29 @@ public class EndResultEntity extends Entity{
      */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
-        float CENTER = x + (WIDTH / 2);
+        float center = x + (WIDTH / 2);
 
         // render player icon + name
-        player.onRender(g, x, y + 175);
+        player.render(g, x, y + 175);
 
         g.setFill(Color.WHITE);
         g.setTextAlign(TextAlignment.CENTER);
         g.setFont(FONT_STAT);
 
         // render wpm results
-        g.fillText(this.wpm, CENTER, 375 + (2 * GAP));
+        g.fillText(this.wpm, center, 375 + (2 * GAP));
 
         // render accuracy results
-        g.fillText(this.accuracy, CENTER, 375 + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
+        g.fillText(this.accuracy, center, 375 + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
 
         // render words results
-        g.fillText(this.words, CENTER, 375 + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
+        g.fillText(this.words, center, 375 + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
 
         // render subtitles
         g.setFont(FONT_SUBTEXT);
-        g.fillText("wpm", CENTER, 375 + (2 * GAP) + STAT_LINE_HEIGHT);
-        g.fillText("accuracy", CENTER, 375 + (3 * GAP) + (2 *STAT_LINE_HEIGHT) + SUBTEXT_LINE_HEIGHT);
-        g.fillText("words", CENTER, 375 + (4 * GAP) + (3 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
+        g.fillText("wpm", center, 375 + (2 * GAP) + STAT_LINE_HEIGHT);
+        g.fillText("accuracy", center, 375 + (3 * GAP) + (2 *STAT_LINE_HEIGHT) + SUBTEXT_LINE_HEIGHT);
+        g.fillText("words", center, 375 + (4 * GAP) + (3 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
     }
 
     @Override

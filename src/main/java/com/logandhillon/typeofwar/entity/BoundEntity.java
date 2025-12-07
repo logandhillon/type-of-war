@@ -28,10 +28,20 @@ public abstract class BoundEntity<T extends GameScene> extends Entity {
     @Override
     public void onAttach(GameScene parent) {
         try {
-            this.parent = (T)parent;
+            //noinspection unchecked
+            onAttachTyped((T)parent);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(
                     "This entity cannot attach to a GameScene that does not match the generic type.");
         }
+    }
+
+    /**
+     * A type-safe version of {@link Entity#onAttach(GameScene)} for BoundEntities
+     *
+     * @param parent the parent that is of the type this entity is bound to.
+     */
+    protected void onAttachTyped(T parent) {
+        this.parent = parent;
     }
 }
