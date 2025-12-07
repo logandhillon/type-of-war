@@ -8,46 +8,38 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
- * A button is a stylized {@link Clickable} entity that can have a button style, label, and action that runs when it's
- * clicked.
+ * A button is a stylized {@link Clickable} entity that can have a label and action that runs when it's clicked.
  * <p>
- * To create a button, use the {@link ButtonStyle}.
+ * To change the way a button looks, you must create a {@link ButtonEntity.Style}, which is (a) passed to the button in
+ * the constructor or (b) changed during the button's lifecycle with the {@link ButtonEntity#setStyle(Style)} method.
  *
  * @author Logan Dhillon
- * @see ButtonStyle
+ * @see ButtonEntity.Style
  */
 public class ButtonEntity extends Clickable {
     private static final int STROKE          = 2;
     private static final int ROUNDING_RADIUS = 16;
 
     private final String       label;
-    private final Color        buttonColor;
-    private final Color        labelColor;
     private final ClickHandler clickHandler;
-    private final Font         font;
-    private final Variant      style;
-    private final boolean isRounded;
+    private final float        cx; // horizontal center
+    private final float        cy; // vertical center
 
-    private final float cx; // horizontal center
-    private final float cy; // vertical center
+    private Style style;
 
-    /**
-     * To create a ButtonEntity, use the {@link ButtonStyle} class.
-     */
-    protected ButtonEntity(String label, Color buttonColor, Color labelColor, float x, float y, float w, float h,
-                           ClickHandler onClick, Font font, Variant style) {
+    public ButtonEntity(String label, float x, float y, float w, float h, ButtonEntity.ClickHandler onClick,
+                        Style style) {
         super(x, y, w, h);
         this.label = label;
-        this.buttonColor = buttonColor;
-        this.labelColor = labelColor;
         this.clickHandler = onClick;
         this.style = style;
-        this.font = font;
 
-        isRounded = style == Variant.ROUNDED_OUTLINE || style == Variant.ROUNDED_SOLID;
+        this.cx = x + w / 2;
+        this.cy = y + h / 2;
+    }
 
-        cx = x + w / 2;
-        cy = y + h / 2;
+    public void setStyle(Style style) {
+        this.style = style;
     }
 
     /**
@@ -75,23 +67,27 @@ public class ButtonEntity extends Clickable {
      */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
+        // throw error if no style
+        if (style == null)
+            throw new NullPointerException("Cannot render ButtonEntity without a ButtonEntity.Style set");
+
         // render button background
-        if (style == Variant.OUTLINE || style == Variant.ROUNDED_OUTLINE) {
-            g.setStroke(buttonColor);
+        if (style.variant == Variant.OUTLINE) {
+            g.setStroke(style.buttonColor);
             g.setLineWidth(STROKE);
             g.setLineDashes(0);
 
-            if (isRounded) g.strokeRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
+            if (style.isRounded) g.strokeRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
             else g.strokeRect(x, y, w, h);
         } else {
-            g.setFill(buttonColor);
-            if (isRounded) g.fillRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
+            g.setFill(style.buttonColor);
+            if (style.isRounded) g.fillRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
             else g.fillRect(x, y, w, h);
         }
 
         // render label
-        g.setFill(labelColor);
-        g.setFont(font);
+        g.setFill(style.labelColor);
+        g.setFont(style.font);
         g.setTextAlign(TextAlignment.CENTER);
         g.setTextBaseline(VPos.CENTER);
         g.fillText(label, cx, cy);
@@ -103,10 +99,17 @@ public class ButtonEntity extends Clickable {
     }
 
     public enum Variant {
-        SOLID, OUTLINE, ROUNDED_SOLID, ROUNDED_OUTLINE
+        SOLID, OUTLINE,
     }
 
     public interface ClickHandler {
         void onClick(MouseEvent e);
     }
+
+    public record Style(
+            Color labelColor,
+            Color buttonColor,
+            ButtonEntity.Variant variant,
+            boolean isRounded,
+            Font font) {}
 }

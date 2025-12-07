@@ -2,7 +2,7 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.ButtonEntity;
-import com.logandhillon.typeofwar.entity.ui.ButtonStyle;
+import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -18,16 +18,27 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    private static final ButtonStyle BUTTON_STYLE = new ButtonStyle(ButtonEntity.Variant.ROUNDED_SOLID)
-            .setColors(Color.DARKSLATEBLUE, Color.WHITE)
-            .setFont(Font.font(Fonts.DM_MONO_MEDIUM, 24))
-            .withSize(256, 64);
+    private static final ButtonEntity.Style BUTTON_STYLE_DEFAULT = new ButtonEntity.Style(
+            Color.WHITE, Colors.DEFAULT, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 20));
+    private static final ButtonEntity.Style BUTTON_STYLE_ACTIVE  = new ButtonEntity.Style(
+            Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 21));
 
     public MainMenuScene() {
-        addEntity(BUTTON_STYLE.build("Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 300, this::play));
-        addEntity(BUTTON_STYLE.build("Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 300, this::play));
-        addEntity(BUTTON_STYLE.build("Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, 400, this::play));
-        addEntity(BUTTON_STYLE.build("Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, 500, this::play));
+        addEntity(new ButtonEntity(
+                "Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 300, 256, 48,
+                this::play, BUTTON_STYLE_DEFAULT));
+
+        addEntity(new ButtonEntity(
+                "Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 350, 256, 48,
+                this::play, BUTTON_STYLE_DEFAULT));
+
+        addEntity(new ButtonEntity(
+                "Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, 400, 256, 48,
+                this::play, BUTTON_STYLE_DEFAULT));
+
+        addEntity(new ButtonEntity(
+                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, 450, 256, 48,
+                this::play, BUTTON_STYLE_DEFAULT));
     }
 
     private void play(MouseEvent e) {
