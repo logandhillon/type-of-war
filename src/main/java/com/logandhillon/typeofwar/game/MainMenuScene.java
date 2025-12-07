@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,28 +16,28 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    public MainMenuScene() {
+    public MainMenuScene(Runnable onPlay) {
         int offsetY = 205;
         int gapY = 48 + 16;
 
         addEntity(new MenuButton(
-                "Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY, 256, 48, this::play));
+                "Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY, 256, 48, e -> onPlay.run()));
 
         addEntity(new MenuButton(
-                "Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + gapY, 256, 48, this::play));
+                "Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + gapY, 256, 48, e -> onPlay.run()));
 
         addEntity(new MenuButton(
-                "Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 2 * gapY, 256, 48, this::play));
+                "Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 2 * gapY, 256, 48, this::doNothing));
 
         addEntity(new MenuButton(
-                "Credits", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 3 * gapY, 256, 48, this::play));
+                "Credits", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 3 * gapY, 256, 48, this::doNothing));
 
         addEntity(new MenuButton(
-                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 4 * gapY, 256, 48, this::play));
+                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 4 * gapY, 256, 48, this::doNothing));
     }
 
-    private void play(MouseEvent e) {
-
+    private void doNothing(MouseEvent e) {
+        // temp code :)
     }
 
     @Override
