@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.game.EndGameScene;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
@@ -7,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 /**
- * Formatting of the end-game statistics that show on the {@link com.logandhillon.typeofwar.game.EndGameScene}
+ * Formatting of the end-game statistics that show on the {@link EndGameScene}
  * @author Jack Ross
  */
 public class EndResultEntity extends Entity{
@@ -22,6 +23,7 @@ public class EndResultEntity extends Entity{
     private final String accuracy;
     private final String words;
     private final PlayerObject player;
+
 
 
     public EndResultEntity(int wpm, int accuracy, int words, PlayerObject player) {
@@ -46,6 +48,7 @@ public class EndResultEntity extends Entity{
      */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
+        float CENTER = x + (WIDTH / 2);
 
         // render player icon + name
         player.onRender(g, x, y + 175);
@@ -55,19 +58,19 @@ public class EndResultEntity extends Entity{
         g.setFont(FONT_STAT);
 
         // render wpm results
-        g.fillText(this.wpm, x + (WIDTH / 2) , 375 + (2 * GAP));
+        g.fillText(this.wpm, CENTER, 375 + (2 * GAP));
 
         // render accuracy results
-        g.fillText(this.accuracy, x + (WIDTH / 2) , 375 + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
+        g.fillText(this.accuracy, CENTER, 375 + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
 
         // render words results
-        g.fillText(this.words, x + (WIDTH / 2) , 375 + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
+        g.fillText(this.words, CENTER, 375 + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
 
         // render subtitles
         g.setFont(FONT_SUBTEXT);
-        g.fillText("wpm", x + (WIDTH / 2), 375 + (2 * GAP) + STAT_LINE_HEIGHT);
-        g.fillText("accuracy", x + (WIDTH / 2), 375 + (3 * GAP) + (2 *STAT_LINE_HEIGHT) + SUBTEXT_LINE_HEIGHT);
-        g.fillText("words", x + (WIDTH / 2), 375 + (4 * GAP) + (3 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
+        g.fillText("wpm", CENTER, 375 + (2 * GAP) + STAT_LINE_HEIGHT);
+        g.fillText("accuracy", CENTER, 375 + (3 * GAP) + (2 *STAT_LINE_HEIGHT) + SUBTEXT_LINE_HEIGHT);
+        g.fillText("words", CENTER, 375 + (4 * GAP) + (3 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
     }
 
     @Override
