@@ -8,7 +8,8 @@ import com.logandhillon.typeofwar.entity.SentenceEntity;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -21,6 +22,7 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
  * @author Logan Dhillon
  */
 public class TypeOfWarScene extends GameScene {
+    private static final Logger LOG = LoggerContext.getContext().getLogger(TypeOfWarScene.class);
 
     private final SentenceEntity sentence;
     private final RopeEntity rope;
@@ -77,7 +79,7 @@ public class TypeOfWarScene extends GameScene {
      *
      * @param wordCount new word count of the sentence
      */
-    public void setWordCount(int wordCount) {
+    public void setWordCount(int wordCount) {;
         stats.setWordCount(wordCount);
     }
 
@@ -85,6 +87,7 @@ public class TypeOfWarScene extends GameScene {
      * Resets the timer used for calculating WPM in the {@link GameStatisticsEntity}.
      */
     public void resetWPMTimer() {
+        LOG.info("Resetting WPM timer");
         stats.restartSession();
     }
 
@@ -92,6 +95,7 @@ public class TypeOfWarScene extends GameScene {
      * Marks this typing session as finished, and propagates that information to {@link GameStatisticsEntity}.
      */
     public void onTypingFinished() {
+        LOG.info("Typing finished, closing session");
         stats.finishSession();
     }
 }

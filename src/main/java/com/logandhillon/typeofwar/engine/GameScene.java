@@ -8,6 +8,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.ArrayList;
 
@@ -23,6 +25,8 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public abstract class GameScene {
+    private static final Logger LOG = LoggerContext.getContext().getLogger(GameScene.class);
+
     private final ArrayList<Entity> entities = new ArrayList<>();
 
     private AnimationTimer         lifecycle;
@@ -70,6 +74,7 @@ public abstract class GameScene {
      * @return Scene containing the GameScene's GUI elements
      */
     public Scene build(Stage stage) {
+        LOG.debug("Building game scene {} to stage", this);
         this.stage = stage;
 
         Canvas canvas = new Canvas(WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
@@ -107,6 +112,8 @@ public abstract class GameScene {
      * Called to discard this scene (i.e., stop its lifecycle, etc.)
      */
     public void discard() {
+        LOG.debug("Discarding scene {}", this);
+
         // schedule all entities for destruction
         for (Entity e: entities) e.onDestroy();
         entities.clear();

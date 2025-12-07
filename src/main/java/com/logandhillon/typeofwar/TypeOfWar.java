@@ -6,6 +6,8 @@ import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 /**
  * This is the main entrypoint for Type of War, handling low-level game engine code and GameScene management.
@@ -14,7 +16,8 @@ import javafx.stage.Stage;
  * @see TypeOfWarScene
  */
 public class TypeOfWar extends Application {
-    public static final String GAME_NAME = "Type of War";
+    public static final  String GAME_NAME = "Type of War";
+    private static final Logger LOG       = LoggerContext.getContext().getLogger(TypeOfWar.class);
 
     private Stage     stage;
     private GameScene activeScene;
@@ -61,6 +64,7 @@ public class TypeOfWar extends Application {
      * @param scene the GameScene to switch
      */
     public void setScene(GameScene scene) {
+        LOG.info("Switching scene to {}", scene);
         if (activeScene != null) activeScene.discard();
         stage.setScene(scene.build(stage));
         activeScene = scene;
