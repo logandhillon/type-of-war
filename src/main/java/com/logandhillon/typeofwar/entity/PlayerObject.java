@@ -7,6 +7,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
+ * The player object that is to be rendered on the {@link RopeEntity}. This entity cannot be rendered directly to a
+ * {@link com.logandhillon.typeofwar.engine.GameScene}, and must be managed by a parent {@link Entity}.
+ *
  * @author Logan Dhillon
  */
 public class PlayerObject extends GameObject {
