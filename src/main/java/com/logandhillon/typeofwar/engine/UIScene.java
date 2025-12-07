@@ -100,9 +100,9 @@ public abstract class UIScene extends GameScene {
             }
 
             // if mouse is outside clickable hitbox
-            else if ((x < c.getX() || x > c.getX() + c.getWidth()) &&
-                     (y < c.getY() || y > c.getY() + c.getHeight()) &&
-                     CLICKABLES.get(c) /* and clickable is currently active */) {
+            else if ((x < c.getX() || x > c.getX() + c.getWidth() ||
+                      y < c.getY() || y > c.getY() + c.getHeight()
+                     ) && CLICKABLES.get(c) /* and clickable is currently active */) {
                 c.onMouseLeave(e);
                 CLICKABLES.put(c, false); // mark as not active
             }

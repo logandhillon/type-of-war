@@ -2,6 +2,7 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.ButtonEntity;
+import com.logandhillon.typeofwar.entity.ui.DynamicButtonEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,21 +25,21 @@ public class MainMenuScene extends UIScene {
             Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 21));
 
     public MainMenuScene() {
-        addEntity(new ButtonEntity(
+        addEntity(new DynamicButtonEntity(
                 "Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 300, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT));
+                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
 
-        addEntity(new ButtonEntity(
+        addEntity(new DynamicButtonEntity(
                 "Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, 350, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT));
+                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
 
-        addEntity(new ButtonEntity(
+        addEntity(new DynamicButtonEntity(
                 "Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, 400, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT));
+                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
 
-        addEntity(new ButtonEntity(
+        addEntity(new DynamicButtonEntity(
                 "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, 450, 256, 48,
-                this::play, BUTTON_STYLE_DEFAULT));
+                this::play, BUTTON_STYLE_DEFAULT, BUTTON_STYLE_ACTIVE));
     }
 
     private void play(MouseEvent e) {

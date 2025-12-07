@@ -30,6 +30,15 @@ public class ButtonEntity extends Clickable {
 
     private Style style;
 
+    /**
+     * Creates a new button entity.
+     *
+     * @param label   the text to show on the button
+     * @param w       width
+     * @param h       height
+     * @param onClick the action that should happen when this button is clicked
+     * @param style   how the button looks
+     */
     public ButtonEntity(String label, float x, float y, float w, float h, MouseEventHandler onClick,
                         Style style) {
         super(x, y, w, h);
@@ -41,31 +50,25 @@ public class ButtonEntity extends Clickable {
         this.cy = y + h / 2;
     }
 
+    /**
+     * Sets the currently visible style.
+     *
+     * @param style the new style to show
+     */
     public void setStyle(Style style) {
         this.style = style;
     }
 
-    /**
-     * Runs the click handler that was supplied when the Button was created.
-     *
-     * @param e the mouse event provided by JavaFX
-     */
     @Override
     public void onClick(MouseEvent e) {
         clickHandler.handle(e);
     }
 
-    /**
-     * Runs the mouse enter handler if it was set.
-     */
     @Override
     public void onMouseEnter(MouseEvent e) {
         if (mouseEnterHandler != null) mouseEnterHandler.handle(e);
     }
 
-    /**
-     * Runs the mouse leave handler if it was set.
-     */
     @Override
     public void onMouseLeave(MouseEvent e) {
         if (mouseLeaveHandler != null) mouseLeaveHandler.handle(e);
@@ -86,10 +89,6 @@ public class ButtonEntity extends Clickable {
      */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
-        // throw error if no style
-        if (style == null)
-            throw new NullPointerException("Cannot render ButtonEntity without a ButtonEntity.Style set");
-
         // render button background
         if (style.variant == Variant.OUTLINE) {
             g.setStroke(style.buttonColor);

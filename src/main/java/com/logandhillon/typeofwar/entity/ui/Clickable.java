@@ -31,10 +31,25 @@ public abstract class Clickable extends BoundEntity<UIScene> {
         this.h = h;
     }
 
+    /**
+     * Runs the click handler that was supplied when the Button was created.
+     *
+     * @param e the mouse event provided by JavaFX
+     */
     public abstract void onClick(MouseEvent e);
 
+    /**
+     * Runs the mouse enter handler if it was set.
+     *
+     * @param e the mouse event provided by JavaFX
+     */
     public abstract void onMouseEnter(MouseEvent e);
 
+    /**
+     * Runs the mouse leave handler if it was set.
+     *
+     * @param e the mouse event provided by JavaFX
+     */
     public abstract void onMouseLeave(MouseEvent e);
 
     public float getWidth() {
