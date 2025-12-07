@@ -12,7 +12,7 @@ import javafx.scene.text.TextAlignment;
  *
  * @author Logan Dhillon
  */
-public class PlayerObject extends GameObject {
+public class PlayerObject implements GameObject {
     protected static final int SIZE          = 64;
     private static final   int NAME_OFFSET_Y = 20;
 
@@ -41,7 +41,7 @@ public class PlayerObject extends GameObject {
     }
 
     @Override
-    public void onRender(GraphicsContext g, float x, float y) {
+    public void render(GraphicsContext g, float x, float y) {
         // render skin
         g.setFill(color);
         g.fillRect(x, y - (SIZE / 2.0), SIZE, SIZE);
