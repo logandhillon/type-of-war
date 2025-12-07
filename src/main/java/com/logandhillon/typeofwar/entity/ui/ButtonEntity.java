@@ -20,14 +20,17 @@ public class ButtonEntity extends Clickable {
     private static final int STROKE          = 2;
     private static final int ROUNDING_RADIUS = 16;
 
-    private final String       label;
-    private final ClickHandler clickHandler;
-    private final float        cx; // horizontal center
-    private final float        cy; // vertical center
+    private final String            label;
+    private final MouseEventHandler clickHandler;
+    private final float             cx; // horizontal center
+    private final float             cy; // vertical center
+
+    private MouseEventHandler mouseEnterHandler;
+    private MouseEventHandler mouseLeaveHandler;
 
     private Style style;
 
-    public ButtonEntity(String label, float x, float y, float w, float h, ButtonEntity.ClickHandler onClick,
+    public ButtonEntity(String label, float x, float y, float w, float h, MouseEventHandler onClick,
                         Style style) {
         super(x, y, w, h);
         this.label = label;
@@ -43,13 +46,29 @@ public class ButtonEntity extends Clickable {
     }
 
     /**
-     * Runs the event handler was supplied when the Button was created.
+     * Runs the click handler that was supplied when the Button was created.
      *
      * @param e the mouse event provided by JavaFX
      */
     @Override
     public void onClick(MouseEvent e) {
-        clickHandler.onClick(e);
+        clickHandler.handle(e);
+    }
+
+    /**
+     * Runs the mouse enter handler if it was set.
+     */
+    @Override
+    public void onMouseEnter(MouseEvent e) {
+        if (mouseEnterHandler != null) mouseEnterHandler.handle(e);
+    }
+
+    /**
+     * Runs the mouse leave handler if it was set.
+     */
+    @Override
+    public void onMouseLeave(MouseEvent e) {
+        if (mouseLeaveHandler != null) mouseLeaveHandler.handle(e);
     }
 
     @Override
@@ -98,14 +117,45 @@ public class ButtonEntity extends Clickable {
 
     }
 
+    /**
+     * Sets the action that will be run when the mouse cursor ENTERS this button.
+     */
+    public void setMouseEnterHandler(MouseEventHandler mouseEnterHandler) {
+        this.mouseEnterHandler = mouseEnterHandler;
+    }
+
+    /**
+     * Sets the action that will be run when the mouse cursor LEAVES this button.
+     */
+    public void setMouseLeaveHandler(MouseEventHandler mouseLeaveHandler) {
+        this.mouseLeaveHandler = mouseLeaveHandler;
+    }
+
+    /**
+     * Represents the way a {@link ButtonEntity} looks like.
+     */
     public enum Variant {
         SOLID, OUTLINE,
     }
 
-    public interface ClickHandler {
-        void onClick(MouseEvent e);
+    /**
+     * A handler that can be (anonymously) created to handle events related to the mouse.
+     *
+     * @see MouseEvent
+     */
+    public interface MouseEventHandler {
+        void handle(MouseEvent e);
     }
 
+    /**
+     * An immutable style object that represents the look of a {@link ButtonEntity}.
+     *
+     * @param labelColor  the color of the button text.
+     * @param buttonColor the color of the button background.
+     * @param variant     the {@link ButtonEntity.Variant} that the button looks like
+     * @param isRounded   if the button has rounded corners
+     * @param font        the font of the button's text.
+     */
     public record Style(
             Color labelColor,
             Color buttonColor,

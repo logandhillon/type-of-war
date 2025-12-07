@@ -33,6 +33,10 @@ public abstract class Clickable extends BoundEntity<UIScene> {
 
     public abstract void onClick(MouseEvent e);
 
+    public abstract void onMouseEnter(MouseEvent e);
+
+    public abstract void onMouseLeave(MouseEvent e);
+
     public float getWidth() {
         return w;
     }
