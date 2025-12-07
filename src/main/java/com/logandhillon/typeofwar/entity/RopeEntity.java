@@ -66,14 +66,14 @@ public class RopeEntity extends Entity {
         // left team
         float dx = 0;
         for (PlayerObject player: leftTeam) {
-            player.onRender(g, x + dx, (y + THICKNESS) / 2);
+            player.render(g, x + dx, (y + THICKNESS) / 2);
             dx += PlayerObject.SIZE + PLAYER_MARGIN;
         }
 
         // right team
         dx = 0;
         for (PlayerObject player: rightTeam) {
-            player.onRender(g, WIDTH - dx, (y + THICKNESS) / 2);
+            player.render(g, WIDTH - dx, (y + THICKNESS) / 2);
             dx += PlayerObject.SIZE + PLAYER_MARGIN;
         }
     }
