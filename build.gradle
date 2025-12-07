@@ -42,6 +42,9 @@ dependencies {
 
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+  // log4j
+  implementation("org.apache.logging.log4j:log4j-core:2.25.2")
 }
 
 test {
