@@ -8,12 +8,12 @@ import com.logandhillon.typeofwar.entity.SentenceEntity;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
+
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
+import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 
 /**
  * The main game loop for Type of War.
@@ -21,15 +21,6 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class TypeOfWarScene extends GameScene {
-    private static final LinearGradient BG_WINNING = new LinearGradient(
-            0, 1, 0, 0, true, CycleMethod.NO_CYCLE,
-            new Stop(0, Color.rgb(8, 4, 44)),
-            new Stop(0.33, Color.BLACK));
-
-    private static final LinearGradient BG_LOSING = new LinearGradient(
-            0, 1, 0, 0, true, CycleMethod.NO_CYCLE,
-            new Stop(0, Color.rgb(39, 3, 3)),
-            new Stop(0.33, Color.BLACK));
 
     private final SentenceEntity sentence;
     private final RopeEntity rope;

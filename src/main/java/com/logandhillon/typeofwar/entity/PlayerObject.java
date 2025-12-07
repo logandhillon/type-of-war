@@ -41,7 +41,7 @@ public class PlayerObject extends GameObject {
     }
 
     @Override
-    protected void onRender(GraphicsContext g, float x, float y) {
+    public void onRender(GraphicsContext g, float x, float y) {
         // render skin
         g.setFill(color);
         g.fillRect(x, y - (SIZE / 2.0), SIZE, SIZE);
