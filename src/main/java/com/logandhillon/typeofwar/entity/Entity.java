@@ -11,7 +11,7 @@ import javafx.scene.canvas.GraphicsContext;
  * @author Logan Dhillon
  * @see com.logandhillon.typeofwar.engine.GameScene
  */
-public abstract class Entity extends GameObject {
+public abstract class Entity implements GameObject {
     protected GameScene parent;
     protected float x;
     protected float y;
@@ -32,12 +32,39 @@ public abstract class Entity extends GameObject {
      *
      * @param g the graphical context to render to.
      *
+     * @apiNote the X and Y parameters are ignored, and are only implemented because {@link GameObject} requires them.
+     * the entity will always render at it's own X and Y positions.
+     * @implNote do not implement this method to change how the entity is rendered.
+     * @see Entity#onRender
+     */
+    public void render(GraphicsContext g, float x, float y) {
+        this.render(g);
+    }
+
+    /**
+     * Called every tick to render the entity.
+     *
+     * @param g the graphical context to render to.
+     *
      * @implNote do not implement this method to change how the entity is rendered.
      * @see Entity#onRender
      */
     public void render(GraphicsContext g) {
         this.onRender(g, this.x, this.y);
     }
+
+    /**
+     * Called every tick to render the entity; responsible for rendering this entity to the provided graphics context.
+     *
+     * @param g the graphical context to render to.
+     * @param x the x position to render the entity at
+     * @param y the y position to render the entity at
+     *
+     * @apiNote Do not call this to render the entity.
+     * @implNote implement this method to change the render behaviour of your entity.
+     * @see Entity#render(GraphicsContext)
+     */
+    protected abstract void onRender(GraphicsContext g, float x, float y);
 
     /**
      * Runs when this object is attached to a parent.

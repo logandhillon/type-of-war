@@ -16,31 +16,28 @@ import javafx.scene.canvas.GraphicsContext;
  * @author Logan Dhillon
  * @see Entity
  */
-public abstract class GameObject {
+public interface GameObject {
     /**
      * Called every tick for non-graphics-related updates (Entity lifecycle, etc.)
      *
      * @param dt the delta time: change in time (seconds) since the last frame
      */
-    public abstract void onUpdate(float dt);
+    void onUpdate(float dt);
 
     /**
-     * Called every tick to render the entity; responsible for rendering this entity to the provided graphics context.
+     * Called every tick to render the entity.
      *
      * @param g the graphical context to render to.
-     * @param x the x position to render the entity at
-     * @param y the y position to render the entity at
      *
-     * @apiNote Do not call this to render the entity (unless you are rendering a {@link GameObject}).
-     * @implNote implement this method to change the render behaviour of your entity.
-     * @see Entity#render(GraphicsContext)
+     * @implNote do not implement this method to change how an {@link Entity} is rendered (unless you're making a
+     * {@link GameObject}).
      */
-    protected abstract void onRender(GraphicsContext g, float x, float y);
+    void render(GraphicsContext g, float x, float y);
 
     /**
      * Called when this entity is scheduled to be destroyed.
      *
      * @implNote This method should clean up the entity, so it's ready for destruction.
      */
-    public abstract void onDestroy();
+    void onDestroy();
 }
