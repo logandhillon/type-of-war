@@ -13,8 +13,8 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public abstract class Entity implements GameObject {
     protected GameScene parent;
-    protected float     x;
-    protected float     y;
+    protected float x;
+    protected float y;
 
     /**
      * Creates an entity at the specified position.
@@ -86,5 +86,13 @@ public abstract class Entity implements GameObject {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getX() {
+        return x;
     }
 }
