@@ -29,13 +29,13 @@ public class GameStatisticsEntity extends Entity {
     private float elapsedSeconds; // used to calculate time (min) for wpm
     private float updateTimer; // used to recalculate stats every second
 
-    private String wpm              = "0";
-    private String wpmDisplay       = "0";
-    private String accuracyText     = "-";
+    private float  wpm                 =  0 ;
+    private String wpmDisplay          = "0";
+    private String accuracyText        = "-";
     private String accuracyTextDisplay = "-";
-    private String completionText   = "-";
-    private String speedRankText    = "-";
-    private String accuracyRankText = "-";
+    private String completionText      = "-";
+    private String speedRankText       = "-";
+    private String accuracyRankText    = "-";
 
     private boolean isWinning;
     private boolean isComplete;
@@ -76,12 +76,12 @@ public class GameStatisticsEntity extends Entity {
         // raw WPM is defined as (total characters / 5) per delta minutes
         rawWpm = (int)(((typedChars + 2) / 5f) / (elapsedSeconds / 60f));
         // net WPM is a function of rWPM and accuracy
-        wpm = String.valueOf((int)(rawWpm * accuracy));
+        wpm = rawWpm * accuracy;
 
         // only run the code in this block ONCE per second.
         if (updateTimer >= 1.0f) {
             updateTimer -= 1.0f;
-            wpmDisplay = wpm;
+            wpmDisplay = String.valueOf((int)wpm);
             accuracyTextDisplay = accuracyText;
         }
     }
@@ -106,7 +106,7 @@ public class GameStatisticsEntity extends Entity {
         g.fillText(wpmDisplay, x, y);
 
         g.setFont(FONT_HEADER);
-        g.fillText("wpm", x + wpm.length() * WPM_CHAR_WIDTH + 16, y);
+        g.fillText("wpm", x + wpmDisplay.length() * WPM_CHAR_WIDTH + 16, y);
 
         g.setFont(FONT_BODY);
         g.fillText(accuracyTextDisplay, x, y + BODY_LINE_HEIGHT);
