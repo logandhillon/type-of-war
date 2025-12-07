@@ -38,8 +38,9 @@ public class TypeOfWar extends Application {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-//        setScene(new TypeOfWarScene());
-        setScene(new MainMenuScene());
+        TypeOfWarScene game = new TypeOfWarScene();
+        MainMenuScene menu = new MainMenuScene(() -> setScene(game));
+        setScene(menu);
         stage.show();
     }
 
