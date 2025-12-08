@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
+import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
@@ -18,24 +19,25 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 public class MainMenuScene extends UIScene {
     private final MenuController controller;
 
-    public MainMenuScene(Runnable onPlay) {
+    /**
+     * Creates a new main menu
+     *
+     * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
+     */
+    public MainMenuScene(GameSceneManager mgr) {
         float x = (WINDOW_HEIGHT.floatValue() + 256) / 2;
         int y = 205;
         int dy = 48 + 16; // ∆y per button height
 
         controller = new MenuController(
-                new MenuButton("Host Game", x, y, 256, 48, onPlay),
-                new MenuButton("Join Game", x, y + dy, 256, 48, onPlay),
-                new MenuButton("Settings", x, y + 2 * dy, 256, 48, this::doNothing),
-                new MenuButton("Credits", x, y + 3 * dy, 256, 48, this::doNothing),
+                new MenuButton("Host Game", x, y, 256, 48, () -> mgr.setScene(new TypeOfWarScene())),
+                new MenuButton("Join Game", x, y + dy, 256, 48, () -> mgr.setScene(new TypeOfWarScene())),
+                new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
+                new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))
         );
 
         for (var e: controller.getButtons()) addEntity(e);
-    }
-
-    private void doNothing() {
-        // temp code :)
     }
 
     @Override
