@@ -18,16 +18,26 @@ public class MenuButton extends DynamicButtonEntity {
     private static final ButtonEntity.Style ACTIVE_STYLE  = new ButtonEntity.Style(
             Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 21));
 
+    private final Runnable pressHandler;
+
     /**
      * Creates a new dynamic button entity using the preset styles for menu buttons.
      *
      * @param label   the text to show on the button
      * @param w       width
      * @param h       height
-     * @param onClick the action that should happen when this button is clicked
+     * @param onPress the action that should happen when this button is clicked
      */
-    public MenuButton(String label, float x, float y, float w, float h, MouseEventHandler onClick) {
-        super(label, x, y, w, h, onClick, DEFAULT_STYLE, ACTIVE_STYLE);
+    public MenuButton(String label, float x, float y, float w, float h, Runnable onPress) {
+        super(label.toUpperCase(), x, y, w, h, e -> onPress.run(), DEFAULT_STYLE, ACTIVE_STYLE);
+        this.pressHandler = onPress;
+    }
+
+    /**
+     * Runs the {@code onPress} press handler.
+     */
+    public void onPress() {
+        pressHandler.run();
     }
 
     @Override
