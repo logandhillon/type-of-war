@@ -3,6 +3,7 @@ package com.logandhillon.typeofwar.game;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
+import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
 import com.logandhillon.typeofwar.entity.ui.ModalEntity;
 import com.logandhillon.typeofwar.resource.Colors;
@@ -19,6 +20,7 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  */
 public class MainMenuScene extends UIScene {
     private final MenuController controller;
+    private final InputBoxEntity userInput;
 
     /**
      * Creates a new main menu
@@ -39,7 +41,10 @@ public class MainMenuScene extends UIScene {
         );
         addEntity(controller);
 
-        addEntity(new ModalEntity(618, y, 348, 310));
+        userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
+        addEntity(new ModalEntity(618, y, 348, 310,
+                                  userInput
+        ));
     }
 
     @Override
@@ -55,6 +60,11 @@ public class MainMenuScene extends UIScene {
     @Override
     protected void onBuild(Scene scene) {
         super.onBuild(scene);
-        scene.setOnKeyPressed(controller::onKeyPressed);
+        scene.setOnKeyPressed(e -> {
+            userInput.onKeyPressed(e);
+            if (e.isConsumed()) return; // exit early if consumed
+            controller.onKeyPressed(e);
+        });
+        scene.setOnKeyTyped(userInput::onKeyTyped);
     }
 }
