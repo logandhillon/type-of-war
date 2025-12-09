@@ -13,8 +13,8 @@ import javafx.scene.canvas.GraphicsContext;
  */
 public abstract class Entity implements GameObject {
     protected GameScene parent;
-    protected float x;
-    protected float y;
+    protected float     x;
+    protected float     y;
 
     /**
      * Creates an entity at the specified position.
@@ -78,7 +78,8 @@ public abstract class Entity implements GameObject {
     }
 
     /**
-     * Immediately sets the absolute position of this entity to the new position.
+     * Immediately sets the absolute position of this entity to the new position. To move an entity by a relative
+     * amount, use {@link Entity#translate(float, float)}
      *
      * @param x new x-position
      * @param y new y-position
@@ -86,6 +87,18 @@ public abstract class Entity implements GameObject {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * Translates this entity relatively by a set amount of units. To move an entity to an absolute position, use
+     * {@link Entity#setPosition(float, float)}
+     *
+     * @param x ∆x units to move by
+     * @param y ∆y units to move by
+     */
+    public void translate(float x, float y) {
+        this.x += x;
+        this.y += y;
     }
 
     public float getY() {

@@ -3,6 +3,7 @@ package com.logandhillon.typeofwar.engine;
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -14,7 +15,7 @@ import javafx.scene.input.KeyEvent;
  *
  * @author Logan Dhillon
  */
-public class MenuController {
+public class MenuController extends Entity {
     private final MenuButton[] buttons;
 
     /** idx of currently active button; -1 means none */
@@ -26,6 +27,7 @@ public class MenuController {
      * @param buttons ordered list of buttons from top to bottom, which will be used to sort navigation.
      */
     public MenuController(MenuButton... buttons) {
+        super(0,0); // pos doesn't matter, do whatever
         this.buttons = buttons;
         this.activeBtnIdx = -1;
 
@@ -70,12 +72,29 @@ public class MenuController {
         }
     }
 
+    @Override
+    protected void onRender(GraphicsContext g, float x, float y) {
+
+    }
+
+    @Override
+    public void onUpdate(float dt) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+
+    }
+
     /**
-     * Use this to register the buttons in this menu ({@link GameScene#addEntity(Entity)})
+     * Attaches this entity and all buttons controlled by it to the parent.
      *
-     * @return an immutable list of the buttons in this controller.
+     * @param parent the parent that this object is now attached to.
      */
-    public MenuButton[] getButtons() {
-        return buttons;
+    @Override
+    public void onAttach(GameScene parent) {
+        super.onAttach(parent);
+        for (var btn: buttons) parent.addEntity(btn);
     }
 }

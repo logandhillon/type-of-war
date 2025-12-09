@@ -42,7 +42,7 @@ public abstract class UIScene extends GameScene {
      * @param e the entity or clickable to append.
      */
     @Override
-    protected void addEntity(Entity e) {
+    public void addEntity(Entity e) {
         super.addEntity(e);
         if (e instanceof Clickable) CLICKABLES.put((Clickable)e, false);
     }

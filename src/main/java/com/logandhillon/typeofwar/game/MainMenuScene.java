@@ -36,8 +36,6 @@ public class MainMenuScene extends UIScene {
                 new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))
         );
-
-        for (var e: controller.getButtons()) addEntity(e);
     }
 
     @Override

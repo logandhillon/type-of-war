@@ -123,7 +123,7 @@ public abstract class GameScene {
      *
      * @param e the entity to append.
      */
-    protected void addEntity(Entity e) {
+    public void addEntity(Entity e) {
         entities.add(e);
         e.onAttach(this);
     }
