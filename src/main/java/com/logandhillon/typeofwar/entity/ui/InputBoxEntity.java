@@ -18,15 +18,16 @@ import javafx.scene.text.TextAlignment;
  *
  * @author Logan Dhillon
  * @see InputBoxEntity#onKeyPressed(KeyEvent)
- * @see InputBoxEntity#onKeyTyped(KeyEvent) 
+ * @see InputBoxEntity#onKeyTyped(KeyEvent)
  */
 public class InputBoxEntity extends Clickable {
-    private static final int  INPUT_FONT_SIZE = 20;
-    private static final int  CORNER_RADIUS   = 16;
-    private static final int  MARGIN_X        = 16;
-    private static final int  MARGIN_Y        = 12;
-    private static final Font INPUT_FONT      = Font.font(Fonts.DM_MONO, INPUT_FONT_SIZE);
-    private static final Font LABEL_FONT      = Font.font(Fonts.DM_MONO_MEDIUM, 18);
+    private static final int  INPUT_FONT_SIZE  = 20;
+    private static final int  INPUT_CHAR_WIDTH = 12;
+    private static final int  CORNER_RADIUS    = 16;
+    private static final int  MARGIN_X         = 16;
+    private static final int  MARGIN_Y         = 12;
+    private static final Font INPUT_FONT       = Font.font(Fonts.DM_MONO, INPUT_FONT_SIZE);
+    private static final Font LABEL_FONT       = Font.font(Fonts.DM_MONO_MEDIUM, 18);
 
     private final float  maxWidth;
     private final String placeholder;
@@ -69,6 +70,15 @@ public class InputBoxEntity extends Clickable {
         g.setFont(LABEL_FONT);
         g.setFill(Color.WHITE);
         g.fillText(label, x, y - 31);
+
+        // when active, show a blinking cursor for 500 ms every 1000 ms
+        if (isActive && System.currentTimeMillis() % 1000 > 500) {
+            g.setStroke(Color.WHITE);
+            g.setLineWidth(2);
+
+            float cursorX = x + input.length() * INPUT_CHAR_WIDTH + MARGIN_X;
+            g.strokeLine(cursorX, y + MARGIN_Y, cursorX, y + h - MARGIN_Y);
+        }
 
         g.setFont(INPUT_FONT);
         if (input.isEmpty()) {
