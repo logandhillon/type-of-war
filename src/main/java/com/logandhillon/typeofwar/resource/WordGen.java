@@ -2,6 +2,7 @@ package com.logandhillon.typeofwar.resource;
 
 import java.io.*;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 /**
@@ -30,11 +31,21 @@ public class WordGen {
         Stream<String> stream = buffered.lines();
         List<String> words = stream.toList();
 
-        // Construct the sentence (do tmr)
+        // Creates the string and random method
+        Random rand = new Random();
+        StringBuilder sentence = new StringBuilder();
 
-
-
-
+        // Picks length amount of word s from the word bank file and adds to sentence
+        for (int i = 0; i < length; i++) {
+            int randWord = rand.nextInt(words.size());
+            sentence.append(words.get(randWord));
+        // Adds spaces in between every word that isn't the last
+            if (i < length - 1) {
+                sentence.append(" ");
+            }
+        }
+        // Returns the sentence
+        return sentence.toString();
 
         // generate sentence
 
