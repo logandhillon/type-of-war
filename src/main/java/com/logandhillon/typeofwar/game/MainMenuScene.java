@@ -4,6 +4,7 @@ import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
+import com.logandhillon.typeofwar.entity.ui.ModalEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,7 +26,7 @@ public class MainMenuScene extends UIScene {
      * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
      */
     public MainMenuScene(GameSceneManager mgr) {
-        float x = (WINDOW_HEIGHT.floatValue() + 256) / 2;
+        float x = 314;
         int y = 205;
         int dy = 48 + 16; // ∆y per button height
 
@@ -36,6 +37,9 @@ public class MainMenuScene extends UIScene {
                 new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))
         );
+        addEntity(controller);
+
+        addEntity(new ModalEntity(618, y, 348, 310));
     }
 
     @Override
