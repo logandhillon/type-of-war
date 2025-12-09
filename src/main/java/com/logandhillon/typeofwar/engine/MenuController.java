@@ -50,16 +50,16 @@ public class MenuController {
      * {@link GameScene#onBuild(Scene)}
      */
     public void onKeyPressed(KeyEvent e) {
-        // when W/UP/(no shift)TAB pressed, go up (-1) in buttons
+        // when W/UP/SHIFT+TAB pressed, go up (-1) in buttons
         if (e.getCode() == KeyCode.UP || e.getCode() == KeyCode.W ||
-            (!e.isShiftDown() && e.getCode() == KeyCode.TAB)) {
+            (e.isShiftDown() && e.getCode() == KeyCode.TAB)) {
             if (activeBtnIdx >= 0) buttons[activeBtnIdx].setActive(false); // deselect old active button (if any)
             activeBtnIdx = Math.max(0, activeBtnIdx - 1);   // decrement idx (no lower than 0)
             buttons[activeBtnIdx].setActive(true); // select new active button
         }
-        // when S/DOWN/SHIFT+TAB pressed, go down (+1) in buttons
+        // when S/DOWN/TAB pressed, go down (+1) in buttons
         else if (e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.S ||
-                 (e.isShiftDown() && e.getCode() == KeyCode.TAB)) {
+                 (!e.isShiftDown() && e.getCode() == KeyCode.TAB)) {
             if (activeBtnIdx >= 0) buttons[activeBtnIdx].setActive(false); // deselect old active button (if any)
             activeBtnIdx = Math.min(buttons.length - 1, activeBtnIdx + 1); // increment idx (no higher than highest idx)
             buttons[activeBtnIdx].setActive(true);  // select new active button
