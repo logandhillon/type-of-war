@@ -6,12 +6,16 @@ import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
+ * A modal is a group of other entities that is rendered inside it. This modal is made for generic menus, without any
+ * headers and just space for content.
+ *
  * @author Logan Dhillon
+ * @apiNote Do not attach entities inside this modal, just the modal itself.
  */
 public class ModalEntity extends Entity {
     private static final int CORNER_RADIUS = 16;
 
-    private final float w, h;
+    protected final float w, h;
     private final Entity[] entities;
 
     /**
