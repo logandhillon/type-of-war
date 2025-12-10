@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.application.Application;
@@ -15,7 +16,7 @@ import org.apache.logging.log4j.core.LoggerContext;
  * @author Logan Dhillon
  * @see TypeOfWarScene
  */
-public class TypeOfWar extends Application {
+public class TypeOfWar extends Application implements GameSceneManager {
     public static final  String GAME_NAME = "Type of War";
     private static final Logger LOG       = LoggerContext.getContext().getLogger(TypeOfWar.class);
 
@@ -41,8 +42,7 @@ public class TypeOfWar extends Application {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-        TypeOfWarScene game = new TypeOfWarScene();
-        MainMenuScene menu = new MainMenuScene(() -> setScene(game));
+        MainMenuScene menu = new MainMenuScene(this);
         setScene(menu);
         stage.show();
     }

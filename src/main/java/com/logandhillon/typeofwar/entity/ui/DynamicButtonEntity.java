@@ -31,16 +31,24 @@ public class DynamicButtonEntity extends ButtonEntity {
         this.activeStyle = activeStyle;
     }
 
+    /**
+     * Sets the {@link DynamicButtonEntity#isActive} flag and updates the currently visible style of the button.
+     */
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+        this.setStyle(isActive ? activeStyle : defaultStyle);
+    }
+
     @Override
     public void onMouseEnter(MouseEvent e) {
-        isActive = true;
-        this.setStyle(activeStyle);
+        this.setActive(true);
+        super.onMouseEnter(e); // call event handler after changing style
     }
 
     @Override
     public void onMouseLeave(MouseEvent e) {
-        isActive = false;
-        this.setStyle(defaultStyle);
+        this.setActive(false);
+        super.onMouseLeave(e); // call event handler after changing style
     }
 
     /**

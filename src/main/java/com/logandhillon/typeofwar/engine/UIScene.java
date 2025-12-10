@@ -18,8 +18,12 @@ import java.util.HashMap;
  * @see Clickable
  */
 public abstract class UIScene extends GameScene {
-    // list of all clickables and if they're currently active or not; where (true = is hovering)
-    private static final HashMap<Clickable, Boolean> CLICKABLES = new HashMap<>();
+    private static final HashMap<Clickable, ClickableFlags> CLICKABLES = new HashMap<>();
+
+    private static final class ClickableFlags {
+        private boolean isHovering = false;
+        private boolean isActive   = false;
+    }
 
     /**
      * Binds the {@link Scene} mouse click handler to the game scene.
@@ -42,9 +46,9 @@ public abstract class UIScene extends GameScene {
      * @param e the entity or clickable to append.
      */
     @Override
-    protected void addEntity(Entity e) {
+    public void addEntity(Entity e) {
         super.addEntity(e);
-        if (e instanceof Clickable) CLICKABLES.put((Clickable)e, false);
+        if (e instanceof Clickable) CLICKABLES.put((Clickable)e, new ClickableFlags());
     }
 
     /**
@@ -64,10 +68,17 @@ public abstract class UIScene extends GameScene {
         float y = (float)e.getY();
 
         for (Clickable c: CLICKABLES.keySet()) {
+            ClickableFlags flags = CLICKABLES.get(c);
             // if the mouse is within the hitbox of the clickable, trigger it's onClick event.
             if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
                 y >= c.getY() && y <= c.getY() + c.getHeight()) {
                 c.onClick(e);
+                flags.isActive = true;
+            }
+            // if outside the hitbox and the clickable is "active"
+            else if (flags.isActive) {
+                c.onBlur(e);
+                flags.isActive = false;
             }
         }
     }
@@ -91,20 +102,22 @@ public abstract class UIScene extends GameScene {
         float y = (float)e.getY();
 
         for (Clickable c: CLICKABLES.keySet()) {
+            ClickableFlags flags = CLICKABLES.get(c);
+
             // if the mouse is within the hitbox of the clickable
             if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
                 y >= c.getY() && y <= c.getY() + c.getHeight() &&
-                !CLICKABLES.get(c) /* and clickable is not currently active */) {
+                !flags.isHovering /* and clickable is not currently active */) {
                 c.onMouseEnter(e);
-                CLICKABLES.put(c, true); // mark as active
+                flags.isHovering = true; // mark as active
             }
 
             // if mouse is outside clickable hitbox
             else if ((x < c.getX() || x > c.getX() + c.getWidth() ||
                       y < c.getY() || y > c.getY() + c.getHeight()
-                     ) && CLICKABLES.get(c) /* and clickable is currently active */) {
+                     ) && flags.isHovering /* and clickable is currently active */) {
                 c.onMouseLeave(e);
-                CLICKABLES.put(c, false); // mark as not active
+                flags.isHovering = false; // mark as not active
             }
         }
     }
