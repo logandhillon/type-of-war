@@ -10,7 +10,7 @@ import javafx.scene.text.TextAlignment;
 /**
  * A darker version of the {@link MenuButton} for contrast over modals.
  *
- * @author Jack Ross
+ * @author Logan Dhillon, Jack Ross
  * @see DynamicButtonEntity
  */
 public class DarkMenuButton extends DynamicButtonEntity {
@@ -18,7 +18,7 @@ public class DarkMenuButton extends DynamicButtonEntity {
             Color.WHITE, Colors.DEFAULT_DARKER, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 20));
     private static final ButtonEntity.Style ACTIVE_STYLE  = new ButtonEntity.Style(
             Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 21));
-
+    private static final int OFFSET_Y = 20;
     private final Runnable pressHandler;
 
     /**
@@ -49,11 +49,11 @@ public class DarkMenuButton extends DynamicButtonEntity {
         if (this.isActive()) {
             // left arrow
             g.setTextAlign(TextAlignment.LEFT);
-            g.fillText(">", x+16, y + h/2);
+            g.fillText(">", x+8, y + h/2 + OFFSET_Y);
 
             // right arrow
             g.setTextAlign(TextAlignment.RIGHT);
-            g.fillText("<", x + w - 16, y + h/2);
+            g.fillText("<", x + w - 8, y + h/2 + OFFSET_Y);
         }
     }
 }

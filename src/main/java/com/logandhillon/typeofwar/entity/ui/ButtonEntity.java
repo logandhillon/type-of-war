@@ -19,6 +19,7 @@ import javafx.scene.text.TextAlignment;
 public class ButtonEntity extends Clickable {
     private static final int STROKE          = 2;
     private static final int ROUNDING_RADIUS = 16;
+    private static final int OFFSET_Y        = 20;
 
     private final String            label;
     private final MouseEventHandler clickHandler;
@@ -86,19 +87,19 @@ public class ButtonEntity extends Clickable {
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
          float cx = x + w / 2;
-         float cy = y + h / 2;
+         float cy = (y + h / 2) + OFFSET_Y;
         // render button background
         if (style.variant == Variant.OUTLINE) {
             g.setStroke(style.buttonColor);
             g.setLineWidth(STROKE);
             g.setLineDashes(0);
 
-            if (style.isRounded) g.strokeRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
-            else g.strokeRect(x, y, w, h);
+            if (style.isRounded) g.strokeRoundRect(x, y  + OFFSET_Y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
+            else g.strokeRect(x, y  + OFFSET_Y, w, h);
         } else {
             g.setFill(style.buttonColor);
-            if (style.isRounded) g.fillRoundRect(x, y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
-            else g.fillRect(x, y, w, h);
+            if (style.isRounded) g.fillRoundRect(x, y  + OFFSET_Y, w, h, ROUNDING_RADIUS, ROUNDING_RADIUS);
+            else g.fillRect(x, y  + OFFSET_Y, w, h);
         }
 
         // render label
