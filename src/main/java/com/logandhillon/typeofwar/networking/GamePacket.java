@@ -1,0 +1,52 @@
+package com.logandhillon.typeofwar.networking;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+
+/**
+ * A packet to send between the server or client that contains game-related networking data.
+ *
+ * @param type    the {@link Type} of packet to send
+ * @param payload the raw content of the packet
+ *
+ * @author Logan Dhillon
+ */
+public record GamePacket(Type type, String payload) {
+    private static final Logger LOG   = LoggerContext.getContext().getLogger(GamePacket.class);
+    private static final char   US    = 31; // unit separator byte
+    private static final Type[] TYPES = Type.values();
+
+    /**
+     * The type of packet to send. SRV are server packets, CLT are client packets.
+     */
+    enum Type {
+        SRV_ALLOW_CONN,
+        CLT_REQ_CONN
+    }
+
+    /**
+     * Turns this packet into a string that can be sent.
+     *
+     * @return the serialized string.
+     */
+    public String serialize() {
+        return type.ordinal() + US + payload;
+    }
+
+    /**
+     * Deserializes a raw string to a {@link GamePacket}.
+     *
+     * @param packet the raw packet content as a string
+     *
+     * @return the deserialized game packet
+     */
+    public static GamePacket deserialize(String packet) {
+        String[] parts = packet.split(String.valueOf(US), 2);
+        int type = Integer.parseInt(parts[0]);
+        if (type >= TYPES.length) {
+            LOG.warn("Failed to deserialize packet, TYPE {} does not exist", type);
+            return null;
+        }
+        return new GamePacket(TYPES[type], parts[1]);
+    }
+}
