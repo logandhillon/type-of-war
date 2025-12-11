@@ -21,23 +21,24 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 /**
  * The host game menu allows the user to input parameters needed for hosting a live server
+ *
  * @author Jack Ross
  */
 public class HostGameScene extends UIScene {
-    private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
-    private float startingMultiplier; //TODO: add scaling multiplier to game (starting from this set point)
+    private static final Font  LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
+    // TODO: add scaling multiplier to game (starting from this set point)
+    private              float startingMultiplier;
 
     private static final int AJITESH_CONSTANT = 25;
 
-    private final InputBoxEntity nameInput;
+    private final InputBoxEntity   nameInput;
     private final DarkMenuButton[] buttons;
-    private final InputBoxEntity sentenceInput;
+    private final InputBoxEntity   sentenceInput;
 
     /**
      * Creates a new main menu
      *
      * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
-     *
      */
     public HostGameScene(GameSceneManager mgr) {
 
@@ -56,6 +57,7 @@ public class HostGameScene extends UIScene {
                 // render label
                 g.fillText("BASE STRENGTH MULTIPLIER", x + 16, y + 152 - 31);
             }
+
             @Override
             public void onUpdate(float dt) {}
 
@@ -66,7 +68,6 @@ public class HostGameScene extends UIScene {
         // create new list of radio buttons
         buttons = new DarkMenuButton[5];
 
-
         // create integer to be set in OnPress()
         AtomicInteger currentButton = new AtomicInteger();
 
@@ -76,12 +77,12 @@ public class HostGameScene extends UIScene {
             buttons[i] = new DarkMenuButton((8f + (i * 2)) / 10 + "X", 16 + (i * (100 + 8)), 152, 100, 48, () -> {
 
                 // keep highlighted when clicked
-                buttons[finalI].setActive(true,true);
+                buttons[finalI].setActive(true, true);
                 currentButton.set(finalI);
 
                 // un-highlight non-selected buttons
-                for(int j = 0; j < buttons.length; j++) {
-                    if(currentButton.get() != j) {
+                for (int j = 0; j < buttons.length; j++) {
+                    if (currentButton.get() != j) {
                         buttons[j].setActive(false, false);
                     }
                 }
@@ -101,7 +102,8 @@ public class HostGameScene extends UIScene {
         });
 
         // create background modal
-        addEntity(new LabeledModalEntity(359, 128, 562, 464, "HOST NEW GAME", mgr, nameInput, sentenceInput, buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], ButtonsLabel, startButton));
+        addEntity(new LabeledModalEntity(359, 128, 562, 464, "HOST NEW GAME", mgr, nameInput, sentenceInput, buttons[0],
+                                         buttons[1], buttons[2], buttons[3], buttons[4], ButtonsLabel, startButton));
     }
 
     @Override
@@ -113,10 +115,15 @@ public class HostGameScene extends UIScene {
         super.render(g);
     }
 
+    public float getStartingMultiplier() {
+        return startingMultiplier;
+    }
 
-    public float getStartingMultiplier() {return startingMultiplier;}
+    public String getRoomName() {
+        return nameInput.getInput();
+    }
 
-    public String getRoomName() {return nameInput.getInput();}
-
-    public String getCustomSentence() {return sentenceInput.getInput();}
+    public String getCustomSentence() {
+        return sentenceInput.getInput();
+    }
 }
