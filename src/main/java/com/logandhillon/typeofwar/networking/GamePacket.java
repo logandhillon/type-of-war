@@ -29,7 +29,7 @@ public record GamePacket(Type type, String payload) {
      * The type of packet to send. SRV are server packets, CLT are client packets.
      */
     public enum Type {
-        SRV_ALLOW_CONN,
+        SRV_ALLOW_CONN, SRV_DENY_CONN__FULL, SRV_DENY_CONN__USERNAME_TAKEN,
         CLT_REQ_CONN
     }
 

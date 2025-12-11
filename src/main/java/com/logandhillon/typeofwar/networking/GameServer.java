@@ -23,23 +23,18 @@ import java.util.Set;
  * @see GameClient
  */
 public class GameServer implements Runnable {
-    private static final Logger LOG  = LoggerContext.getContext().getLogger(GameServer.class);
-    private static final int    PORT = 20670;
+    private static final Logger LOG             = LoggerContext.getContext().getLogger(GameServer.class);
+    private static final int    PORT            = 20670;
+    private static final int    MAX_CONNECTIONS = 8;
 
-    private volatile boolean running;
+    private volatile boolean      running;
+    private          ServerSocket socket;
 
-    private       ServerSocket socket;
     /** the list of ALL active client connections, including unregistered ones. */
-    private final Set<Socket>  clients = Collections.synchronizedSet(new HashSet<>());
+    private final Set<Socket> clients = Collections.synchronizedSet(new HashSet<>());
 
-    private final HashMap<Socket, ClientConnection> registeredClients = new HashMap<>();
-
-    /**
-     * Anything used to reference a connected client
-     *
-     * @param username the client's username
-     */
-    private record ClientConnection(String username) {}
+    /** list of all REGISTERED client connections; maps socket to username */
+    private final HashMap<Socket, String> registeredClients = new HashMap<>();
 
     /**
      * Starts the server socket and the acceptor thread, which listens for incoming connections and handles them
@@ -127,8 +122,25 @@ public class GameServer implements Runnable {
      * @param out    the output stream used to respond to the client.
      */
     private void parseRequest(Socket client, GamePacket packet, PacketWriter out) {
-        System.out.println("FROM CLIENT: " + packet);
-        // FIXME: the client never gets this?? idk if it's the SRV or CLT fault
-        out.send(new GamePacket(GamePacket.Type.SRV_ALLOW_CONN));
+        try {
+            if (registeredClients.size() < MAX_CONNECTIONS) {
+                if (registeredClients.containsValue(packet.payload())) {
+                    LOG.info("Denying connection from {} (username '{}' in use)", client.getInetAddress(), packet.payload());
+                    out.send(GamePacket.Type.SRV_DENY_CONN__USERNAME_TAKEN);
+                    client.close();
+                    return;
+                }
+
+                LOG.info("Registering new client named '{}' at {}", packet.payload(), client.getInetAddress());
+                out.send(GamePacket.Type.SRV_ALLOW_CONN);
+                registeredClients.put(client, packet.payload());
+            } else {
+                LOG.info("Denying connection from {} (server full)", client.getInetAddress());
+                out.send(GamePacket.Type.SRV_DENY_CONN__FULL);
+                client.close();
+            }
+        } catch (IOException e) {
+            LOG.error("Failed to close client at {}", client.getInetAddress(), e);
+        }
     }
 }

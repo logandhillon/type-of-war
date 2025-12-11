@@ -27,6 +27,9 @@ public class GameClient {
     private BufferedReader in;
     private PrintWriter    out;
 
+    /** if this client is registered with a remote server */
+    private boolean isRegistered;
+
     /**
      * Sets up a new client, does not connect to the server.
      *
@@ -38,6 +41,8 @@ public class GameClient {
     public GameClient(String host, int port) {
         this.host = host;
         this.port = port;
+
+        isRegistered = false;
     }
 
     /**
@@ -80,9 +85,19 @@ public class GameClient {
      *
      * @param packet the deserialized packet from the server
      */
-    private void parseResponse(GamePacket packet) {
-        // TODO: temp code to see if it workls :)
-        System.out.println("FROM SERVER: " + packet);
+    private void parseResponse(GamePacket packet) throws IOException {
+        if (packet == null) return;
+
+        switch (packet.type()) {
+            case SRV_ALLOW_CONN -> {
+                isRegistered = true;
+                LOG.info("Successfully registered with remote server");
+            }
+            case SRV_DENY_CONN__USERNAME_TAKEN, SRV_DENY_CONN__FULL -> {
+                LOG.error("Failed to join: {}", packet.type());
+                this.close();
+            }
+        }
     }
 
     /**

@@ -28,10 +28,21 @@ public class PacketWriter implements AutoCloseable {
 
     /**
      * Serializes and writes a packet to the output stream, effectively "sending" it.
+     *
      * @param packet the {@link GamePacket} to send.
      */
     public void send(GamePacket packet) {
         writer.println(packet.serialize());
+        writer.flush();
+    }
+
+    /**
+     * Builds a new NULL packet using the specified type and sends it.
+     *
+     * @param packetType the packet type to send
+     */
+    public void send(GamePacket.Type packetType) {
+        send(new GamePacket(packetType));
     }
 
     /**
