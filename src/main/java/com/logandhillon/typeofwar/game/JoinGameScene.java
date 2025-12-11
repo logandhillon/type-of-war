@@ -13,6 +13,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.apache.logging.log4j.core.jmx.Server;
+
+import java.util.ArrayList;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -28,7 +31,18 @@ public class JoinGameScene extends UIScene {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
     private String serverAddress;
 
+    // TODO: temp code, this will be filled in with the actual server list later.
+    private final ArrayList<ServerEntry> serverList = new ArrayList<>();
+
     public JoinGameScene(GameSceneManager mgr) {
+        // TODO: temp code, this just adds in placeholder servers to render.
+        //       this will be filled in by the networking engine LATER.
+        serverList.add(new ServerEntry("Room 100", "127.0.0.1", 0));
+        serverList.add(new ServerEntry("Room 101", "127.0.0.1", 0));
+        serverList.add(new ServerEntry("Room 102", "127.0.0.1", 0));
+        serverList.add(new ServerEntry("Room 103", "127.0.0.1", 0));
+        serverList.add(new ServerEntry("Room 104", "127.0.0.1", 0));
+        serverList.add(new ServerEntry("Room 105", "127.0.0.1", 0));
 
         // rect in background for server list
         Entity serverList = new Entity(16, 152){
@@ -101,4 +115,13 @@ public class JoinGameScene extends UIScene {
     public String getServerAddress() {
         return serverAddress;
     }
+
+    /**
+     * An entry in the server list of the join game screen.
+     *
+     * @param name name of the server/room
+     * @param address FQDN or IP address of server
+     * @param ping how many milliseconds of latency to the server
+     */
+    public record ServerEntry(String name, String address, int ping) {}
 }
