@@ -34,7 +34,11 @@ public class JoinGameScene extends UIScene {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
     private String serverAddress;
     private static final int ENTITY_GAP = 53;
+
+
     private ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
+    private int scrollServerIndex = 0;
+    private int currentServerIndex;
 
     // TODO: temp code, this will be filled in with the actual server list later.
     private final ArrayList<ServerEntry> serverList = new ArrayList<>();
@@ -52,6 +56,8 @@ public class JoinGameScene extends UIScene {
         serverList.add(new ServerEntry("Room 103", "127.0.0.1", 0));
         serverList.add(new ServerEntry("Room 104", "127.0.0.1", 0));
         serverList.add(new ServerEntry("Room 105", "127.0.0.1", 0));
+        serverList.add(new ServerEntry("Room 106", "127.0.0.1", 0));
+        serverList.add(new ServerEntry("Room 107", "127.0.0.1", 0));
 
 
         // rect in background for server list
@@ -115,6 +121,7 @@ public class JoinGameScene extends UIScene {
             serverButtons[i] = new ServerEntryEntity(32, 231 + (ENTITY_GAP * i), 498, 37, serverList.get(i).name, serverList.get(i).address,serverList.get(i).ping, ()-> {
                 serverButtons[finalI].setActive(true, true);
                 currentServer.set(finalI);
+                currentServerIndex = finalI;
                 for (int j = 0; j < serverButtons.length; j++) {
                     if (currentServer.get() != j) {
                         serverButtons[j].setActive(false, false);
@@ -123,7 +130,7 @@ public class JoinGameScene extends UIScene {
             });
             joinModal.addEntity(serverButtons[i]);
         }
-        this.addHandler(KeyEvent.KEY_PRESSED, e->onKeyPressed(e, serverButtons, serverList));
+        this.addHandler(KeyEvent.KEY_PRESSED, e->onKeyPressed(e, serverButtons));
     }
 
     @Override
@@ -152,19 +159,42 @@ public class JoinGameScene extends UIScene {
      */
     public record ServerEntry(String name, String address, int ping) {}
 
-    private void onKeyPressed(KeyEvent e, ServerEntryEntity[] array, ArrayList<ServerEntry> list){
+    private void onKeyPressed(KeyEvent e, ServerEntryEntity[] array){
+
         if(e.getCode() != KeyCode.UP && e.getCode() != KeyCode.DOWN) return;
 
+        // incr/decr the 4 shown servers
+        // TODO: dont let the user scroll out of bounds
         if(e.getCode() == KeyCode.UP) {
-            for(int i = 0; i < array.length - 1; i++){ //TODO #32: Make the up/down arrows work
-                array[i + 1] = array[i];
+            if(scrollServerIndex > 0) {
+                for(int i = 0; i < array.length; i++) {
+                    array[i].setActive(false, false);
+                }
+                if (currentServerIndex < array.length) { // FIXME: Current server index going off-screen
+                    currentServerIndex++;
+                    array[currentServerIndex].setActive(true, true);
+                }
+                scrollServerIndex--;
             }
         }
-
         if(e.getCode() == KeyCode.DOWN){
-            for(int i = array.length - 1; i > 0; i--){
-                array[i] = array[i - 1];
+            if(scrollServerIndex < serverList.toArray().length - array.length) {
+                for(int i = 0; i < array.length; i++) {
+                    array[i].setActive(false, false);
+                }
+                if (currentServerIndex > 0) {
+                    currentServerIndex--;
+                    array[currentServerIndex].setActive(true, true);
+                }
+                scrollServerIndex++;
+
             }
+        }
+        System.out.println(currentServerIndex);
+
+        // now that index has changed, re-populate the server list
+        for(int i = 0; i < array.length; i++){
+            array[i].setData(serverList.get(i + scrollServerIndex));
         }
     }
 }

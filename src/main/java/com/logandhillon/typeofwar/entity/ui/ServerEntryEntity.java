@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity.ui;
 
+import com.logandhillon.typeofwar.game.JoinGameScene;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
@@ -79,4 +80,13 @@ public class ServerEntryEntity extends DynamicButtonEntity{
         g.fillText(this.ping + " ms", x + w - 12 , y + h / 2);
     }
 
+    public void setPing(int ping) {
+        this.ping = ping;
+    }
+
+    public void setData(JoinGameScene.ServerEntry data) {
+        this.serverName = data.name();
+        this.serverAddress = data.address();
+        this.ping = data.ping();
+    }
 }
