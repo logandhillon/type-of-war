@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.Scene;
@@ -218,9 +219,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     }
 
     @Override
-    public void onBuild(Scene scene) {
-        super.onBuild(scene);
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
-        scene.addEventHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
+    public void onAttach(GameScene parent) {
+        super.onAttach(parent);
+        parent.addHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+        parent.addHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
     }
 }

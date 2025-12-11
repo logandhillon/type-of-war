@@ -1,9 +1,9 @@
 package com.logandhillon.typeofwar.entity.ui;
 
+import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -134,10 +134,10 @@ public class InputBoxEntity extends Clickable {
     }
 
     @Override
-    public void onBuild(Scene scene) {
-        super.onBuild(scene);
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
-        scene.addEventHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
+    public void onAttach(GameScene parent) {
+        super.onAttach(parent);
+        parent.addHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+        parent.addHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
     }
 
     /**

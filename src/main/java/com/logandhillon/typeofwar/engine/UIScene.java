@@ -2,10 +2,8 @@ package com.logandhillon.typeofwar.engine;
 
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.Clickable;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
@@ -25,8 +23,6 @@ public abstract class UIScene extends GameScene {
 
     private final HashMap<Clickable, ClickableFlags> clickables       = new HashMap<>();
     private       Clickable[]                        cachedClickables = new Clickable[0];
-    private       EventHandler<MouseEvent>           mouseClickedHandler;
-    private       EventHandler<MouseEvent>           mouseMovedHandler;
 
     private static final class ClickableFlags {
         private boolean isHovering = false;
@@ -34,34 +30,16 @@ public abstract class UIScene extends GameScene {
     }
 
     /**
-     * Binds the {@link Scene} mouse click handler to the game scene.
-     *
-     * @param scene the JavaFX scene (NOT GameScene!) from {@link GameScene#build(Stage)}
-     *
-     * @see UIScene#onUpdate(float)
+     * Creates a new UI scene and registers the mouse events.
      */
-    @Override
-    protected void onBuild(Scene scene) {
-        super.onBuild(scene);
-
-        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, (mouseClickedHandler = this::onMouseClicked));
-        scene.addEventHandler(MouseEvent.MOUSE_MOVED, (mouseMovedHandler = this::onMouseMoved));
+    public UIScene() {
+        this.addHandler(MouseEvent.MOUSE_CLICKED, this::onMouseClicked);
+        this.addHandler(MouseEvent.MOUSE_MOVED, this::onMouseMoved);
     }
 
     @Override
     public void discard(Scene scene) {
         super.discard(scene);
-
-        // clear event handlers
-        if (mouseClickedHandler != null) {
-            scene.removeEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedHandler);
-            mouseClickedHandler = null;
-        }
-
-        if (mouseMovedHandler != null) {
-            scene.removeEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedHandler);
-            mouseMovedHandler = null;
-        }
 
         // clear stored clickables to avoid memory leaks / stale state
         for (Clickable c: clickables.keySet()) c.onDestroy();
@@ -104,6 +82,10 @@ public abstract class UIScene extends GameScene {
 
         for (Clickable c: cachedClickables) {
             ClickableFlags flags = clickables.get(c);
+
+            // if there are no flags, this Clickable was unregistered (so skip it)
+            if (flags == null) continue;
+
             // if the mouse is within the hitbox of the clickable, trigger it's onClick event.
             if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
                 y >= c.getY() && y <= c.getY() + c.getHeight()) {

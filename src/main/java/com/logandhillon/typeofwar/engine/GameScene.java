@@ -3,6 +3,9 @@ package com.logandhillon.typeofwar.engine;
 import com.logandhillon.typeofwar.entity.Entity;
 import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -27,12 +31,15 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 public abstract class GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(GameScene.class);
 
-    private final ArrayList<Entity> entities = new ArrayList<>();
+    private final ArrayList<Entity>   entities = new ArrayList<>();
+    private final List<HandlerRef<?>> handlers = new ArrayList<>();
 
     private AnimationTimer         lifecycle;
     private Stage                  stage;
     private ChangeListener<Number> widthListener;
     private ChangeListener<Number> heightListener;
+
+    private record HandlerRef<T extends Event>(EventType<T> type, EventHandler<? super T> handler) {}
 
     /**
      * Do not instantiate this class.
@@ -59,13 +66,6 @@ public abstract class GameScene {
         for (Entity e: entities)
             e.render(g);
     }
-
-    /**
-     * Called when this GameScene is built to a scene with a lifecycle. Should be used to attach events to the scene.
-     *
-     * @param scene the JavaFX scene (NOT GameScene!) from {@link GameScene#build(Stage)}
-     */
-    protected void onBuild(Scene scene) {}
 
     /**
      * Creates a new JavaFX Scene for this GameScene. This should only be called once, as this method creates a new
@@ -104,8 +104,14 @@ public abstract class GameScene {
         WINDOW_WIDTH.addListener(widthListener);
         WINDOW_HEIGHT.addListener(heightListener);
 
-        for (Entity e: entities) e.onBuild(scene);
-        onBuild(scene);
+        // register all event handlers
+        for (HandlerRef<?> h: handlers) {
+            @SuppressWarnings("unchecked") EventType<Event> t = (EventType<Event>)h.type();
+            @SuppressWarnings("unchecked") EventHandler<Event> eh = (EventHandler<Event>)h.handler();
+
+            scene.addEventHandler(t, eh);
+        }
+
         return scene;
     }
 
@@ -126,6 +132,15 @@ public abstract class GameScene {
         // remove window resize listeners from stage
         stage.widthProperty().removeListener(widthListener);
         stage.heightProperty().removeListener(heightListener);
+
+        // remove all stored event handlers
+        for (HandlerRef<?> h: handlers) {
+            @SuppressWarnings("unchecked") EventType<Event> t = (EventType<Event>)h.type();
+            @SuppressWarnings("unchecked") EventHandler<Event> eh = (EventHandler<Event>)h.handler();
+
+            scene.removeEventHandler(t, eh);
+        }
+        handlers.clear();
     }
 
     /**
@@ -136,5 +151,15 @@ public abstract class GameScene {
     public void addEntity(Entity e) {
         entities.add(e);
         e.onAttach(this);
+    }
+
+    /**
+     * Registers an event handler that will be attached to the scene when it is built.
+     *
+     * @param type    the type of event to fire on
+     * @param handler the event handler itself (the method that will run)
+     */
+    public <T extends Event> void addHandler(EventType<T> type, EventHandler<? super T> handler) {
+        handlers.add(new HandlerRef<>(type, handler));
     }
 }
