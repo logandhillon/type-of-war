@@ -21,13 +21,13 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 public class HostGameScene extends UIScene {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
     private float startingMultiplier; //TODO: add scaling multiplier to game (starting from this set point)
+
     private static final int AJITESH_CONSTANT = 22;
     private static final int  OFFSET_Y = -20;
 
     private final InputBoxEntity nameInput;
     private final DarkMenuButton[] buttons;
     private final InputBoxEntity sentenceInput;
-    private final DarkMenuButton startButton;
 
     public HostGameScene(GameSceneManager mgr) {
 
@@ -75,12 +75,13 @@ public class HostGameScene extends UIScene {
 
         sentenceInput = new InputBoxEntity(16, 255 + OFFSET_Y, 530, "Leave blank to randomly generate", "CUSTOM SENTENCE", 500);
 
-        startButton = new DarkMenuButton("START GAME", 16, 337 + OFFSET_Y, 530, 50, () -> {
-           mgr.setScene(new TypeOfWarScene());
+        DarkMenuButton startButton = new DarkMenuButton("START GAME", 16, 337 + OFFSET_Y, 530, 50, () -> {
+            mgr.setScene(new TypeOfWarScene());
         });
 
         addEntity(new ModalEntity(359, 128, 562, 464, nameInput, sentenceInput, buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], ButtonsLabel, startButton));
     }
+
     @Override
     protected void render(GraphicsContext g) {
         g.setFill(Colors.BG_WINNING);
@@ -106,4 +107,8 @@ public class HostGameScene extends UIScene {
     }
 
     public float getStartingMultiplier() {return startingMultiplier;}
+
+    public String getRoomName() {return nameInput.getInput();}
+
+    public String getCustomSentence() {return sentenceInput.getInput();}
 }
