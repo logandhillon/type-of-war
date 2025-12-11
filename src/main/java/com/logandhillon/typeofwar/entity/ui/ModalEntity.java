@@ -18,6 +18,8 @@ public class ModalEntity extends Entity {
     protected final float w, h;
     private final Entity[] entities;
 
+    private GameScene parent;
+
     /**
      * Creates an entity at the specified position. All entities passed to this modal will be translated such that (0,
      * 0) is the top-left corner of this modal.
@@ -34,7 +36,7 @@ public class ModalEntity extends Entity {
         this.entities = entities;
 
         // move all entities to relative 0,0
-        for (Entity e: entities) e.translate(x, y);
+        for (Entity e: entities) addEntity(e);
     }
 
     @Override
@@ -61,7 +63,22 @@ public class ModalEntity extends Entity {
     @Override
     public void onAttach(GameScene parent) {
         super.onAttach(parent);
+        this.parent = parent;
         // add all controlled entities to the parent
         for (Entity e: entities) parent.addEntity(e);
+    }
+
+    /**
+     * Adds an entity to be controlled by this modal.
+     *
+     * @param e the entity to attach.
+     *
+     * @apiNote this modal must be attached to a GameScene before calling this.
+     */
+    public void addEntity(Entity e) {
+        if (parent == null)
+            throw new NullPointerException("This ModalEntity has not been attached to a GameScene yet, and thus you cannot add entities to it yet.");
+        e.translate(x, y); // translate to relative 0,0
+        parent.addEntity(e);
     }
 }
