@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A game server handles all outgoing communications to {@link GameClient}s via a valid network connection.
@@ -24,7 +28,18 @@ public class GameServer implements Runnable {
 
     private volatile boolean running;
 
-    private ServerSocket socket;
+    private       ServerSocket socket;
+    /** the list of ALL active client connections, including unregistered ones. */
+    private final Set<Socket>  clients = Collections.synchronizedSet(new HashSet<>());
+
+    private final HashMap<Socket, ClientConnection> registeredClients = new HashMap<>();
+
+    /**
+     * Anything used to reference a connected client
+     *
+     * @param username the client's username
+     */
+    private record ClientConnection(String username) {}
 
     /**
      * Starts the server socket and the acceptor thread, which listens for incoming connections and handles them
@@ -50,6 +65,16 @@ public class GameServer implements Runnable {
         if (socket != null) {
             LOG.info("Closing server socket now");
             socket.close();
+        }
+        LOG.info("Closing {} client connection(s)", clients.size());
+        synchronized (clients) {
+            for (Socket c: clients) {
+                try {
+                    c.close();
+                } catch (IOException ignored) {
+                }
+            }
+            clients.clear();
         }
     }
 
@@ -78,14 +103,18 @@ public class GameServer implements Runnable {
     private void handleClient(Socket client) {
         new Thread(() -> {
             LOG.info("Incoming client connection at {}", client.getInetAddress().getHostAddress());
-            try (client) {
-                var in = new BufferedReader(
-                        new InputStreamReader(client.getInputStream()));
+            clients.add(client);
 
+            try (client;
+                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                 var out = new PacketWriter(client.getOutputStream())
+            ) {
                 String line;
-                while ((line = in.readLine()) != null) parseRequest(client, GamePacket.deserialize(line));
+                while ((line = in.readLine()) != null) parseRequest(client, GamePacket.deserialize(line), out);
             } catch (IOException e) {
                 LOG.error(e);
+            } finally {
+                clients.remove(client);
             }
         }, "ClientHandler-" + client.getInetAddress()).start();
     }
@@ -95,8 +124,11 @@ public class GameServer implements Runnable {
      *
      * @param client the client socket that this packet is from
      * @param packet the packet itself, from the client
+     * @param out    the output stream used to respond to the client.
      */
-    private void parseRequest(Socket client, GamePacket packet) {
+    private void parseRequest(Socket client, GamePacket packet, PacketWriter out) {
         System.out.println("FROM CLIENT: " + packet);
+        // FIXME: the client never gets this?? idk if it's the SRV or CLT fault
+        out.send(new GamePacket(GamePacket.Type.SRV_ALLOW_CONN));
     }
 }

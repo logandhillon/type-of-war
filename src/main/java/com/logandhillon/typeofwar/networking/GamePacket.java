@@ -17,9 +17,18 @@ public record GamePacket(Type type, String payload) {
     private static final Type[] TYPES = Type.values();
 
     /**
+     * Creates a packet with a null payload.
+     *
+     * @param type the type of packet to send.
+     */
+    public GamePacket(Type type) {
+        this(type, "");
+    }
+
+    /**
      * The type of packet to send. SRV are server packets, CLT are client packets.
      */
-    enum Type {
+    public enum Type {
         SRV_ALLOW_CONN,
         CLT_REQ_CONN
     }
