@@ -2,7 +2,6 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.UIScene;
-import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.LabeledModalEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,14 +10,13 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 /**
- * @author Logan Dhillon
+ * @author Jack Ross
  */
 public class JoinGameMenu extends UIScene {
-    public JoinGameMenu(GameSceneManager mgr) {
-        int dy = 48 + 16; // ∆y per button height
+    private String serverAddress;
 
-        InputBoxEntity userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
-        addEntity(new LabeledModalEntity(359, 110, 562, 464, "JOIN A GAME", mgr, userInput));
+    public JoinGameMenu(GameSceneManager mgr) {
+        addEntity(new LabeledModalEntity(359, 110, 562, 464, "JOIN A GAME", mgr));
     }
 
     @Override
@@ -29,5 +27,12 @@ public class JoinGameMenu extends UIScene {
 
         // render all other entities
         super.render(g);
+    }
+
+    /**
+     * Gets the server address in the "direct connection" input box as a string
+     */
+    public String getServerAddress() {
+        return serverAddress;
     }
 }
