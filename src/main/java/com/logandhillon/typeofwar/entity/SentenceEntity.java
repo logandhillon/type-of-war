@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.Scene;
@@ -61,14 +62,14 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     }
 
     /**
-     * Renders the original sentence and the user's input, which is automatically handled by the event handlers within this file.
-     *
+     * Renders the original sentence and the user's input, which is automatically handled by the event handlers within
+     * this file.
+     * <p>
      * The position of the characters within
      *
      * @param g the graphical context to render to.
      * @param x the x position to render the entity at
      * @param y the y position to render the entity at
-     *
      */
     @Override
     public void onRender(GraphicsContext g, float x, float y) {
@@ -215,5 +216,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             isComplete = true;
             parent.onTypingFinished();
         }
+    }
+
+    @Override
+    public void onAttach(GameScene parent) {
+        super.onAttach(parent);
+        parent.addHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+        parent.addHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
     }
 }

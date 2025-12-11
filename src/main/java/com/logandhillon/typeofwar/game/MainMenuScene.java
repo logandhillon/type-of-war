@@ -7,7 +7,6 @@ import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
 import com.logandhillon.typeofwar.entity.ui.ModalEntity;
 import com.logandhillon.typeofwar.resource.Colors;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
@@ -19,9 +18,6 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    private final MenuController controller;
-    private final InputBoxEntity userInput;
-
     /**
      * Creates a new main menu
      *
@@ -32,7 +28,7 @@ public class MainMenuScene extends UIScene {
         int y = 205;
         int dy = 48 + 16; // ∆y per button height
 
-        controller = new MenuController(
+        MenuController controller = new MenuController(
                 new MenuButton("Host Game", x, y, 256, 48, () -> mgr.setScene(new TypeOfWarScene())),
                 new MenuButton("Join Game", x, y + dy, 256, 48, () -> mgr.setScene(new TypeOfWarScene())),
                 new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
@@ -41,7 +37,7 @@ public class MainMenuScene extends UIScene {
         );
         addEntity(controller);
 
-        userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
+        InputBoxEntity userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
         addEntity(new ModalEntity(618, y, 348, 310,
                                   userInput
         ));
@@ -55,16 +51,5 @@ public class MainMenuScene extends UIScene {
 
         // render all other entities
         super.render(g);
-    }
-
-    @Override
-    protected void onBuild(Scene scene) {
-        super.onBuild(scene);
-        scene.setOnKeyPressed(e -> {
-            userInput.onKeyPressed(e);
-            if (e.isConsumed()) return; // exit early if consumed
-            controller.onKeyPressed(e);
-        });
-        scene.setOnKeyTyped(userInput::onKeyTyped);
     }
 }

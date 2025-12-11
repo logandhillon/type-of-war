@@ -13,4 +13,9 @@ public interface GameSceneManager {
      * @param scene the scene to switch to.
      */
     void setScene(GameScene scene);
+
+    /**
+     * Sets the current scene to the main menu.
+     */
+    void goToMainMenu();
 }
