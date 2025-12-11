@@ -10,7 +10,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
+ * A game client handles all outgoing communications to the {@link GameServer} via a valid network connection.
+ * <p>
+ * The client connects to a server using an {@link java.net.InetAddress} and communicates using {@link GamePacket}s.
+ *
  * @author Logan Dhillon
+ * @see GameServer
  */
 public class GameClient {
     private static final Logger LOG = LoggerContext.getContext().getLogger(GameClient.class);
@@ -22,11 +27,25 @@ public class GameClient {
     private BufferedReader in;
     private PrintWriter    out;
 
+    /**
+     * Sets up a new client, does not connect to the server.
+     *
+     * @param host the FQDN or IP address of the server to connect to
+     * @param port the port (default 20670)
+     *
+     * @see GameClient#connect()
+     */
     public GameClient(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
+    /**
+     * Connects to the pre-defined server, sends a REQ_CONN packet, then starts the listener thread.
+     *
+     * @throws IOException if the socket throws an exception during creation
+     * @see GameClient#readLoop()
+     */
     public void connect() throws IOException {
         LOG.info("Connecting to server at {}:{}...", host, port);
         socket = new Socket(host, port);
@@ -41,6 +60,12 @@ public class GameClient {
         new Thread(this::readLoop, "Client-ReadLoop").start();
     }
 
+    /**
+     * The listener thread of the client, handles incoming communication from the server, deserializes it, and sends it
+     * to {@link GameClient#parseResponse(GamePacket)}.
+     *
+     * @apiNote This should be run in a separate thread, as it is a blocking action.
+     */
     private void readLoop() {
         try {
             String line;
@@ -50,15 +75,30 @@ public class GameClient {
         }
     }
 
+    /**
+     * Handles an incoming packet
+     *
+     * @param packet the deserialized packet from the server
+     */
     private void parseResponse(GamePacket packet) {
         // TODO: temp code to see if it workls :)
         System.out.println("FROM SERVER: " + packet);
     }
 
+    /**
+     * Sends a packet to the connected server
+     *
+     * @param packet the packet to serialize and send
+     */
     public void send(GamePacket packet) {
         if (out != null) out.println(packet.serialize());
     }
 
+    /**
+     * Terminates the active connection with the server
+     *
+     * @throws IOException if the socket fails to close
+     */
     public void close() throws IOException {
         if (socket != null) {
             LOG.info("Closing connection to server");
