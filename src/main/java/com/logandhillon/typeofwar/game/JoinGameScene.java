@@ -11,6 +11,8 @@ import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -121,6 +123,7 @@ public class JoinGameScene extends UIScene {
             });
             joinModal.addEntity(serverButtons[i]);
         }
+        this.addHandler(KeyEvent.KEY_PRESSED, e->onKeyPressed(e, serverButtons, serverList));
     }
 
     @Override
@@ -148,4 +151,20 @@ public class JoinGameScene extends UIScene {
      * @param ping how many milliseconds of latency to the server
      */
     public record ServerEntry(String name, String address, int ping) {}
+
+    private void onKeyPressed(KeyEvent e, ServerEntryEntity[] array, ArrayList<ServerEntry> list){
+        if(e.getCode() != KeyCode.UP && e.getCode() != KeyCode.DOWN) return;
+
+        if(e.getCode() == KeyCode.UP) {
+            for(int i = 0; i < array.length - 1; i++){ //TODO #32: Make the up/down arrows work
+                array[i + 1] = array[i];
+            }
+        }
+
+        if(e.getCode() == KeyCode.DOWN){
+            for(int i = array.length - 1; i > 0; i--){
+                array[i] = array[i - 1];
+            }
+        }
+    }
 }
