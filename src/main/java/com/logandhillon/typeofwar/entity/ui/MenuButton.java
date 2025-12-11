@@ -17,7 +17,7 @@ public class MenuButton extends DynamicButtonEntity {
             Color.WHITE, Colors.DEFAULT, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 20));
     private static final ButtonEntity.Style ACTIVE_STYLE  = new ButtonEntity.Style(
             Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 21));
-    private static final int OFFSET_Y = 20;
+
     private final Runnable pressHandler;
 
     /**
@@ -48,11 +48,11 @@ public class MenuButton extends DynamicButtonEntity {
         if (this.isActive()) {
             // left arrow
             g.setTextAlign(TextAlignment.LEFT);
-            g.fillText(">", x+16, y + h/2  + OFFSET_Y);
+            g.fillText(">", x + 16, y + h / 2);
 
             // right arrow
             g.setTextAlign(TextAlignment.RIGHT);
-            g.fillText("<", x + w - 16, y + h/2 + OFFSET_Y);
+            g.fillText("<", x + w - 16, y + h / 2);
         }
     }
 }

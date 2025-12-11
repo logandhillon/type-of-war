@@ -31,7 +31,6 @@ public class InputBoxEntity extends Clickable {
     private static final int  CORNER_RADIUS    = 16;
     private static final int  MARGIN_X         = 16;
     private static final int  MARGIN_Y         = 12;
-    private static final int  OFFSET_Y         = 20;
     private static final Font INPUT_FONT       = Font.font(Fonts.DM_MONO, INPUT_FONT_SIZE);
     private static final Font LABEL_FONT       = Font.font(Fonts.DM_MONO_MEDIUM, 18);
 
@@ -69,13 +68,13 @@ public class InputBoxEntity extends Clickable {
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
         g.setFill(Colors.DEFAULT_DARKER);
-        g.fillRoundRect(x, y + OFFSET_Y, w, h, CORNER_RADIUS, CORNER_RADIUS);
+        g.fillRoundRect(x, y, w, h, CORNER_RADIUS, CORNER_RADIUS);
 
         g.setTextAlign(TextAlignment.LEFT);
         g.setTextBaseline(VPos.TOP);
         g.setFont(LABEL_FONT);
         g.setFill(Color.WHITE);
-        g.fillText(label, x, y + OFFSET_Y - 31);
+        g.fillText(label, x, y - 31);
 
         // when active, show a blinking cursor for 500 ms every 1000 ms
         if (isActive && System.currentTimeMillis() % 1000 > 500) {
@@ -83,17 +82,17 @@ public class InputBoxEntity extends Clickable {
             g.setLineWidth(2);
 
             float cursorX = x + input.length() * INPUT_CHAR_WIDTH + MARGIN_X;
-            g.strokeLine(cursorX, y + MARGIN_Y + OFFSET_Y, cursorX, y + h - MARGIN_Y + OFFSET_Y);
+            g.strokeLine(cursorX, y + MARGIN_Y, cursorX, y + h - MARGIN_Y);
         }
 
         g.setFont(INPUT_FONT);
         if (input.isEmpty()) {
             // render placeholder
             g.setFill(Color.hsb(0, 0, 1, 0.2));
-            g.fillText(placeholder, x + MARGIN_X, y + MARGIN_Y + OFFSET_Y, maxWidth);
+            g.fillText(placeholder, x + MARGIN_X, y + MARGIN_Y, maxWidth);
         } else {
             // render input (font is already white)
-            g.fillText(input.toString(), x + MARGIN_X, y + MARGIN_Y + OFFSET_Y, maxWidth);
+            g.fillText(input.toString(), x + MARGIN_X, y + MARGIN_Y, maxWidth);
         }
     }
 
