@@ -2,9 +2,12 @@ package com.logandhillon.typeofwar.engine;
 
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.Clickable;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.HashMap;
 
@@ -18,7 +21,12 @@ import java.util.HashMap;
  * @see Clickable
  */
 public abstract class UIScene extends GameScene {
-    private static final HashMap<Clickable, ClickableFlags> CLICKABLES = new HashMap<>();
+    private static final Logger LOG = LoggerContext.getContext().getLogger(UIScene.class);
+
+    private final HashMap<Clickable, ClickableFlags> clickables       = new HashMap<>();
+    private       Clickable[]                        cachedClickables = new Clickable[0];
+    private       EventHandler<MouseEvent>           mouseClickedHandler;
+    private       EventHandler<MouseEvent>           mouseMovedHandler;
 
     private static final class ClickableFlags {
         private boolean isHovering = false;
@@ -35,8 +43,30 @@ public abstract class UIScene extends GameScene {
     @Override
     protected void onBuild(Scene scene) {
         super.onBuild(scene);
-        scene.setOnMouseClicked(this::onMouseClicked);
-        scene.setOnMouseMoved(this::onMouseMoved);
+
+        scene.addEventHandler(MouseEvent.MOUSE_CLICKED, (mouseClickedHandler = this::onMouseClicked));
+        scene.addEventHandler(MouseEvent.MOUSE_MOVED, (mouseMovedHandler = this::onMouseMoved));
+    }
+
+    @Override
+    public void discard(Scene scene) {
+        super.discard(scene);
+
+        // clear event handlers
+        if (mouseClickedHandler != null) {
+            scene.removeEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedHandler);
+            mouseClickedHandler = null;
+        }
+
+        if (mouseMovedHandler != null) {
+            scene.removeEventHandler(MouseEvent.MOUSE_MOVED, mouseMovedHandler);
+            mouseMovedHandler = null;
+        }
+
+        // clear stored clickables to avoid memory leaks / stale state
+        for (Clickable c: clickables.keySet()) c.onDestroy();
+        clickables.clear();
+        cachedClickables = new Clickable[0];
     }
 
     /**
@@ -48,7 +78,10 @@ public abstract class UIScene extends GameScene {
     @Override
     public void addEntity(Entity e) {
         super.addEntity(e);
-        if (e instanceof Clickable) CLICKABLES.put((Clickable)e, new ClickableFlags());
+        if (e instanceof Clickable) clickables.put((Clickable)e, new ClickableFlags());
+        if (e instanceof Clickable) {
+            cachedClickables = clickables.keySet().toArray(new Clickable[0]);
+        }
     }
 
     /**
@@ -67,11 +100,14 @@ public abstract class UIScene extends GameScene {
         float x = (float)e.getX();
         float y = (float)e.getY();
 
-        for (Clickable c: CLICKABLES.keySet()) {
-            ClickableFlags flags = CLICKABLES.get(c);
+        LOG.debug("{}: Handling mouse click event at ({}, {})", this.getClass().getSimpleName(), x, y);
+
+        for (Clickable c: cachedClickables) {
+            ClickableFlags flags = clickables.get(c);
             // if the mouse is within the hitbox of the clickable, trigger it's onClick event.
             if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
                 y >= c.getY() && y <= c.getY() + c.getHeight()) {
+                LOG.debug("Click event sent to {} (Clickable)", c.toString());
                 c.onClick(e);
                 flags.isActive = true;
             }
@@ -101,8 +137,8 @@ public abstract class UIScene extends GameScene {
         float x = (float)e.getX();
         float y = (float)e.getY();
 
-        for (Clickable c: CLICKABLES.keySet()) {
-            ClickableFlags flags = CLICKABLES.get(c);
+        for (Clickable c: cachedClickables) {
+            ClickableFlags flags = clickables.get(c);
 
             // if the mouse is within the hitbox of the clickable
             if (x >= c.getX() && x <= c.getX() + c.getWidth() &&

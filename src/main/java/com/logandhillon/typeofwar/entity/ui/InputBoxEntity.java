@@ -3,6 +3,7 @@ package com.logandhillon.typeofwar.entity.ui;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -10,6 +11,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 /**
  * This is an input field, which handles user input in a box and can be retrieved as a string.
@@ -21,6 +24,8 @@ import javafx.scene.text.TextAlignment;
  * @see InputBoxEntity#onKeyTyped(KeyEvent)
  */
 public class InputBoxEntity extends Clickable {
+    private static final Logger LOG = LoggerContext.getContext().getLogger(InputBoxEntity.class);
+
     private static final int  INPUT_FONT_SIZE  = 20;
     private static final int  INPUT_CHAR_WIDTH = 12;
     private static final int  CORNER_RADIUS    = 16;
@@ -129,6 +134,14 @@ public class InputBoxEntity extends Clickable {
         if (c.isEmpty() || Character.isISOControl(c.charAt(0)) || input.length() >= charLimit) return;
 
         input.append(c);
+        e.consume();
+    }
+
+    @Override
+    public void onBuild(Scene scene) {
+        super.onBuild(scene);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+        scene.addEventHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
     }
 
     /**
@@ -151,11 +164,13 @@ public class InputBoxEntity extends Clickable {
 
     @Override
     public void onClick(MouseEvent e) {
+        LOG.debug("Input box clicked");
         this.isActive = true;
     }
 
     @Override
     public void onBlur(MouseEvent e) {
+        LOG.debug("Input box blurred");
         this.isActive = false;
     }
 }

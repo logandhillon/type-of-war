@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.entity;
 
 import com.logandhillon.typeofwar.engine.GameScene;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
@@ -75,6 +76,15 @@ public abstract class Entity implements GameObject {
      */
     public void onAttach(GameScene parent) {
         this.parent = parent;
+    }
+
+    /**
+     * Called when the parent {@link GameScene} is built to JavaFX
+     *
+     * @param scene the JavaFX Scene of this entity's parent
+     */
+    public void onBuild(Scene scene) {
+
     }
 
     /**

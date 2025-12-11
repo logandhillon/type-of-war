@@ -21,8 +21,6 @@ public class TypeOfWar extends Application implements GameSceneManager {
     public static final  String GAME_NAME = "Type of War";
     private static final Logger LOG       = LoggerContext.getContext().getLogger(TypeOfWar.class);
 
-    private final MainMenuScene mainMenu = new MainMenuScene(this);
-
     private Stage     stage;
     private GameScene activeScene;
 
@@ -68,13 +66,13 @@ public class TypeOfWar extends Application implements GameSceneManager {
      */
     public void setScene(GameScene scene) {
         LOG.info("Switching scene to {}", scene);
-        if (activeScene != null) activeScene.discard();
+        if (activeScene != null) activeScene.discard(stage.sceneProperty().get());
         stage.setScene(scene.build(stage));
         activeScene = scene;
     }
 
     @Override
     public void goToMainMenu() {
-        this.setScene(mainMenu);
+        this.setScene(new MainMenuScene(this));
     }
 }

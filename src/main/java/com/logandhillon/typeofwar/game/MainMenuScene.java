@@ -7,7 +7,6 @@ import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
 import com.logandhillon.typeofwar.entity.ui.ModalEntity;
 import com.logandhillon.typeofwar.resource.Colors;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
@@ -55,16 +54,5 @@ public class MainMenuScene extends UIScene {
 
         // render all other entities
         super.render(g);
-    }
-
-    @Override
-    protected void onBuild(Scene scene) {
-        super.onBuild(scene);
-        scene.setOnKeyPressed(e -> {
-            userInput.onKeyPressed(e);
-            if (e.isConsumed()) return; // exit early if consumed
-            controller.onKeyPressed(e);
-        });
-        scene.setOnKeyTyped(userInput::onKeyTyped);
     }
 }

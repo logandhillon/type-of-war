@@ -104,14 +104,17 @@ public abstract class GameScene {
         WINDOW_WIDTH.addListener(widthListener);
         WINDOW_HEIGHT.addListener(heightListener);
 
+        for (Entity e: entities) e.onBuild(scene);
         onBuild(scene);
         return scene;
     }
 
     /**
      * Called to discard this scene (i.e., stop its lifecycle, etc.)
+     *
+     * @param scene the JavaFX scene that is this scene is being removed from. use this for detaching events, etc.
      */
-    public void discard() {
+    public void discard(Scene scene) {
         LOG.debug("Discarding scene {}", this);
 
         // schedule all entities for destruction

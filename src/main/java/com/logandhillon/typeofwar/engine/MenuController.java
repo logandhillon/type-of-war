@@ -97,4 +97,10 @@ public class MenuController extends Entity {
         super.onAttach(parent);
         for (var btn: buttons) parent.addEntity(btn);
     }
+
+    @Override
+    public void onBuild(Scene scene) {
+        super.onBuild(scene);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+    }
 }

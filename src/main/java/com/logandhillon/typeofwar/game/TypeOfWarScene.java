@@ -63,6 +63,11 @@ public class TypeOfWarScene extends GameScene {
         scene.setOnKeyTyped(sentence::onKeyTyped);
     }
 
+    @Override
+    public void discard(Scene scene) {
+        super.discard(scene);
+    }
+
     /**
      * Propagates an update in the {@link GameStatisticsEntity} instance.
      *
