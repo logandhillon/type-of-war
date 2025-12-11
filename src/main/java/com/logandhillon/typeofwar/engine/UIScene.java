@@ -21,6 +21,9 @@ import java.util.HashMap;
 public abstract class UIScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(UIScene.class);
 
+    /** javaFX hitboxes are TERRIBLE and wrong, so this constant corrects the Y axis */
+    private static final int HITBOX_Y_CORRECTION = -13;
+
     private final HashMap<Clickable, ClickableFlags> clickables       = new HashMap<>();
     private       Clickable[]                        cachedClickables = new Clickable[0];
 
@@ -87,8 +90,7 @@ public abstract class UIScene extends GameScene {
             if (flags == null) continue;
 
             // if the mouse is within the hitbox of the clickable, trigger it's onClick event.
-            if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
-                y >= c.getY() && y <= c.getY() + c.getHeight()) {
+            if (checkHitbox(e, c)) {
                 LOG.debug("Click event sent to {} (Clickable)", c.toString());
                 c.onClick(e);
                 flags.isActive = true;
@@ -116,27 +118,33 @@ public abstract class UIScene extends GameScene {
      * @see Clickable#onMouseLeave(MouseEvent)
      */
     protected void onMouseMoved(MouseEvent e) {
-        float x = (float)e.getX();
-        float y = (float)e.getY();
-
         for (Clickable c: cachedClickables) {
             ClickableFlags flags = clickables.get(c);
 
             // if the mouse is within the hitbox of the clickable
-            if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
-                y >= c.getY() && y <= c.getY() + c.getHeight() &&
-                !flags.isHovering /* and clickable is not currently active */) {
+            if (checkHitbox(e, c) && !flags.isHovering) {
                 c.onMouseEnter(e);
                 flags.isHovering = true; // mark as active
             }
 
             // if mouse is outside clickable hitbox
-            else if ((x < c.getX() || x > c.getX() + c.getWidth() ||
-                      y < c.getY() || y > c.getY() + c.getHeight()
-                     ) && flags.isHovering /* and clickable is currently active */) {
+            else if (!checkHitbox(e, c) && flags.isHovering) {
                 c.onMouseLeave(e);
                 flags.isHovering = false; // mark as not active
             }
         }
+    }
+
+    /**
+     * Checks the hitbox of the given clickable and sees if the mouse (from event) is in the hitbox of it.
+     *
+     * @param e the mouseevent
+     * @param c the clickable to check against
+     *
+     * @return true if the cursor is inside the clickable.
+     */
+    private boolean checkHitbox(MouseEvent e, Clickable c) {
+        return e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() &&
+               e.getY() >= c.getY() + HITBOX_Y_CORRECTION && e.getY() <= c.getY() + HITBOX_Y_CORRECTION + c.getHeight();
     }
 }

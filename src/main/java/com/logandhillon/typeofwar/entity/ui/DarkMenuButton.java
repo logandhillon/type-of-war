@@ -8,13 +8,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
- * A stylized version of the {@link DynamicButtonEntity} made for menus.
+ * A darker version of the {@link MenuButton} for contrast over modals.
  *
- * @author Logan Dhillon
+ * @author Logan Dhillon, Jack Ross
+ * @see DynamicButtonEntity
  */
-public class MenuButton extends DynamicButtonEntity {
+public class DarkMenuButton extends DynamicButtonEntity {
     private static final ButtonEntity.Style DEFAULT_STYLE = new ButtonEntity.Style(
-            Color.WHITE, Colors.DEFAULT, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 20));
+            Color.WHITE, Colors.DEFAULT_DARKER, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 20));
     private static final ButtonEntity.Style ACTIVE_STYLE  = new ButtonEntity.Style(
             Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 21));
 
@@ -28,7 +29,7 @@ public class MenuButton extends DynamicButtonEntity {
      * @param h       height
      * @param onPress the action that should happen when this button is clicked
      */
-    public MenuButton(String label, float x, float y, float w, float h, Runnable onPress) {
+    public DarkMenuButton(String label, float x, float y, float w, float h, Runnable onPress) {
         super(label.toUpperCase(), x, y, w, h, e -> onPress.run(), DEFAULT_STYLE, ACTIVE_STYLE);
         this.pressHandler = onPress;
     }
@@ -48,11 +49,11 @@ public class MenuButton extends DynamicButtonEntity {
         if (this.isActive()) {
             // left arrow
             g.setTextAlign(TextAlignment.LEFT);
-            g.fillText(">", x + 16, y + h / 2);
+            g.fillText(">", x + 8, y + h / 2);
 
             // right arrow
             g.setTextAlign(TextAlignment.RIGHT);
-            g.fillText("<", x + w - 16, y + h / 2);
+            g.fillText("<", x + w - 8, y + h / 2);
         }
     }
 }
