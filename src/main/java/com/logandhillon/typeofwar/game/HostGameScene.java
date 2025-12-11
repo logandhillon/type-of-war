@@ -101,7 +101,7 @@ public class HostGameScene extends UIScene {
         });
 
         // create background modal
-        addEntity(new ModalEntity(359, 128, 562, 464, nameInput, sentenceInput, buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], ButtonsLabel, startButton));
+        addEntity(new LabeledModalEntity(359, 128, 562, 464, "HOST NEW GAME", mgr, nameInput, sentenceInput, buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], ButtonsLabel, startButton));
     }
 
     @Override
@@ -111,23 +111,6 @@ public class HostGameScene extends UIScene {
 
         // render all entities
         super.render(g);
-    }
-
-    @Override
-    protected void onBuild(Scene scene) {
-
-        super.onBuild(scene);
-        scene.setOnKeyPressed(e -> {
-            nameInput.onKeyPressed(e);
-            if (e.isConsumed()) return;
-            sentenceInput.onKeyPressed(e);
-        });
-
-        scene.setOnKeyTyped( e -> {
-            nameInput.onKeyTyped(e);
-            sentenceInput.onKeyTyped(e);
-        });
-
     }
 
 
