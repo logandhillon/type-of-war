@@ -6,6 +6,7 @@ import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
 import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.LabeledModalEntity;
+import com.logandhillon.typeofwar.entity.ui.ServerEntryEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
@@ -13,9 +14,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -30,10 +31,16 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 public class JoinGameScene extends UIScene {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
     private String serverAddress;
+    private static final int ENTITY_GAP = 53;
+    private ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
 
     // TODO: temp code, this will be filled in with the actual server list later.
     private final ArrayList<ServerEntry> serverList = new ArrayList<>();
 
+    /**
+     *
+     * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
+     */
     public JoinGameScene(GameSceneManager mgr) {
         // TODO: temp code, this just adds in placeholder servers to render.
         //       this will be filled in by the networking engine LATER.
@@ -44,8 +51,9 @@ public class JoinGameScene extends UIScene {
         serverList.add(new ServerEntry("Room 104", "127.0.0.1", 0));
         serverList.add(new ServerEntry("Room 105", "127.0.0.1", 0));
 
+
         // rect in background for server list
-        Entity serverList = new Entity(16, 152){
+        Entity serverListRect = new Entity(16, 152){
             @Override
             protected void onRender(GraphicsContext g, float x, float y) {
                 g.setFill(Colors.DEFAULT_DARKER);
@@ -56,7 +64,6 @@ public class JoinGameScene extends UIScene {
 
             @Override
             public void onDestroy() {}
-
         };
 
         // label for server list
@@ -96,7 +103,24 @@ public class JoinGameScene extends UIScene {
            // TODO #6: Make this join server
         });
 
-        addEntity(new LabeledModalEntity(359, 99, 562, 523, "JOIN A GAME", mgr, serverList, serverListLabel, joinServer, joinDirectButton, joinDiscoverButton));
+        LabeledModalEntity joinModal = new LabeledModalEntity(359, 99, 562, 523, "JOIN A GAME", mgr, serverListRect, serverListLabel, joinServer, joinDirectButton, joinDiscoverButton);
+        addEntity(joinModal);
+
+        AtomicInteger currentServer = new AtomicInteger();
+
+        for(int i = 0; i < serverButtons.length; i++) {
+            int finalI = i;
+            serverButtons[i] = new ServerEntryEntity(32, 231 + (ENTITY_GAP * i), 498, 37, serverList.get(i).name, serverList.get(i).address,serverList.get(i).ping, ()-> {
+                serverButtons[finalI].setActive(true, true);
+                currentServer.set(finalI);
+                for (int j = 0; j < serverButtons.length; j++) {
+                    if (currentServer.get() != j) {
+                        serverButtons[j].setActive(false, false);
+                    }
+                }
+            });
+            joinModal.addEntity(serverButtons[i]);
+        }
     }
 
     @Override
