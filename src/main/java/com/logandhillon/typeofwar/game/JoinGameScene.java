@@ -9,7 +9,6 @@ import com.logandhillon.typeofwar.entity.ui.LabeledModalEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
-import javafx.scene.DirectionalLight;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -19,13 +18,17 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 /**
+ * The join game menu allows users to join existing servers through manual IP Address searching or local server
+ * discovery.
+ * When the user has joined a game, they will be transported to the {@link LobbyGameScene}
+ *
  * @author Jack Ross
  */
-public class JoinGameMenu extends UIScene {
+public class JoinGameScene extends UIScene {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
     private String serverAddress;
 
-    public JoinGameMenu(GameSceneManager mgr) {
+    public JoinGameScene(GameSceneManager mgr) {
 
         // rect in background for server list
         Entity serverList = new Entity(16, 152){
@@ -42,6 +45,7 @@ public class JoinGameMenu extends UIScene {
 
         };
 
+        // label for server list
         Entity serverListLabel = new Entity(16, 121) {
             @Override
             protected void onRender(GraphicsContext g, float x, float y) {
