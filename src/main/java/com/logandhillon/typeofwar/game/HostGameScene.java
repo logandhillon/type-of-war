@@ -13,12 +13,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 public class HostGameScene extends UIScene {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
-    public static int startingMultiplier; //TODO: add scaling multiplier to game (starting from this set point)
+    private float startingMultiplier; //TODO: add scaling multiplier to game (starting from this set point)
     private static final int AJITESH_CONSTANT = 22;
     private static final int  OFFSET_Y = -20;
 
@@ -36,6 +38,7 @@ public class HostGameScene extends UIScene {
                 g.setTextBaseline(VPos.TOP);
                 g.setFont(LABEL_FONT);
                 g.setFill(Color.WHITE);
+
                 g.fillText("BASE STRENGTH MULTIPLIER", x + 16, y + 152 - 31);
             }
             @Override
@@ -45,12 +48,26 @@ public class HostGameScene extends UIScene {
             public void onDestroy() {}
         };
 
+
         buttons = new DarkMenuButton[5];
+
+
+        AtomicInteger currentButton = new AtomicInteger();
+
         for (int i = 0; i < 5; i++) {
             int finalI = i;
             buttons[i] = new DarkMenuButton((8f + (i * 2)) / 10 + "X", 16 + (i * (100 + 8)), 152 + OFFSET_Y, 100, 48, () -> {
-                buttons[finalI].setActive(true);
-                startingMultiplier = (8 + (finalI * 2)) / 10;
+
+                buttons[finalI].setActive(true,true);
+                currentButton.set(finalI);
+
+                for(int j = 0; j < buttons.length; j++) {
+                    if(currentButton.get() != j) {
+                        buttons[j].setActive(false, false);
+                    }
+                }
+
+                startingMultiplier = (8f + (finalI * 2)) / 10;
             });
         }
 
@@ -58,7 +75,7 @@ public class HostGameScene extends UIScene {
 
         sentenceInput = new InputBoxEntity(16, 255 + OFFSET_Y, 530, "Leave blank to randomly generate", "CUSTOM SENTENCE", 500);
 
-        startButton = new DarkMenuButton("START GAME", 16, 329 + OFFSET_Y, 530, 50, () -> {
+        startButton = new DarkMenuButton("START GAME", 16, 337 + OFFSET_Y, 530, 50, () -> {
            mgr.setScene(new TypeOfWarScene());
         });
 
@@ -87,4 +104,6 @@ public class HostGameScene extends UIScene {
         });
 
     }
+
+    public float getStartingMultiplier() {return startingMultiplier;}
 }

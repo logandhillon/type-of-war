@@ -21,6 +21,7 @@ public class ButtonEntity extends Clickable {
     private static final int ROUNDING_RADIUS = 16;
     private static final int OFFSET_Y        = 20;
 
+
     private final String            label;
     private final MouseEventHandler clickHandler;
 
@@ -55,6 +56,8 @@ public class ButtonEntity extends Clickable {
     public void setStyle(Style style) {
         this.style = style;
     }
+
+    public String getLabel(){ return this.label;}
 
     @Override
     public void onClick(MouseEvent e) {

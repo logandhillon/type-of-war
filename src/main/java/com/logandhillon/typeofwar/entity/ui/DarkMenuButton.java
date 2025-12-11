@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity.ui;
 
+import com.logandhillon.typeofwar.game.HostGameScene;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
@@ -49,11 +50,12 @@ public class DarkMenuButton extends DynamicButtonEntity {
         if (this.isActive()) {
             // left arrow
             g.setTextAlign(TextAlignment.LEFT);
-            g.fillText(">", x+8, y + h/2 + OFFSET_Y);
+            g.fillText(">", x + 8, y + h/2 + OFFSET_Y);
 
             // right arrow
             g.setTextAlign(TextAlignment.RIGHT);
             g.fillText("<", x + w - 8, y + h/2 + OFFSET_Y);
+
         }
     }
 }

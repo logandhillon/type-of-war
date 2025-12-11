@@ -43,7 +43,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-        MainMenuScene hostGame = new MainMenuScene(this);
+        HostGameScene hostGame = new HostGameScene(this);
         setScene(hostGame);
         stage.show();
     }
