@@ -34,9 +34,6 @@ public class ModalEntity extends Entity {
         this.w = w;
         this.h = h;
         this.entities = entities;
-
-        // move all entities to relative 0,0
-        for (Entity e: entities) addEntity(e);
     }
 
     @Override
@@ -64,8 +61,9 @@ public class ModalEntity extends Entity {
     public void onAttach(GameScene parent) {
         super.onAttach(parent);
         this.parent = parent;
+
         // add all controlled entities to the parent
-        for (Entity e: entities) parent.addEntity(e);
+        for (Entity e: entities) addEntity(e);
     }
 
     /**
