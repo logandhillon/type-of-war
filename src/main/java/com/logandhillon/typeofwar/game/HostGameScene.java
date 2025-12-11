@@ -26,7 +26,7 @@ public class HostGameScene extends UIScene {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
     private float startingMultiplier; //TODO: add scaling multiplier to game (starting from this set point)
 
-    private static final int AJITESH_CONSTANT = 22;
+    private static final int AJITESH_CONSTANT = 25;
     private static final int  OFFSET_Y = -20;
 
     private final InputBoxEntity nameInput;
