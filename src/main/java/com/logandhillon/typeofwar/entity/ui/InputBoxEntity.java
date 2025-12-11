@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity.ui;
 
+import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
@@ -10,6 +11,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 /**
  * This is an input field, which handles user input in a box and can be retrieved as a string.
@@ -21,6 +24,8 @@ import javafx.scene.text.TextAlignment;
  * @see InputBoxEntity#onKeyTyped(KeyEvent)
  */
 public class InputBoxEntity extends Clickable {
+    private static final Logger LOG = LoggerContext.getContext().getLogger(InputBoxEntity.class);
+
     private static final int  INPUT_FONT_SIZE  = 20;
     private static final int  INPUT_CHAR_WIDTH = 12;
     private static final int  CORNER_RADIUS    = 16;
@@ -104,8 +109,6 @@ public class InputBoxEntity extends Clickable {
 
     /**
      * Handles input by attaching to the key press event (for backspacing)
-     *
-     * @return true if the event has been consumed (should stop executing)
      */
     public void onKeyPressed(KeyEvent e) {
         if (isActive) {
@@ -118,8 +121,6 @@ public class InputBoxEntity extends Clickable {
 
     /**
      * Handles input by attaching to the key typed event (for entering input)
-     *
-     * @return true if the event has been consumed (should stop executing)
      */
     public void onKeyTyped(KeyEvent e) {
         if (!isActive) return;
@@ -130,6 +131,14 @@ public class InputBoxEntity extends Clickable {
         if (c.isEmpty() || Character.isISOControl(c.charAt(0)) || input.length() >= charLimit) return;
 
         input.append(c);
+        e.consume();
+    }
+
+    @Override
+    public void onAttach(GameScene parent) {
+        super.onAttach(parent);
+        parent.addHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+        parent.addHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
     }
 
     /**
@@ -152,11 +161,13 @@ public class InputBoxEntity extends Clickable {
 
     @Override
     public void onClick(MouseEvent e) {
+        LOG.debug("Input box clicked");
         this.isActive = true;
     }
 
     @Override
     public void onBlur(MouseEvent e) {
+        LOG.debug("Input box blurred");
         this.isActive = false;
     }
 }

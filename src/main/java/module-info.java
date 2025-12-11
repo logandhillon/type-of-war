@@ -6,6 +6,7 @@ module com.logandhillon.typeofwar {
     requires org.kordamp.ikonli.javafx;
     requires javafx.graphics;
     requires org.apache.logging.log4j.core;
+    requires jdk.compiler;
 
     opens com.logandhillon.typeofwar to javafx.fxml;
     exports com.logandhillon.typeofwar;

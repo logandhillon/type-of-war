@@ -2,7 +2,6 @@ package com.logandhillon.typeofwar.engine;
 
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -27,7 +26,7 @@ public class MenuController extends Entity {
      * @param buttons ordered list of buttons from top to bottom, which will be used to sort navigation.
      */
     public MenuController(MenuButton... buttons) {
-        super(0,0); // pos doesn't matter, do whatever
+        super(0, 0); // pos doesn't matter, do whatever
         this.buttons = buttons;
         this.activeBtnIdx = -1;
 
@@ -47,9 +46,6 @@ public class MenuController extends Entity {
 
     /**
      * Handles key presses from JavaFX, used to change the actively selected button or press it.
-     * <p>
-     * This method should be registered to the {@link Scene#onKeyPressedProperty()} parameter of the
-     * {@link GameScene#onBuild(Scene)}
      */
     public void onKeyPressed(KeyEvent e) {
         // when W/UP/SHIFT+TAB pressed, go up (-1) in buttons
@@ -95,6 +91,11 @@ public class MenuController extends Entity {
     @Override
     public void onAttach(GameScene parent) {
         super.onAttach(parent);
+
+        // add all buttons to parent
         for (var btn: buttons) parent.addEntity(btn);
+
+        // register key press event
+        parent.addHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
     }
 }

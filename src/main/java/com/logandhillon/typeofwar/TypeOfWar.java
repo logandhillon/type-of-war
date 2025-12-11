@@ -2,6 +2,7 @@ package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
+import com.logandhillon.typeofwar.game.JoinGameMenu;
 import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.application.Application;
@@ -42,8 +43,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-        MainMenuScene hostGame = new MainMenuScene(this);
-        setScene(hostGame);
+//        MainMenuScene menu = new MainMenuScene(this);
+        setScene(new JoinGameMenu(this));
         stage.show();
     }
 
@@ -65,8 +66,13 @@ public class TypeOfWar extends Application implements GameSceneManager {
      */
     public void setScene(GameScene scene) {
         LOG.info("Switching scene to {}", scene);
-        if (activeScene != null) activeScene.discard();
+        if (activeScene != null) activeScene.discard(stage.sceneProperty().get());
         stage.setScene(scene.build(stage));
         activeScene = scene;
+    }
+
+    @Override
+    public void goToMainMenu() {
+        this.setScene(new MainMenuScene(this));
     }
 }

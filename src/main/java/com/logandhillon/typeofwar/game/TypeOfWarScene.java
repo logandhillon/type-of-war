@@ -5,7 +5,6 @@ import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.entity.RopeEntity;
 import com.logandhillon.typeofwar.entity.SentenceEntity;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
@@ -24,8 +23,6 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 public class TypeOfWarScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(TypeOfWarScene.class);
 
-    private final SentenceEntity sentence;
-    private final RopeEntity rope;
     private final GameStatisticsEntity stats;
 
     private boolean isWinning = true;
@@ -34,13 +31,14 @@ public class TypeOfWarScene extends GameScene {
         stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
         addEntity(stats);
 
-        sentence = new SentenceEntity(WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
+        SentenceEntity sentence = new SentenceEntity(
+                WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
         addEntity(sentence);
         sentence.setText("The quick brown fox jumps over the lazy dog.");
 
         PlayerObject testPlayer = new PlayerObject("Player1", Color.CYAN);
 
-        rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
+        RopeEntity rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
         rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
         rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
         rope.addPlayer(testPlayer, RopeEntity.Team.RIGHT);
@@ -55,12 +53,6 @@ public class TypeOfWarScene extends GameScene {
 
         // render all other entities
         super.render(g);
-    }
-
-    @Override
-    protected void onBuild(Scene scene) {
-        scene.setOnKeyPressed(sentence::onKeyPressed);
-        scene.setOnKeyTyped(sentence::onKeyTyped);
     }
 
     /**
@@ -79,7 +71,7 @@ public class TypeOfWarScene extends GameScene {
      *
      * @param wordCount new word count of the sentence
      */
-    public void setWordCount(int wordCount) {;
+    public void setWordCount(int wordCount) {
         stats.setWordCount(wordCount);
     }
 
