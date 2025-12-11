@@ -57,8 +57,6 @@ public class ButtonEntity extends Clickable {
         this.style = style;
     }
 
-    public String getLabel(){ return this.label;}
-
     @Override
     public void onClick(MouseEvent e) {
         clickHandler.handle(e);
