@@ -30,8 +30,12 @@ public class GameServer implements Runnable {
     }
 
     public void stop() throws IOException {
+        LOG.info("Stopping server gracefully");
         running = false;
-        socket.close();
+        if (socket != null) {
+            LOG.info("Closing server socket now");
+            socket.close();
+        }
     }
 
     @Override

@@ -16,7 +16,7 @@ public class GameClient {
     private static final Logger LOG = LoggerContext.getContext().getLogger(GameClient.class);
 
     private final String host;
-    private final int port;
+    private final int    port;
 
     private Socket         socket;
     private BufferedReader in;
@@ -60,6 +60,9 @@ public class GameClient {
     }
 
     public void close() throws IOException {
-        if (socket != null) socket.close();
+        if (socket != null) {
+            LOG.info("Closing connection to server");
+            socket.close();
+        }
     }
 }

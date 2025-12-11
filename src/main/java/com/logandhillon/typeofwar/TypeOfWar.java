@@ -2,7 +2,6 @@ package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
-import com.logandhillon.typeofwar.game.JoinGameMenu;
 import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.GameClient;
@@ -28,11 +27,11 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     private Stage     stage;
     private GameScene activeScene;
-    private GameServer server;
-    private GameClient client;
 
-    public static ReadOnlyDoubleProperty WINDOW_WIDTH;
-    public static ReadOnlyDoubleProperty WINDOW_HEIGHT;
+    private static GameServer             server;
+    private static GameClient             client;
+    public static  ReadOnlyDoubleProperty WINDOW_WIDTH;
+    public static  ReadOnlyDoubleProperty WINDOW_HEIGHT;
 
     /**
      * Handles communication with JavaFX when this program is signalled to start.
@@ -61,8 +60,13 @@ public class TypeOfWar extends Application implements GameSceneManager {
      *
      * @see TypeOfWar#start(Stage)
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         launch();
+
+        // this runs AFTER the javafx window closes
+        LOG.info("Program terminated, exiting cleanly");
+        if (server != null) server.stop();
+        if (client != null) client.close();
     }
 
     /**
@@ -82,21 +86,29 @@ public class TypeOfWar extends Application implements GameSceneManager {
         this.setScene(new MainMenuScene(this));
     }
 
-    public void startServer() {
+    public static void startServer() {
+        if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
+
         try {
-            new GameServer().start();
+            server = new GameServer();
+            server.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void connectClient(String addr) {
+    public static void connectClient(String addr) {
+        if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
+
         try {
-            new GameClient(addr, 20670).connect();
+            client = new GameClient(addr, 20670);
+            client.connect();
         } catch (ConnectException e) {
             LOG.warn("Connection failed: {}", e.getMessage());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+
 }
