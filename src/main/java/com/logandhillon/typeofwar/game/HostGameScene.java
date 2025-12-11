@@ -26,7 +26,7 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  */
 public class HostGameScene extends UIScene {
     private static final Font  LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
-    // TODO: add scaling multiplier to game (starting from this set point)
+    // TODO: add scaling multiplier to game (starting from this set point) and default it to 1
     private              float startingMultiplier;
 
     private static final int AJITESH_CONSTANT = 25;
