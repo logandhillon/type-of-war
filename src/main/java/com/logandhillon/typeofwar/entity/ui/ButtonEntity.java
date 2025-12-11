@@ -1,8 +1,10 @@
 package com.logandhillon.typeofwar.entity.ui;
 
+import com.logandhillon.typeofwar.entity.SentenceEntity;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -19,6 +21,7 @@ import javafx.scene.text.TextAlignment;
 public class ButtonEntity extends Clickable {
     private static final int STROKE          = 2;
     private static final int ROUNDING_RADIUS = 16;
+    AudioClip correct = new AudioClip(SentenceEntity.class.getResource("/sound/click_1.wav").toExternalForm());
 
     private final String            label;
     private final MouseEventHandler clickHandler;
@@ -56,6 +59,7 @@ public class ButtonEntity extends Clickable {
 
     @Override
     public void onClick(MouseEvent e) {
+        correct.play();
         clickHandler.handle(e);
     }
 

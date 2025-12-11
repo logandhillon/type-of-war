@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -39,6 +40,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
     private boolean isFirstKeyPress;
     private boolean isComplete;
+
+    AudioClip correct = new AudioClip(SentenceEntity.class.getResource("/sound/click_1.wav").toExternalForm());
+    AudioClip incorrect = new AudioClip(SentenceEntity.class.getResource("/sound/error_1.wav").toExternalForm());
 
     /**
      * Creates a new SentenceEntity at the provided coordinates.
@@ -194,8 +198,10 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
-            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
+            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
                 currentWord++; // increment word counter LAST so we can do statistics checks
+                correct.play();
+            }
         }
         // handle the other characters
         else {
@@ -205,6 +211,10 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
                 && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
                 correctChars++;
+                correct.play();
+            } else {
+                // if not correct
+                incorrect.play();
             }
         }
 
