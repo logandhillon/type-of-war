@@ -18,9 +18,6 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    private final MenuController controller;
-    private final InputBoxEntity userInput;
-
     /**
      * Creates a new main menu
      *
@@ -31,7 +28,7 @@ public class MainMenuScene extends UIScene {
         int y = 205;
         int dy = 48 + 16; // ∆y per button height
 
-        controller = new MenuController(
+        MenuController controller = new MenuController(
                 new MenuButton("Host Game", x, y, 256, 48, () -> mgr.setScene(new TypeOfWarScene())),
                 new MenuButton("Join Game", x, y + dy, 256, 48, () -> mgr.setScene(new TypeOfWarScene())),
                 new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
@@ -40,7 +37,7 @@ public class MainMenuScene extends UIScene {
         );
         addEntity(controller);
 
-        userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
+        InputBoxEntity userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
         addEntity(new ModalEntity(618, y, 348, 310,
                                   userInput
         ));

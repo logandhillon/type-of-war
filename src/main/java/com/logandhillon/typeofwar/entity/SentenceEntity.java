@@ -61,14 +61,14 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     }
 
     /**
-     * Renders the original sentence and the user's input, which is automatically handled by the event handlers within this file.
-     *
+     * Renders the original sentence and the user's input, which is automatically handled by the event handlers within
+     * this file.
+     * <p>
      * The position of the characters within
      *
      * @param g the graphical context to render to.
      * @param x the x position to render the entity at
      * @param y the y position to render the entity at
-     *
      */
     @Override
     public void onRender(GraphicsContext g, float x, float y) {
@@ -215,5 +215,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             isComplete = true;
             parent.onTypingFinished();
         }
+    }
+
+    @Override
+    public void onBuild(Scene scene) {
+        super.onBuild(scene);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+        scene.addEventHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
     }
 }

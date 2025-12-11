@@ -108,8 +108,6 @@ public class InputBoxEntity extends Clickable {
 
     /**
      * Handles input by attaching to the key press event (for backspacing)
-     *
-     * @return true if the event has been consumed (should stop executing)
      */
     public void onKeyPressed(KeyEvent e) {
         if (isActive) {
@@ -122,8 +120,6 @@ public class InputBoxEntity extends Clickable {
 
     /**
      * Handles input by attaching to the key typed event (for entering input)
-     *
-     * @return true if the event has been consumed (should stop executing)
      */
     public void onKeyTyped(KeyEvent e) {
         if (!isActive) return;
