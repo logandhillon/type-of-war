@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run C&amp;S Games" type="CompoundRunConfigurationType">
+    <toRun name="Run Type of War" type="GradleRunConfiguration" />
+    <toRun name="Run Type of War (Cli't)" type="GradleRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>
