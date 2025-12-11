@@ -13,7 +13,7 @@ import org.apache.logging.log4j.core.LoggerContext;
  */
 public record GamePacket(Type type, String payload) {
     private static final Logger LOG   = LoggerContext.getContext().getLogger(GamePacket.class);
-    private static final char   US    = 31; // unit separator byte
+    private static final char   US    = (char)31; // unit separator byte
     private static final Type[] TYPES = Type.values();
 
     /**
@@ -30,7 +30,7 @@ public record GamePacket(Type type, String payload) {
      * @return the serialized string.
      */
     public String serialize() {
-        return type.ordinal() + US + payload;
+        return String.valueOf(type.ordinal()) + US + payload;
     }
 
     /**

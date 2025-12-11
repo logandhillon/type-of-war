@@ -5,11 +5,16 @@ import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.game.JoinGameMenu;
 import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.networking.GameClient;
+import com.logandhillon.typeofwar.networking.GameServer;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+
+import java.io.IOException;
+import java.net.ConnectException;
 
 /**
  * This is the main entrypoint for Type of War, handling low-level game engine code and GameScene management.
@@ -23,6 +28,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     private Stage     stage;
     private GameScene activeScene;
+    private GameServer server;
+    private GameClient client;
 
     public static ReadOnlyDoubleProperty WINDOW_WIDTH;
     public static ReadOnlyDoubleProperty WINDOW_HEIGHT;
@@ -73,5 +80,23 @@ public class TypeOfWar extends Application implements GameSceneManager {
     @Override
     public void goToMainMenu() {
         this.setScene(new MainMenuScene(this));
+    }
+
+    public void startServer() {
+        try {
+            new GameServer().start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void connectClient(String addr) {
+        try {
+            new GameClient(addr, 20670).connect();
+        } catch (ConnectException e) {
+            LOG.warn("Connection failed: {}", e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
