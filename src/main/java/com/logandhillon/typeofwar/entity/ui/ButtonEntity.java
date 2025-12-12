@@ -141,6 +141,7 @@ public class ButtonEntity extends Clickable {
      */
     public interface MouseEventHandler {
         void handle(MouseEvent e);
+
     }
 
     /**
