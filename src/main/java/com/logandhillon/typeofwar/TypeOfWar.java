@@ -1,11 +1,14 @@
 package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 /**
  * This is the main entrypoint for Type of War, handling low-level game engine code and GameScene management.
@@ -13,8 +16,9 @@ import javafx.stage.Stage;
  * @author Logan Dhillon
  * @see TypeOfWarScene
  */
-public class TypeOfWar extends Application {
-    public static final String GAME_NAME = "Type of War";
+public class TypeOfWar extends Application implements GameSceneManager {
+    public static final  String GAME_NAME = "Type of War";
+    private static final Logger LOG       = LoggerContext.getContext().getLogger(TypeOfWar.class);
 
     private Stage     stage;
     private GameScene activeScene;
@@ -38,9 +42,7 @@ public class TypeOfWar extends Application {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-        TypeOfWarScene game = new TypeOfWarScene();
-        MainMenuScene menu = new MainMenuScene(() -> setScene(game));
-        setScene(menu);
+        setScene(new MainMenuScene(this));
         stage.show();
     }
 
@@ -61,8 +63,14 @@ public class TypeOfWar extends Application {
      * @param scene the GameScene to switch
      */
     public void setScene(GameScene scene) {
-        if (activeScene != null) activeScene.discard();
+        LOG.info("Switching scene to {}", scene);
+        if (activeScene != null) activeScene.discard(stage.sceneProperty().get());
         stage.setScene(scene.build(stage));
         activeScene = scene;
+    }
+
+    @Override
+    public void goToMainMenu() {
+        this.setScene(new MainMenuScene(this));
     }
 }

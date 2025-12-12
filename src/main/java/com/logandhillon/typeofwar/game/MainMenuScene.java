@@ -1,11 +1,13 @@
 package com.logandhillon.typeofwar.game;
 
-import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.GameSceneManager;
+import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
+import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.MenuButton;
+import com.logandhillon.typeofwar.entity.ui.ModalEntity;
+import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -16,34 +18,35 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    public MainMenuScene(Runnable onPlay) {
-        int offsetY = 205;
-        int gapY = 48 + 16;
+    /**
+     * Creates a new main menu
+     *
+     * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
+     */
+    public MainMenuScene(GameSceneManager mgr) {
+        float x = 314;
+        int y = 205;
+        int dy = 48 + 16; // ∆y per button height
 
-        addEntity(new MenuButton(
-                "Host Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY, 256, 48, e -> onPlay.run()));
+        MenuController controller = new MenuController(
+                new MenuButton("Host Game", x, y, 256, 48, () -> mgr.setScene(new HostGameScene(mgr))),
+                new MenuButton("Join Game", x, y + dy, 256, 48, () -> mgr.setScene(new JoinGameScene(mgr))),
+                new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
+                new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
+                new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))
+        );
+        addEntity(controller);
 
-        addEntity(new MenuButton(
-                "Join Game", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + gapY, 256, 48, e -> onPlay.run()));
-
-        addEntity(new MenuButton(
-                "Settings", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 2 * gapY, 256, 48, this::doNothing));
-
-        addEntity(new MenuButton(
-                "Credits", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 3 * gapY, 256, 48, this::doNothing));
-
-        addEntity(new MenuButton(
-                "Quit", (WINDOW_HEIGHT.floatValue() + 256) / 2, offsetY + 4 * gapY, 256, 48, this::doNothing));
-    }
-
-    private void doNothing(MouseEvent e) {
-        // temp code :)
+        InputBoxEntity userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
+        addEntity(new ModalEntity(618, y, 348, 310,
+                                  userInput
+        ));
     }
 
     @Override
     protected void render(GraphicsContext g) {
         // background
-        g.setFill(Color.BLACK);
+        g.setFill(Colors.BG_WINNING);
         g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
 
         // render all other entities

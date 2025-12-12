@@ -22,8 +22,6 @@ public class ButtonEntity extends Clickable {
 
     private final String            label;
     private final MouseEventHandler clickHandler;
-    private final float             cx; // horizontal center
-    private final float             cy; // vertical center
 
     private MouseEventHandler mouseEnterHandler;
     private MouseEventHandler mouseLeaveHandler;
@@ -45,9 +43,6 @@ public class ButtonEntity extends Clickable {
         this.label = label;
         this.clickHandler = onClick;
         this.style = style;
-
-        this.cx = x + w / 2;
-        this.cy = y + h / 2;
     }
 
     /**
@@ -89,6 +84,8 @@ public class ButtonEntity extends Clickable {
      */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
+        float cx = x + w / 2;
+        float cy = (y + h / 2);
         // render button background
         if (style.variant == Variant.OUTLINE) {
             g.setStroke(style.buttonColor);
@@ -144,6 +141,7 @@ public class ButtonEntity extends Clickable {
      */
     public interface MouseEventHandler {
         void handle(MouseEvent e);
+
     }
 
     /**

@@ -4,7 +4,8 @@ import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.Clickable;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.HashMap;
 
@@ -18,21 +19,35 @@ import java.util.HashMap;
  * @see Clickable
  */
 public abstract class UIScene extends GameScene {
-    // list of all clickables and if they're currently active or not; where (true = is hovering)
-    private static final HashMap<Clickable, Boolean> CLICKABLES = new HashMap<>();
+    private static final Logger LOG = LoggerContext.getContext().getLogger(UIScene.class);
+
+    /** javaFX hitboxes are TERRIBLE and wrong, so this constant corrects the Y axis */
+    private static final int HITBOX_Y_CORRECTION = -13;
+
+    private final HashMap<Clickable, ClickableFlags> clickables       = new HashMap<>();
+    private       Clickable[]                        cachedClickables = new Clickable[0];
+
+    private static final class ClickableFlags {
+        private boolean isHovering = false;
+        private boolean isActive   = false;
+    }
 
     /**
-     * Binds the {@link Scene} mouse click handler to the game scene.
-     *
-     * @param scene the JavaFX scene (NOT GameScene!) from {@link GameScene#build(Stage)}
-     *
-     * @see UIScene#onUpdate(float)
+     * Creates a new UI scene and registers the mouse events.
      */
+    public UIScene() {
+        this.addHandler(MouseEvent.MOUSE_CLICKED, this::onMouseClicked);
+        this.addHandler(MouseEvent.MOUSE_MOVED, this::onMouseMoved);
+    }
+
     @Override
-    protected void onBuild(Scene scene) {
-        super.onBuild(scene);
-        scene.setOnMouseClicked(this::onMouseClicked);
-        scene.setOnMouseMoved(this::onMouseMoved);
+    public void discard(Scene scene) {
+        super.discard(scene);
+
+        // clear stored clickables to avoid memory leaks / stale state
+        for (Clickable c: clickables.keySet()) c.onDestroy();
+        clickables.clear();
+        cachedClickables = new Clickable[0];
     }
 
     /**
@@ -42,9 +57,12 @@ public abstract class UIScene extends GameScene {
      * @param e the entity or clickable to append.
      */
     @Override
-    protected void addEntity(Entity e) {
+    public void addEntity(Entity e) {
         super.addEntity(e);
-        if (e instanceof Clickable) CLICKABLES.put((Clickable)e, false);
+        if (e instanceof Clickable) clickables.put((Clickable)e, new ClickableFlags());
+        if (e instanceof Clickable) {
+            cachedClickables = clickables.keySet().toArray(new Clickable[0]);
+        }
     }
 
     /**
@@ -63,11 +81,24 @@ public abstract class UIScene extends GameScene {
         float x = (float)e.getX();
         float y = (float)e.getY();
 
-        for (Clickable c: CLICKABLES.keySet()) {
+        LOG.debug("{}: Handling mouse click event at ({}, {})", this.getClass().getSimpleName(), x, y);
+
+        for (Clickable c: cachedClickables) {
+            ClickableFlags flags = clickables.get(c);
+
+            // if there are no flags, this Clickable was unregistered (so skip it)
+            if (flags == null) continue;
+
             // if the mouse is within the hitbox of the clickable, trigger it's onClick event.
-            if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
-                y >= c.getY() && y <= c.getY() + c.getHeight()) {
+            if (checkHitbox(e, c)) {
+                LOG.debug("Click event sent to {} (Clickable)", c.toString());
                 c.onClick(e);
+                flags.isActive = true;
+            }
+            // if outside the hitbox and the clickable is "active"
+            else if (flags.isActive) {
+                c.onBlur(e);
+                flags.isActive = false;
             }
         }
     }
@@ -87,25 +118,33 @@ public abstract class UIScene extends GameScene {
      * @see Clickable#onMouseLeave(MouseEvent)
      */
     protected void onMouseMoved(MouseEvent e) {
-        float x = (float)e.getX();
-        float y = (float)e.getY();
+        for (Clickable c: cachedClickables) {
+            ClickableFlags flags = clickables.get(c);
 
-        for (Clickable c: CLICKABLES.keySet()) {
             // if the mouse is within the hitbox of the clickable
-            if (x >= c.getX() && x <= c.getX() + c.getWidth() &&
-                y >= c.getY() && y <= c.getY() + c.getHeight() &&
-                !CLICKABLES.get(c) /* and clickable is not currently active */) {
+            if (checkHitbox(e, c) && !flags.isHovering) {
                 c.onMouseEnter(e);
-                CLICKABLES.put(c, true); // mark as active
+                flags.isHovering = true; // mark as active
             }
 
             // if mouse is outside clickable hitbox
-            else if ((x < c.getX() || x > c.getX() + c.getWidth() ||
-                      y < c.getY() || y > c.getY() + c.getHeight()
-                     ) && CLICKABLES.get(c) /* and clickable is currently active */) {
+            else if (!checkHitbox(e, c) && flags.isHovering) {
                 c.onMouseLeave(e);
-                CLICKABLES.put(c, false); // mark as not active
+                flags.isHovering = false; // mark as not active
             }
         }
+    }
+
+    /**
+     * Checks the hitbox of the given clickable and sees if the mouse (from event) is in the hitbox of it.
+     *
+     * @param e the mouseevent
+     * @param c the clickable to check against
+     *
+     * @return true if the cursor is inside the clickable.
+     */
+    private boolean checkHitbox(MouseEvent e, Clickable c) {
+        return e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() &&
+               e.getY() >= c.getY() + HITBOX_Y_CORRECTION && e.getY() <= c.getY() + HITBOX_Y_CORRECTION + c.getHeight();
     }
 }
