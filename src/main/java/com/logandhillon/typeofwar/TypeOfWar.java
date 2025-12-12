@@ -88,6 +88,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
     @Override
     public void goToMainMenu() {
         this.setScene(new MainMenuScene(this));
+        terminateClient();
+        terminateServer();
     }
 
     /**
@@ -145,6 +147,23 @@ public class TypeOfWar extends Application implements GameSceneManager {
             LOG.error("Failed to close socket during termination", e);
         }
         client = null;
+    }
+
+    /**
+     * Stops the server and nullifies the pointer.
+     */
+    private void terminateServer() {
+        if (server == null) {
+            LOG.warn("Server does not exist, skipping termination");
+            return;
+        }
+
+        try {
+            server.stop();
+        } catch (IOException e) {
+            LOG.error("Failed to close socket during termination", e);
+        }
+        server = null;
     }
 
     /**
