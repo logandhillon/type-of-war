@@ -122,17 +122,16 @@ public class GameClient {
 
                 var lobby = new LobbyGameScene(game, data.getName(), false);
                 for (var p: data.getTeam1List())
-                    lobby.addPlayer(
-                            p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
+                    lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
                 for (var p: data.getTeam2List())
-                    lobby.addPlayer(
-                            p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
+                    lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
 
                 // run setScene on the FX thread
                 Platform.runLater(() -> game.setScene(lobby));
             }
             case SRV_DENY_CONN__USERNAME_TAKEN, SRV_DENY_CONN__FULL -> {
                 LOG.error("Failed to join: {}", packet.type());
+                Platform.runLater(() -> game.showAlert("Failed to join server", "Could not " + host + ": " + packet.type().name()));
                 this.close();
             }
         }

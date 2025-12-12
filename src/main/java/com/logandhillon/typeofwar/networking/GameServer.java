@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * A game server handles all outgoing communications to {@link GameClient}s via a valid network connection.
@@ -113,7 +114,7 @@ public class GameServer implements Runnable {
 
             try (client;
                  var out = new PacketWriter(client.getOutputStream());
-                 DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
+                 DataInputStream dataInputStream = new DataInputStream(client.getInputStream())
             ) {
                 while (true) {
                     int length;
@@ -187,15 +188,19 @@ public class GameServer implements Runnable {
                 registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, 1));
 
                 // get the players on each team...
-                var team1 = registeredClients.values().stream()
-                                             .filter(d -> d.team == 1)
-                                             .map(d -> PlayerProto.PlayerData.newBuilder()
-                                                                             .setName(d.name)
-                                                                             .setR((int)d.color.getRed() * 255)
-                                                                             .setG((int)d.color.getRed() * 255)
-                                                                             .setB((int)d.color.getRed() * 255)
-                                                                             .build()
-                                             ).toList();
+                var team1 = Stream.concat(
+                        registeredClients.values().stream()
+                                         .filter(d -> d.team == 1)
+                                         .map(d -> PlayerProto.PlayerData.newBuilder()
+                                                                         .setName(d.name)
+                                                                         .setR((int)d.color.getRed() * 255)
+                                                                         .setG((int)d.color.getRed() * 255)
+                                                                         .setB((int)d.color.getRed() * 255)
+                                                                         .build()
+                                         ),
+                        // hardcode the server owner in the list, as they are not going to be in the client list
+                        Stream.of(PlayerProto.PlayerData.newBuilder().setName("You").setR(255).setG(0).setB(0).build())
+                ).toList();
 
                 var team2 = registeredClients.values().stream()
                                              .filter(d -> d.team == 2)
