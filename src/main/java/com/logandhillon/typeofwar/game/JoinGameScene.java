@@ -39,6 +39,7 @@ public class JoinGameScene extends UIScene {
     private ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
     private int scrollServerIndex = 0;
     private int currentServerIndex;
+    private int rawCurrentServerIndex;
 
     // TODO: temp code, this will be filled in with the actual server list later.
     private final ArrayList<ServerEntry> serverList = new ArrayList<>();
@@ -122,6 +123,9 @@ public class JoinGameScene extends UIScene {
                 serverButtons[finalI].setActive(true, true);
                 currentServer.set(finalI);
                 currentServerIndex = finalI;
+                rawCurrentServerIndex = finalI;
+                System.out.println(currentServerIndex + "c");
+                System.out.println(rawCurrentServerIndex + "r");
                 for (int j = 0; j < serverButtons.length; j++) {
                     if (currentServer.get() != j) {
                         serverButtons[j].setActive(false, false);
@@ -164,33 +168,58 @@ public class JoinGameScene extends UIScene {
         if(e.getCode() != KeyCode.UP && e.getCode() != KeyCode.DOWN) return;
 
         // incr/decr the 4 shown servers
-        // TODO: dont let the user scroll out of bounds
+
         if(e.getCode() == KeyCode.UP) {
             if(scrollServerIndex > 0) {
+                rawCurrentServerIndex++;
                 for(int i = 0; i < array.length; i++) {
                     array[i].setActive(false, false);
                 }
-                if (currentServerIndex < array.length) { // FIXME: Current server index going off-screen
+                if (currentServerIndex < array.length - 1 && rawCurrentServerIndex > 0) {
                     currentServerIndex++;
                     array[currentServerIndex].setActive(true, true);
+                }
+                if (currentServerIndex == 0) {
+                    if(rawCurrentServerIndex < -1) {
+                        for (int i = 0; i < array.length; i++) {
+                            array[i].setActive(false, false);
+                        }
+                    }
+                    if (rawCurrentServerIndex > -1){
+                        currentServerIndex = 0;
+                        array[0].setActive(true, true);
+                    }
                 }
                 scrollServerIndex--;
             }
         }
         if(e.getCode() == KeyCode.DOWN){
             if(scrollServerIndex < serverList.toArray().length - array.length) {
+                rawCurrentServerIndex--;
                 for(int i = 0; i < array.length; i++) {
                     array[i].setActive(false, false);
                 }
-                if (currentServerIndex > 0) {
+                if (currentServerIndex > 0 && rawCurrentServerIndex < array.length - 1) {
                     currentServerIndex--;
                     array[currentServerIndex].setActive(true, true);
+                }
+                if (currentServerIndex == array.length - 1) {
+                    if (rawCurrentServerIndex > array.length) {
+                        for (int i = 0; i < array.length; i++) {
+                            array[i].setActive(false, false);
+                        }
+                    }
+                    if (rawCurrentServerIndex < array.length) {
+                        currentServerIndex = array.length - 1;
+                        array[array.length - 1].setActive(true, true);
+                    }
                 }
                 scrollServerIndex++;
 
             }
         }
-        System.out.println(currentServerIndex);
+        System.out.println(currentServerIndex + "c");
+        System.out.println(rawCurrentServerIndex + "r");
 
         // now that index has changed, re-populate the server list
         for(int i = 0; i < array.length; i++){
