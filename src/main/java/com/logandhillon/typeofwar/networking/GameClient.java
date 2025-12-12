@@ -3,6 +3,7 @@ package com.logandhillon.typeofwar.networking;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
+import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -127,7 +128,8 @@ public class GameClient {
                     lobby.addPlayer(
                             p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
 
-                game.setScene(lobby);
+                // run setScene on the FX thread
+                Platform.runLater(() -> game.setScene(lobby));
             }
             case SRV_DENY_CONN__USERNAME_TAKEN, SRV_DENY_CONN__FULL -> {
                 LOG.error("Failed to join: {}", packet.type());
