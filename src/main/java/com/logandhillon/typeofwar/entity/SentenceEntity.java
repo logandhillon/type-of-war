@@ -43,7 +43,6 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
     AudioClip correct = new AudioClip(SentenceEntity.class.getResource("/sound/click_1.wav").toExternalForm());
     AudioClip incorrect = new AudioClip(SentenceEntity.class.getResource("/sound/error_1.wav").toExternalForm());
-
     /**
      * Creates a new SentenceEntity at the provided coordinates.
      *
@@ -200,6 +199,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         if (c.equals(" ")) {
             if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
                 currentWord++; // increment word counter LAST so we can do statistics checks
+                correct.setVolume(1.2);
                 correct.play();
             }
         }
@@ -214,6 +214,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 correct.play();
             } else {
                 // if not correct
+                incorrect.setVolume(2.0);
                 incorrect.play();
             }
         }

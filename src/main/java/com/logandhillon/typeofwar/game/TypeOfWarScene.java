@@ -5,15 +5,21 @@ import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.entity.RopeEntity;
 import com.logandhillon.typeofwar.entity.SentenceEntity;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+import javafx.scene.media.AudioClip;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
 import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
+
+
 
 /**
  * The main game loop for Type of War.
@@ -89,5 +95,25 @@ public class TypeOfWarScene extends GameScene {
     public void onTypingFinished() {
         LOG.info("Typing finished, closing session");
         stats.finishSession();
+    }
+
+    @Override
+    public Scene build(Stage stage) {
+        AudioClip bgMusic = new AudioClip(SentenceEntity.class.getResource("/sound/bgMusic1.wav").toExternalForm());
+        bgMusic.setVolume(0.3);
+        bgMusic.play();
+        return super.build(stage);
+
+        // start music
+
+    }
+
+    @Override
+    public void discard(Scene scene) {
+        AudioClip bgMusic = new AudioClip(SentenceEntity.class.getResource("/sound/bgMusic1.wav").toExternalForm());
+        bgMusic.stop();
+        super.discard(scene);
+
+        // stop music
     }
 }
