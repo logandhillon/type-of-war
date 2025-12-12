@@ -11,3 +11,9 @@ message PlayerData {
   uint32 g = 3;
   uint32 b = 4;
 }
+
+message Lobby {
+  string name = 1;
+  repeated PlayerData team1 = 2;
+  repeated PlayerData team2 = 3;
+}

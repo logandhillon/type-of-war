@@ -124,13 +124,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
     public void joinGame(String serverAddress) {
         LOG.info("Attempting to join game at {}", serverAddress);
 
-        var lobby = new LobbyGameScene(this, "...", false);
-        setScene(lobby);
-
         if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
 
         try {
-            client = new GameClient(serverAddress, 20670);
+            client = new GameClient(serverAddress, 20670, this);
             client.connect();
         } catch (ConnectException e) {
             terminateClient();

@@ -38,8 +38,10 @@ public class GameServer implements Runnable {
     /** the list of ALL active client connections, including unregistered ones. */
     private final Set<Socket> clients = Collections.synchronizedSet(new HashSet<>());
 
-    /** list of all REGISTERED client connections; maps socket to username */
-    private final HashMap<Socket, String> registeredClients = new HashMap<>();
+    /** list of all REGISTERED client connections; maps socket to name */
+    private final HashMap<Socket, ConnectionDetails> registeredClients = new HashMap<>();
+
+    private record ConnectionDetails(String name, Color color, int team) {}
 
     public GameServer(TypeOfWar game) {
         this.game = game;
@@ -110,9 +112,9 @@ public class GameServer implements Runnable {
             clients.add(client);
 
             try (client;
-                 var out = new PacketWriter(client.getOutputStream())
+                 var out = new PacketWriter(client.getOutputStream());
+                 DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
             ) {
-                DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
                 while (true) {
                     int length;
                     try {
@@ -146,6 +148,8 @@ public class GameServer implements Runnable {
     private void parseRequest(Socket client, GamePacket packet, PacketWriter out) {
         if (packet == null) return;
 
+        LOG.debug("Received {} from {}", packet.type(), client.getInetAddress());
+
         try {
             switch (packet.type()) {
                 case CLT_REQ_CONN -> handleClientRegistration(client, packet, out);
@@ -162,12 +166,12 @@ public class GameServer implements Runnable {
     private void handleClientRegistration(Socket client, GamePacket packet, PacketWriter out) throws IOException {
         try {
             if (registeredClients.size() < MAX_CONNECTIONS) {
-                PlayerProto.PlayerData playerData = PlayerProto.PlayerData.parseFrom(packet.payload());
+                PlayerProto.PlayerData pkt = PlayerProto.PlayerData.parseFrom(packet.payload());
 
-                // check if username is already used
-                if (registeredClients.containsValue(playerData.getName())) {
+                // check if name is already used
+                if (registeredClients.values().stream().anyMatch(p -> p.name.equals(pkt.getName()))) {
                     LOG.info(
-                            "Denying connection from {} (username '{}' in use)", client.getInetAddress(),
+                            "Denying connection from {} (name '{}' in use)", client.getInetAddress(),
                             packet.payload());
                     out.send(GamePacket.Type.SRV_DENY_CONN__USERNAME_TAKEN);
                     client.close();
@@ -178,10 +182,41 @@ public class GameServer implements Runnable {
                 var lobby = game.getActiveScene(LobbyGameScene.class);
 
                 // all good now! register the client
-                out.send(GamePacket.Type.SRV_ALLOW_CONN);
+                Color color = Color.rgb(pkt.getR(), pkt.getG(), pkt.getB());
+                lobby.addPlayer(pkt.getName(), color, 1); // TODO: send player color in join packet
+                registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, 1));
 
-                // finally, add the new player to the lobby
-                lobby.addPlayer(playerData.getName(), Color.rgb(playerData.getR(), playerData.getG(), playerData.getB()), 1); // TODO: send player color in join packet
+                // get the players on each team...
+                var team1 = registeredClients.values().stream()
+                                             .filter(d -> d.team == 1)
+                                             .map(d -> PlayerProto.PlayerData.newBuilder()
+                                                                             .setName(d.name)
+                                                                             .setR((int)d.color.getRed() * 255)
+                                                                             .setG((int)d.color.getRed() * 255)
+                                                                             .setB((int)d.color.getRed() * 255)
+                                                                             .build()
+                                             ).toList();
+
+                var team2 = registeredClients.values().stream()
+                                             .filter(d -> d.team == 2)
+                                             .map(d -> PlayerProto.PlayerData.newBuilder()
+                                                                             .setName(d.name)
+                                                                             .setR((int)d.color.getRed() * 255)
+                                                                             .setG((int)d.color.getRed() * 255)
+                                                                             .setB((int)d.color.getRed() * 255)
+                                                                             .build()
+                                             ).toList();
+
+                // ... and send them to the client
+                out.send(new GamePacket(
+                        GamePacket.Type.SRV_ALLOW_CONN,
+                        PlayerProto.Lobby.newBuilder()
+                                         .setName(lobby.getRoomName())
+                                         .addAllTeam1(team1)
+                                         .addAllTeam2(team2)
+                                         .build()));
+
+                LOG.info("Registered new client '{}' at {}!", pkt.getName(), client.getInetAddress());
             }
 
             // check if srv is full

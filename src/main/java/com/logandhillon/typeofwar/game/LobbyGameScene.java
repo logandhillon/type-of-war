@@ -33,6 +33,7 @@ public class LobbyGameScene extends UIScene {
     private static final float  ENTITY_GAP = 48;
 
     private final LabeledModalEntity lobbyModal;
+    private final String roomName;
 
     private float dyTeam1;
     private float dyTeam2;
@@ -43,6 +44,7 @@ public class LobbyGameScene extends UIScene {
      * @param isHosting determines if the user is the host of the given lobby or not
      */
     public LobbyGameScene(TypeOfWar mgr, String roomName, boolean isHosting) {
+        this.roomName = roomName;
 
         // containers for each team
         PlayerContainer leftContainer = new PlayerContainer(16, 47, 257, 206);
@@ -180,6 +182,10 @@ public class LobbyGameScene extends UIScene {
         public void onDestroy() {
 
         }
+    }
+
+    public String getRoomName() {
+        return roomName;
     }
 }
 

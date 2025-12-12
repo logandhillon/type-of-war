@@ -1,6 +1,9 @@
 package com.logandhillon.typeofwar.networking;
 
+import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
+import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
@@ -20,8 +23,9 @@ import java.net.Socket;
 public class GameClient {
     private static final Logger LOG = LoggerContext.getContext().getLogger(GameClient.class);
 
-    private final String host;
-    private final int    port;
+    private final String    host;
+    private final int       port;
+    private final TypeOfWar game;
 
     private Socket           socket;
     private DataInputStream  in;
@@ -38,9 +42,10 @@ public class GameClient {
      *
      * @see GameClient#connect()
      */
-    public GameClient(String host, int port) {
+    public GameClient(String host, int port, TypeOfWar game) {
         this.host = host;
         this.port = port;
+        this.game = game;
 
         isRegistered = false;
     }
@@ -79,7 +84,16 @@ public class GameClient {
     private void readLoop() {
         try {
             while (true) {
-                int length = in.readInt();
+                int length;
+                try {
+                    length = in.readInt();
+                } catch (IOException e) {
+                    break; // client disconnected or stream closed
+                }
+                if (length <= 0) {
+                    LOG.warn("Received invalid packet length {} from SERVER", length);
+                    break;
+                }
                 byte[] data = new byte[length];
                 in.readFully(data);
                 parseResponse(GamePacket.deserialize(data));
@@ -96,10 +110,22 @@ public class GameClient {
     private void parseResponse(GamePacket packet) throws IOException {
         if (packet == null) return;
 
+        // FIXME: client never gets this!!! hahahahahhahHhahahahhahAHHAHAHHAHAHAHAAAHA WHY DOESNT IT WORK ?????? KJSHKJDHALKSJHAKJSGKUSYDI@GIALKJALSJKHSDLKJSLKFDJALKSJ
+        LOG.debug("Received {} from SERVER", packet.type());
+
         switch (packet.type()) {
             case SRV_ALLOW_CONN -> {
                 isRegistered = true;
                 LOG.info("Successfully registered with remote server");
+
+                var data = PlayerProto.Lobby.parseFrom(packet.payload());
+
+                var lobby = new LobbyGameScene(game, data.getName(), false);
+                for (var p: data.getTeam1List()) lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
+                for (var p: data.getTeam2List()) lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
+
+                game.setScene(lobby);
+
             }
             case SRV_DENY_CONN__USERNAME_TAKEN, SRV_DENY_CONN__FULL -> {
                 LOG.error("Failed to join: {}", packet.type());
