@@ -154,6 +154,7 @@ public class InputBoxEntity extends Clickable {
      *
      * @param input the text to fill the new input buffer with
      */
+
     public void setInput(String input) {
         this.input = new StringBuilder(input);
     }
