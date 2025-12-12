@@ -44,6 +44,9 @@ public class TypeOfWar extends Application implements GameSceneManager {
      */
     @Override
     public void start(Stage stage) {
+        // rename thread to shorten logs
+        Thread.currentThread().setName("FX");
+
         this.stage = stage;
 
         stage.setTitle(GAME_NAME);
