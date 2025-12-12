@@ -1,7 +1,10 @@
 package com.logandhillon.typeofwar.networking;
 
+import com.google.protobuf.Message;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * A packet to send between the server or client that contains game-related networking data.
@@ -11,7 +14,7 @@ import org.apache.logging.log4j.core.LoggerContext;
  *
  * @author Logan Dhillon
  */
-public record GamePacket(Type type, String payload) {
+public record GamePacket(Type type, byte[] payload) {
     private static final Logger LOG   = LoggerContext.getContext().getLogger(GamePacket.class);
     private static final char   US    = (char)31; // unit separator byte
     private static final Type[] TYPES = Type.values();
@@ -22,7 +25,15 @@ public record GamePacket(Type type, String payload) {
      * @param type the type of packet to send.
      */
     public GamePacket(Type type) {
-        this(type, "");
+        this(type, new byte[0]);
+    }
+
+    public GamePacket(Type type, String payload) {
+        this(type, payload.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public GamePacket(Type type, Message proto) {
+        this(type, proto.toByteArray()); // TODO: make this turn seriable into bytes
     }
 
     /**
@@ -38,28 +49,64 @@ public record GamePacket(Type type, String payload) {
     }
 
     /**
-     * Turns this packet into a string that can be sent.
+     * Turns this packet into a length-prefixed byte array that can be sent.
+     * <p>
+     * Format: [4-byte payload length][1-byte type][payload bytes]
      *
-     * @return the serialized string.
+     * @return the serialized byte array.
      */
-    public String serialize() {
-        return String.valueOf(type.ordinal()) + US + payload;
+    public byte[] serialize() {
+        int totalLength = 4 + 1 + payload.length; // 4 bytes for length, 1 for type
+        byte[] out = new byte[totalLength];
+
+        // write length of the payload (1 byte type + payload)
+        int payloadLength = 1 + payload.length;
+        out[0] = (byte)((payloadLength >> 24) & 0xFF);
+        out[1] = (byte)((payloadLength >> 16) & 0xFF);
+        out[2] = (byte)((payloadLength >> 8) & 0xFF);
+        out[3] = (byte)(payloadLength & 0xFF);
+
+        // write type
+        out[4] = (byte)type.ordinal();
+
+        // write payload
+        System.arraycopy(payload, 0, out, 5, payload.length);
+
+        return out;
     }
 
     /**
-     * Deserializes a raw string to a {@link GamePacket}.
+     * Deserializes a length-prefixed byte array to a {@link GamePacket}.
      *
-     * @param packet the raw packet content as a string
+     * @param data the raw packet content as a byte array
      *
      * @return the deserialized game packet
      */
-    public static GamePacket deserialize(String packet) {
-        String[] parts = packet.split(String.valueOf(US), 2);
-        int type = Integer.parseInt(parts[0]);
-        if (type >= TYPES.length) {
-            LOG.warn("Failed to deserialize packet, TYPE {} does not exist", type);
+    public static GamePacket deserialize(byte[] data) {
+        if (data.length < 5) {
+            LOG.warn("Failed to deserialize packet: not enough data");
             return null;
         }
-        return new GamePacket(TYPES[type], parts[1]);
+
+        // read payload length
+        int payloadLength = ((data[0] & 0xFF) << 24) |
+                            ((data[1] & 0xFF) << 16) |
+                            ((data[2] & 0xFF) << 8) |
+                            (data[3] & 0xFF);
+
+        if (payloadLength != data.length - 4) {
+            LOG.warn("Failed to deserialize packet: length mismatch");
+            return null;
+        }
+
+        int typeIndex = data[4];
+        if (typeIndex < 0 || typeIndex >= TYPES.length) {
+            LOG.warn("Failed to deserialize packet, TYPE {} does not exist", typeIndex);
+            return null;
+        }
+
+        byte[] payload = new byte[payloadLength - 1];
+        System.arraycopy(data, 5, payload, 0, payload.length);
+        return new GamePacket(TYPES[typeIndex], payload);
     }
 }

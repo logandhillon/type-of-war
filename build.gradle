@@ -4,6 +4,7 @@ plugins {
   id 'org.javamodularity.moduleplugin' version '1.8.12'
   id 'org.openjfx.javafxplugin' version '0.0.13'
   id 'org.beryx.jlink' version '2.25.0'
+  id "com.google.protobuf" version "0.9.5"
 }
 
 group 'com.logandhillon'
@@ -45,6 +46,15 @@ dependencies {
 
   // log4j
   implementation("org.apache.logging.log4j:log4j-core:2.25.2")
+
+  // protobuf
+  implementation('com.google.protobuf:protobuf-java:4.28.2')
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.24.1"
+    }
 }
 
 test {

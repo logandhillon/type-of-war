@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "com.logandhillon.typeofwar.networking.proto";
+option java_outer_classname = "PlayerProto";
+
+message PlayerData {
+  string name = 1;
+
+  // player color
+  uint32 r = 2;
+  uint32 g = 3;
+  uint32 b = 4;
+}

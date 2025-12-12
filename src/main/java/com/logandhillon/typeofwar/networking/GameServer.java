@@ -3,13 +3,13 @@ package com.logandhillon.typeofwar.networking;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
+import com.logandhillon.typeofwar.networking.proto.PlayerProto;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collections;
@@ -110,11 +110,24 @@ public class GameServer implements Runnable {
             clients.add(client);
 
             try (client;
-                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                  var out = new PacketWriter(client.getOutputStream())
             ) {
-                String line;
-                while ((line = in.readLine()) != null) parseRequest(client, GamePacket.deserialize(line), out);
+                DataInputStream dataInputStream = new DataInputStream(client.getInputStream());
+                while (true) {
+                    int length;
+                    try {
+                        length = dataInputStream.readInt();
+                    } catch (IOException e) {
+                        break; // client disconnected or stream closed
+                    }
+                    if (length <= 0) {
+                        LOG.warn("Received invalid packet length {} from {}", length, client.getInetAddress());
+                        break;
+                    }
+                    byte[] data = new byte[length];
+                    dataInputStream.readFully(data);
+                    parseRequest(client, GamePacket.deserialize(data), out);
+                }
             } catch (IOException e) {
                 LOG.error(e);
             } finally {
@@ -149,8 +162,10 @@ public class GameServer implements Runnable {
     private void handleClientRegistration(Socket client, GamePacket packet, PacketWriter out) throws IOException {
         try {
             if (registeredClients.size() < MAX_CONNECTIONS) {
+                PlayerProto.PlayerData playerData = PlayerProto.PlayerData.parseFrom(packet.payload());
+
                 // check if username is already used
-                if (registeredClients.containsValue(packet.payload())) {
+                if (registeredClients.containsValue(playerData.getName())) {
                     LOG.info(
                             "Denying connection from {} (username '{}' in use)", client.getInetAddress(),
                             packet.payload());
@@ -163,12 +178,10 @@ public class GameServer implements Runnable {
                 var lobby = game.getActiveScene(LobbyGameScene.class);
 
                 // all good now! register the client
-                LOG.info("Registering new client named '{}' at {}", packet.payload(), client.getInetAddress());
                 out.send(GamePacket.Type.SRV_ALLOW_CONN);
-                registeredClients.put(client, packet.payload());
 
                 // finally, add the new player to the lobby
-                lobby.addPlayer(packet.payload(), Color.RED, 1); // TODO: send player color in join packet
+                lobby.addPlayer(playerData.getName(), Color.rgb(playerData.getR(), playerData.getG(), playerData.getB()), 1); // TODO: send player color in join packet
             }
 
             // check if srv is full

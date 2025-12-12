@@ -104,7 +104,16 @@ public class TypeOfWar extends Application implements GameSceneManager {
         lobby.addPlayer("You", Color.DEEPSKYBLUE, 1);
         setScene(lobby);
 
-        startServer();
+        if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
+
+        server = new GameServer(this);
+        try {
+            server.start();
+        } catch (IOException e) {
+            LOG.error("Failed to start server", e);
+        }
+
+
     }
 
     /**
@@ -164,20 +173,6 @@ public class TypeOfWar extends Application implements GameSceneManager {
             LOG.error("Failed to close socket during termination", e);
         }
         server = null;
-    }
-
-    /**
-     * Starts the server thread and server acceptor immediately.
-     */
-    private void startServer() {
-        if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
-
-        try {
-            server = new GameServer(this);
-            server.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
