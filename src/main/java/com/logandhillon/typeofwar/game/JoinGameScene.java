@@ -37,7 +37,7 @@ public class JoinGameScene extends UIScene {
 
 
     private ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
-    private int scrollServerIndex = 0;
+    private int scrollServerIndex;
     private int currentServerIndex;
     private int rawCurrentServerIndex;
 
@@ -102,12 +102,12 @@ public class JoinGameScene extends UIScene {
         // join server input field
         InputBoxEntity joinServer = new InputBoxEntity(16, 47, 379, "ex. 192.168.0.1", "JOIN A SERVER DIRECTLY", 39);
 
-        // join button
+        // join button (direct)
         DarkMenuButton joinDirectButton = new DarkMenuButton("JOIN",407, 47,139, 50, ()->{
             //TODO #6: Make this join server
         });
 
-        // join
+        // join button (discovery)
         DarkMenuButton joinDiscoverButton = new DarkMenuButton("JOIN", 16, 396, 530, 48, ()-> {
            // TODO #6: Make this join server
         });
@@ -119,13 +119,18 @@ public class JoinGameScene extends UIScene {
 
         for(int i = 0; i < serverButtons.length; i++) {
             int finalI = i;
+            // set new server button with available information
             serverButtons[i] = new ServerEntryEntity(32, 231 + (ENTITY_GAP * i), 498, 37, serverList.get(i).name, serverList.get(i).address,serverList.get(i).ping, ()-> {
+                // runnable (runs on click)
+
+                // highlight button
                 serverButtons[finalI].setActive(true, true);
                 currentServer.set(finalI);
+
                 currentServerIndex = finalI;
                 rawCurrentServerIndex = finalI;
-                System.out.println(currentServerIndex + "c");
-                System.out.println(rawCurrentServerIndex + "r");
+
+                // reset button highlight for non-clicked buttons
                 for (int j = 0; j < serverButtons.length; j++) {
                     if (currentServer.get() != j) {
                         serverButtons[j].setActive(false, false);
@@ -134,6 +139,8 @@ public class JoinGameScene extends UIScene {
             });
             joinModal.addEntity(serverButtons[i]);
         }
+
+        // create event handler that uses the event and the array of buttons
         this.addHandler(KeyEvent.KEY_PRESSED, e->onKeyPressed(e, serverButtons));
     }
 
@@ -163,44 +170,60 @@ public class JoinGameScene extends UIScene {
      */
     public record ServerEntry(String name, String address, int ping) {}
 
+
+    /**
+     *
+     * @param e any key event registered by javafx
+     * @param array list of buttons on screen
+     */
     private void onKeyPressed(KeyEvent e, ServerEntryEntity[] array){
 
         if(e.getCode() != KeyCode.UP && e.getCode() != KeyCode.DOWN) return;
 
-        // incr/decr the 4 shown servers
+        // increment/decrement the 4 shown servers
 
         if(e.getCode() == KeyCode.UP) {
             if(scrollServerIndex > 0) {
                 rawCurrentServerIndex++;
+                // un-highlight all buttons
                 for(int i = 0; i < array.length; i++) {
                     array[i].setActive(false, false);
                 }
                 if (currentServerIndex < array.length - 1 && rawCurrentServerIndex > 0) {
                     currentServerIndex++;
+                    // re-highlight button if it isn't still off-screen
                     array[currentServerIndex].setActive(true, true);
                 }
+
+
                 if (currentServerIndex == 0) {
                     if(rawCurrentServerIndex < -1) {
+                        // un-highlight all buttons if the selected button is not in the array
                         for (int i = 0; i < array.length; i++) {
                             array[i].setActive(false, false);
                         }
                     }
+                    // if the button was put back in the array by moving up, put it at the start
                     if (rawCurrentServerIndex > -1){
                         currentServerIndex = 0;
                         array[0].setActive(true, true);
                     }
                 }
+                // increments entire list of shown servers
                 scrollServerIndex--;
             }
         }
         if(e.getCode() == KeyCode.DOWN){
             if(scrollServerIndex < serverList.toArray().length - array.length) {
+                // opposite to KeyCode.UP, the index of the current button must decrease when down arrow is pressed
                 rawCurrentServerIndex--;
                 for(int i = 0; i < array.length; i++) {
                     array[i].setActive(false, false);
                 }
+
                 if (currentServerIndex > 0 && rawCurrentServerIndex < array.length - 1) {
                     currentServerIndex--;
+
                     array[currentServerIndex].setActive(true, true);
                 }
                 if (currentServerIndex == array.length - 1) {
@@ -214,12 +237,11 @@ public class JoinGameScene extends UIScene {
                         array[array.length - 1].setActive(true, true);
                     }
                 }
+                // decrements entire list of shown servers
                 scrollServerIndex++;
 
             }
         }
-        System.out.println(currentServerIndex + "c");
-        System.out.println(rawCurrentServerIndex + "r");
 
         // now that index has changed, re-populate the server list
         for(int i = 0; i < array.length; i++){
