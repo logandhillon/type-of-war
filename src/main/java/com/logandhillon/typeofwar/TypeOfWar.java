@@ -5,6 +5,7 @@ import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.MainMenuScene;
+import com.logandhillon.typeofwar.game.MenuAlertScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.GameClient;
 import com.logandhillon.typeofwar.networking.GameServer;
@@ -104,7 +105,19 @@ public class TypeOfWar extends Application implements GameSceneManager {
         startServer();
     }
 
-    public void startServer() {
+    public void joinGame(String serverAddress) {
+        LOG.info("Attempting to join game at {}", serverAddress);
+
+        var lobby = new LobbyGameScene(this, "...", false);
+        setScene(lobby);
+
+        connectClient(serverAddress);
+    }
+
+    /**
+     * Starts the server thread and server acceptor immediately.
+     */
+    private void startServer() {
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
 
         try {
@@ -115,7 +128,12 @@ public class TypeOfWar extends Application implements GameSceneManager {
         }
     }
 
-    public void connectClient(String addr) {
+    /**
+     * Immediately tries to connect to a remote server by creating a {@link GameClient} bound to it.
+     *
+     * @param addr the server address (IP or FQDN), not including port
+     */
+    private void connectClient(String addr) {
         if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
 
         try {
@@ -126,6 +144,13 @@ public class TypeOfWar extends Application implements GameSceneManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Discards the current scene and shows a new {@link MenuAlertScene} with the provided alert details.
+     */
+    public void showAlert(String title, String message) {
+        setScene(new MenuAlertScene(title, message, this));
     }
 
     /**
