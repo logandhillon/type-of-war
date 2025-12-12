@@ -1,7 +1,11 @@
 package com.logandhillon.typeofwar.networking;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 /**
@@ -15,7 +19,9 @@ import java.io.PrintWriter;
  * @author Logan Dhillon
  */
 public class PacketWriter implements AutoCloseable {
-    private final PrintWriter writer;
+    private static final Logger LOG = LoggerContext.getContext().getLogger(PacketWriter.class);
+
+    private final DataOutputStream out;
 
     /**
      * Creates the internal print writer from an output stream
@@ -23,7 +29,7 @@ public class PacketWriter implements AutoCloseable {
      * @param out the output stream to write to
      */
     public PacketWriter(OutputStream out) {
-        this.writer = new PrintWriter(new OutputStreamWriter(out));
+        this.out = new DataOutputStream(out);
     }
 
     /**
@@ -32,8 +38,16 @@ public class PacketWriter implements AutoCloseable {
      * @param packet the {@link GamePacket} to send.
      */
     public void send(GamePacket packet) {
-        writer.println(packet.serialize());
-        writer.flush();
+        LOG.debug("Sending {} packet", packet.type());
+
+        try {
+            byte[] data = packet.serialize();
+            out.writeInt(data.length);
+            out.write(data);
+            out.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -50,6 +64,10 @@ public class PacketWriter implements AutoCloseable {
      */
     @Override
     public void close() {
-        writer.close();
+        try {
+            out.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

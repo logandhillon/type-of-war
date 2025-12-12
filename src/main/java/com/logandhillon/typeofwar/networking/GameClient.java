@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -27,9 +26,9 @@ public class GameClient {
     private final int       port;
     private final TypeOfWar game;
 
-    private Socket           socket;
-    private DataInputStream  in;
-    private DataOutputStream out;
+    private Socket          socket;
+    private DataInputStream in;
+    private PacketWriter    out;
 
     /** if this client is registered with a remote server */
     private boolean isRegistered;
@@ -62,10 +61,10 @@ public class GameClient {
 
         // setup remote IO
         in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
+        out = new PacketWriter(socket.getOutputStream());
 
         // ask to connect
-        send(new GamePacket(
+        out.send(new GamePacket(
                 GamePacket.Type.CLT_REQ_CONN,
                 PlayerProto.PlayerData.newBuilder()
                                       .setName(System.getProperty("user.name"))
@@ -88,6 +87,7 @@ public class GameClient {
                 try {
                     length = in.readInt();
                 } catch (IOException e) {
+                    LOG.warn("Failed to read length byte from server packet");
                     break; // client disconnected or stream closed
                 }
                 if (length <= 0) {
@@ -110,7 +110,6 @@ public class GameClient {
     private void parseResponse(GamePacket packet) throws IOException {
         if (packet == null) return;
 
-        // FIXME: client never gets this!!! hahahahahhahHhahahahhahAHHAHAHHAHAHAHAAAHA WHY DOESNT IT WORK ?????? KJSHKJDHALKSJHAKJSGKUSYDI@GIALKJALSJKHSDLKJSLKFDJALKSJ
         LOG.debug("Received {} from SERVER", packet.type());
 
         switch (packet.type()) {
@@ -121,33 +120,18 @@ public class GameClient {
                 var data = PlayerProto.Lobby.parseFrom(packet.payload());
 
                 var lobby = new LobbyGameScene(game, data.getName(), false);
-                for (var p: data.getTeam1List()) lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
-                for (var p: data.getTeam2List()) lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
+                for (var p: data.getTeam1List())
+                    lobby.addPlayer(
+                            p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
+                for (var p: data.getTeam2List())
+                    lobby.addPlayer(
+                            p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
 
                 game.setScene(lobby);
-
             }
             case SRV_DENY_CONN__USERNAME_TAKEN, SRV_DENY_CONN__FULL -> {
                 LOG.error("Failed to join: {}", packet.type());
                 this.close();
-            }
-        }
-    }
-
-    /**
-     * Sends a packet to the connected server
-     *
-     * @param packet the packet to serialize and send
-     */
-    public void send(GamePacket packet) {
-        if (out != null) {
-            try {
-                byte[] data = packet.serialize();
-                out.writeInt(data.length);
-                out.write(data);
-                out.flush();
-            } catch (IOException e) {
-                LOG.error("Failed to send packet", e);
             }
         }
     }

@@ -33,7 +33,7 @@ public record GamePacket(Type type, byte[] payload) {
     }
 
     public GamePacket(Type type, Message proto) {
-        this(type, proto.toByteArray()); // TODO: make this turn seriable into bytes
+        this(type, proto.toByteArray());
     }
 
     /**
