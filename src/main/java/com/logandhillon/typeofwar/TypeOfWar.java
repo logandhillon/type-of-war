@@ -105,13 +105,46 @@ public class TypeOfWar extends Application implements GameSceneManager {
         startServer();
     }
 
+    /**
+     * Joins a remote server, registers itself, and displays the lobby.
+     *
+     * @param serverAddress address of the server to join
+     */
     public void joinGame(String serverAddress) {
         LOG.info("Attempting to join game at {}", serverAddress);
 
         var lobby = new LobbyGameScene(this, "...", false);
         setScene(lobby);
 
-        connectClient(serverAddress);
+        if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
+
+        try {
+            client = new GameClient(serverAddress, 20670);
+            client.connect();
+        } catch (ConnectException e) {
+            terminateClient();
+            showAlert("COULD NOT JOIN SERVER", e.getMessage());
+        } catch (IOException e) {
+            terminateClient();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Closes the client and nullifies the pointer.
+     */
+    private void terminateClient() {
+        if (client == null) {
+            LOG.warn("Client does not exist, skipping termination");
+            return;
+        }
+
+        try {
+            client.close();
+        } catch (IOException e) {
+            LOG.error("Failed to close socket during termination", e);
+        }
+        client = null;
     }
 
     /**
@@ -123,24 +156,6 @@ public class TypeOfWar extends Application implements GameSceneManager {
         try {
             server = new GameServer(this);
             server.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Immediately tries to connect to a remote server by creating a {@link GameClient} bound to it.
-     *
-     * @param addr the server address (IP or FQDN), not including port
-     */
-    private void connectClient(String addr) {
-        if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
-
-        try {
-            client = new GameClient(addr, 20670);
-            client.connect();
-        } catch (ConnectException e) {
-            LOG.warn("Connection failed: {}", e.getMessage());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
