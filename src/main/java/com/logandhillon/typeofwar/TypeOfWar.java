@@ -2,12 +2,15 @@ package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
+import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
+import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.GameClient;
 import com.logandhillon.typeofwar.networking.GameServer;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -86,18 +89,33 @@ public class TypeOfWar extends Application implements GameSceneManager {
         this.setScene(new MainMenuScene(this));
     }
 
-    public static void startServer() {
+    /**
+     * Shows the lobby screen and starts a server.
+     *
+     * @param roomName the name of the lobby
+     */
+    public void createLobby(String roomName) {
+        LOG.info("Creating lobby named {}", roomName);
+
+        var lobby = new LobbyGameScene(this, roomName, true);
+        lobby.addPlayer("You", Color.DEEPSKYBLUE, 1);
+        setScene(lobby);
+
+        startServer();
+    }
+
+    public void startServer() {
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
 
         try {
-            server = new GameServer();
+            server = new GameServer(this);
             server.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void connectClient(String addr) {
+    public void connectClient(String addr) {
         if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
 
         try {
@@ -110,5 +128,27 @@ public class TypeOfWar extends Application implements GameSceneManager {
         }
     }
 
+    /**
+     * @return the active GameScene
+     */
+    public GameScene getActiveScene() {
+        return activeScene;
+    }
 
+    /**
+     * Tries to return the active scene as the (expected) type, casting it to said type, and throwing an exception if
+     * such fails.
+     *
+     * @param type the expected type of {@link GameScene}
+     *
+     * @return the active {@link GameScene} if it is the right type
+     *
+     * @throws GameSceneMismatchException if the active scene is not the expected type
+     */
+    public <T extends GameScene> T getActiveScene(Class<T> type) throws GameSceneMismatchException {
+        if (!type.isInstance(activeScene))
+            throw new GameSceneMismatchException(activeScene.getClass(), type);
+
+        return type.cast(activeScene);
+    }
 }

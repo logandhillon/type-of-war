@@ -29,8 +29,12 @@ public record GamePacket(Type type, String payload) {
      * The type of packet to send. SRV are server packets, CLT are client packets.
      */
     public enum Type {
-        SRV_ALLOW_CONN, SRV_DENY_CONN__FULL, SRV_DENY_CONN__USERNAME_TAKEN,
-        CLT_REQ_CONN
+        // server-side types
+        SRV_ALLOW_CONN, SRV_DENY_CONN__FULL, SRV_DENY_CONN__USERNAME_TAKEN, // used for managing connections
+        SRV_UNEXPECTED, // generic error for if the server wasn't expecting something (e.g. not ready for a request)
+
+        // client-side types
+        CLT_REQ_CONN // used to request registration upon joining a server
     }
 
     /**

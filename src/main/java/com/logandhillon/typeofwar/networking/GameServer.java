@@ -1,5 +1,9 @@
 package com.logandhillon.typeofwar.networking;
 
+import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
+import com.logandhillon.typeofwar.game.LobbyGameScene;
+import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
@@ -28,6 +32,7 @@ public class GameServer implements Runnable {
     private static final int    MAX_CONNECTIONS = 8;
 
     private volatile boolean      running;
+    private final    TypeOfWar    game;
     private          ServerSocket socket;
 
     /** the list of ALL active client connections, including unregistered ones. */
@@ -35,6 +40,10 @@ public class GameServer implements Runnable {
 
     /** list of all REGISTERED client connections; maps socket to username */
     private final HashMap<Socket, String> registeredClients = new HashMap<>();
+
+    public GameServer(TypeOfWar game) {
+        this.game = game;
+    }
 
     /**
      * Starts the server socket and the acceptor thread, which listens for incoming connections and handles them
@@ -122,25 +131,58 @@ public class GameServer implements Runnable {
      * @param out    the output stream used to respond to the client.
      */
     private void parseRequest(Socket client, GamePacket packet, PacketWriter out) {
+        if (packet == null) return;
+
+        try {
+            switch (packet.type()) {
+                case CLT_REQ_CONN -> handleClientRegistration(client, packet, out);
+            }
+        } catch (IOException e) {
+            LOG.error("Failed to close client at {}", client.getInetAddress(), e);
+        }
+    }
+
+    /**
+     * Handles a new client request and tries to register it or defer it. Should be called when receiving a CLT_REQ_CONN
+     * packet.
+     */
+    private void handleClientRegistration(Socket client, GamePacket packet, PacketWriter out) throws IOException {
         try {
             if (registeredClients.size() < MAX_CONNECTIONS) {
+                // check if username is already used
                 if (registeredClients.containsValue(packet.payload())) {
-                    LOG.info("Denying connection from {} (username '{}' in use)", client.getInetAddress(), packet.payload());
+                    LOG.info(
+                            "Denying connection from {} (username '{}' in use)", client.getInetAddress(),
+                            packet.payload());
                     out.send(GamePacket.Type.SRV_DENY_CONN__USERNAME_TAKEN);
                     client.close();
                     return;
                 }
 
+                // get the lobby in advance, so it can throw GameSceneMismatchException if we shouldn't do this
+                var lobby = game.getActiveScene(LobbyGameScene.class);
+
+                // all good now! register the client
                 LOG.info("Registering new client named '{}' at {}", packet.payload(), client.getInetAddress());
                 out.send(GamePacket.Type.SRV_ALLOW_CONN);
                 registeredClients.put(client, packet.payload());
-            } else {
+
+                // finally, add the new player to the lobby
+                lobby.addPlayer(packet.payload(), Color.RED, 1); // TODO: send player color in join packet
+            }
+
+            // check if srv is full
+            else {
                 LOG.info("Denying connection from {} (server full)", client.getInetAddress());
                 out.send(GamePacket.Type.SRV_DENY_CONN__FULL);
                 client.close();
             }
-        } catch (IOException e) {
-            LOG.error("Failed to close client at {}", client.getInetAddress(), e);
+        } catch (GameSceneMismatchException e) {
+            LOG.warn(
+                    "Server got a registration request, but was not ready for it. Closing client at {}.",
+                    client.getInetAddress());
+            out.send(GamePacket.Type.SRV_UNEXPECTED);
+            client.close();
         }
     }
 }
