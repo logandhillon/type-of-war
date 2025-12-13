@@ -11,6 +11,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * A game client handles all outgoing communications to the {@link GameServer} via a valid network connection.
@@ -30,6 +31,9 @@ public class GameClient {
     private Socket          socket;
     private DataInputStream in;
     private PacketWriter    out;
+
+    private List<PlayerProto.PlayerData> team1;
+    private List<PlayerProto.PlayerData> team2;
 
     /** if this client is registered with a remote server */
     private boolean isRegistered;
@@ -69,7 +73,7 @@ public class GameClient {
                 GamePacket.Type.CLT_REQ_CONN,
                 PlayerProto.PlayerData.newBuilder()
                                       .setName(System.getProperty("user.name"))
-                                      .setR(1).setG(1).setB(1)
+                                      .setR(255).setG(255).setB(255)
                                       .build()));
 
         new Thread(this::readLoop, "Client-ReadLoop").start();
@@ -119,6 +123,8 @@ public class GameClient {
                 LOG.info("Successfully registered with remote server");
 
                 var data = PlayerProto.Lobby.parseFrom(packet.payload());
+                this.team1 = data.getTeam1List();
+                this.team2 = data.getTeam2List();
 
                 var lobby = new LobbyGameScene(game, data.getName(), false);
                 for (var p: data.getTeam1List())
@@ -131,9 +137,12 @@ public class GameClient {
             }
             case SRV_DENY_CONN__USERNAME_TAKEN, SRV_DENY_CONN__FULL -> {
                 LOG.error("Failed to join: {}", packet.type());
-                Platform.runLater(() -> game.showAlert("Failed to join server", "Could not " + host + ": " + packet.type().name()));
+                Platform.runLater(() -> game.showAlert(
+                        "Failed to join server",
+                        "Could not " + host + ": " + packet.type().name()));
                 this.close();
             }
+            case SRV_GAME_STARTING -> game.startGame(false);
         }
     }
 
@@ -147,5 +156,21 @@ public class GameClient {
             LOG.info("Closing connection to server");
             socket.close();
         }
+    }
+
+    /**
+     * Gets the players that the server has told this client about.
+     *
+     * @param team the team (1 or 2)
+     *
+     * @return all players on said team
+     *
+     * @throws IllegalArgumentException if you tried to get an invalid team number
+     */
+    public List<PlayerProto.PlayerData> getTeam(int team) {
+        if (team == 1) return team1;
+        if (team == 2) return team1;
+
+        throw new IllegalArgumentException("Can only get team for 1 or 2.");
     }
 }

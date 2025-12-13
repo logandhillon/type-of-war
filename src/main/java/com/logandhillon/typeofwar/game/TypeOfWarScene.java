@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
+import java.util.List;
+
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
@@ -27,7 +29,7 @@ public class TypeOfWarScene extends GameScene {
 
     private boolean isWinning = true;
 
-    public TypeOfWarScene() {
+    public TypeOfWarScene(List<PlayerObject> team1, List<PlayerObject> team2) {
         stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
         addEntity(stats);
 
@@ -36,12 +38,9 @@ public class TypeOfWarScene extends GameScene {
         addEntity(sentence);
         sentence.setText("The quick brown fox jumps over the lazy dog.");
 
-        PlayerObject testPlayer = new PlayerObject("Player1", Color.CYAN);
-
         RopeEntity rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
-        rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
-        rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
-        rope.addPlayer(testPlayer, RopeEntity.Team.RIGHT);
+        for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
+        for (var p: team2) rope.addPlayer(p, RopeEntity.Team.RIGHT);
         addEntity(rope);
     }
 

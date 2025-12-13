@@ -3,13 +3,16 @@ package com.logandhillon.typeofwar;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
+import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.MainMenuScene;
 import com.logandhillon.typeofwar.game.MenuAlertScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.GameClient;
+import com.logandhillon.typeofwar.networking.GamePacket;
 import com.logandhillon.typeofwar.networking.GameServer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -18,6 +21,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.util.List;
 
 /**
  * This is the main entrypoint for Type of War, handling low-level game engine code and GameScene management.
@@ -115,8 +119,22 @@ public class TypeOfWar extends Application implements GameSceneManager {
         } catch (IOException e) {
             LOG.error("Failed to start server", e);
         }
+    }
 
+    public void startGame(boolean isServer) {
+        List<PlayerObject> t1;
+        List<PlayerObject> t2;
 
+        if (isServer) {
+            t1 = server.getTeam(1).map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+            t2 = server.getTeam(2).map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+            server.broadcast(new GamePacket(GamePacket.Type.SRV_GAME_STARTING));
+        } else {
+            t1 = client.getTeam(1).stream().map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+            t2 = client.getTeam(2).stream().map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+        }
+
+        Platform.runLater(() -> setScene(new TypeOfWarScene(t1, t2)));
     }
 
     /**

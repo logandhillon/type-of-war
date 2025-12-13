@@ -42,7 +42,7 @@ public class GameServer implements Runnable {
     /** list of all REGISTERED client connections; maps socket to name */
     private final HashMap<Socket, ConnectionDetails> registeredClients = new HashMap<>();
 
-    private record ConnectionDetails(String name, Color color, int team) {}
+    private record ConnectionDetails(String name, Color color, int team, PacketWriter out) {}
 
     public GameServer(TypeOfWar game) {
         this.game = game;
@@ -185,40 +185,17 @@ public class GameServer implements Runnable {
                 // all good now! register the client
                 Color color = Color.rgb(pkt.getR(), pkt.getG(), pkt.getB());
                 lobby.addPlayer(pkt.getName(), color, 1); // TODO: send player color in join packet
-                registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, 1));
+                registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, 1, out));
 
                 // get the players on each team...
-                var team1 = Stream.concat(
-                        registeredClients.values().stream()
-                                         .filter(d -> d.team == 1)
-                                         .map(d -> PlayerProto.PlayerData.newBuilder()
-                                                                         .setName(d.name)
-                                                                         .setR((int)d.color.getRed() * 255)
-                                                                         .setG((int)d.color.getRed() * 255)
-                                                                         .setB((int)d.color.getRed() * 255)
-                                                                         .build()
-                                         ),
-                        // hardcode the server owner in the list, as they are not going to be in the client list
-                        Stream.of(PlayerProto.PlayerData.newBuilder().setName("You").setR(255).setG(0).setB(0).build())
-                ).toList();
-
-                var team2 = registeredClients.values().stream()
-                                             .filter(d -> d.team == 2)
-                                             .map(d -> PlayerProto.PlayerData.newBuilder()
-                                                                             .setName(d.name)
-                                                                             .setR((int)d.color.getRed() * 255)
-                                                                             .setG((int)d.color.getRed() * 255)
-                                                                             .setB((int)d.color.getRed() * 255)
-                                                                             .build()
-                                             ).toList();
 
                 // ... and send them to the client
                 out.send(new GamePacket(
                         GamePacket.Type.SRV_ALLOW_CONN,
                         PlayerProto.Lobby.newBuilder()
                                          .setName(lobby.getRoomName())
-                                         .addAllTeam1(team1)
-                                         .addAllTeam2(team2)
+                                         .addAllTeam1(getTeam(1).toList())
+                                         .addAllTeam2(getTeam(2).toList())
                                          .build()));
 
                 LOG.info("Registered new client '{}' at {}!", pkt.getName(), client.getInetAddress());
@@ -237,5 +214,38 @@ public class GameServer implements Runnable {
             out.send(GamePacket.Type.SRV_UNEXPECTED);
             client.close();
         }
+    }
+
+    /**
+     * Without checking who, this broadcasts the same packet to all registered clients.
+     *
+     * @param pkt the packet to broadcast
+     */
+    public void broadcast(GamePacket pkt) {
+        for (ConnectionDetails conn: registeredClients.values()) {
+            conn.out.send(pkt);
+        }
+    }
+
+    public Stream<PlayerProto.PlayerData> getTeam(int team) {
+        // stream registered clients into playerdata, filtering only those that match the team
+        var list = registeredClients.values().stream()
+                                    .filter(d -> d.team == team)
+                                    .map(d -> PlayerProto.PlayerData.newBuilder()
+                                                                    .setName(d.name)
+                                                                    .setR((int)d.color.getRed() * 255)
+                                                                    .setG((int)d.color.getRed() * 255)
+                                                                    .setB((int)d.color.getRed() * 255)
+                                                                    .build()
+                                    );
+
+        // add the host to team 1
+        if (team == 1) {
+            list = Stream.concat(
+                    Stream.of(PlayerProto.PlayerData.newBuilder().setName("You").setR(255).setG(0).setB(0).build()),
+                    list);
+        }
+
+        return list;
     }
 }
