@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
@@ -23,14 +24,14 @@ public class MainMenuScene extends UIScene {
      *
      * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
      */
-    public MainMenuScene(GameSceneManager mgr) {
+    public MainMenuScene(TypeOfWar mgr) {
         float x = 314;
         int y = 205;
         int dy = 48 + 16; // ∆y per button height
 
         MenuController controller = new MenuController(
                 new MenuButton("Host Game", x, y, 256, 48, () -> mgr.setScene(new HostGameScene(mgr))),
-                new MenuButton("Join Game", x, y + dy, 256, 48, () -> mgr.setScene(new TypeOfWarScene())),
+                new MenuButton("Join Game", x, y + dy, 256, 48, () -> mgr.setScene(new JoinGameScene(mgr))),
                 new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
                 new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))

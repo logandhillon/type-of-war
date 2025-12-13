@@ -90,11 +90,11 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 if (j < input[i].length()) {
                     // if input is in word
                     if (j < text[i].length()) {
-                        // fill white for correct characters, red for incorrect
+                        // white for correct character, red for incorrect character
                         g.setFill(text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
                         g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
                     } else {
-                        // fill dark red if text entends too long
+                        // fill dark red if text extends too long
                         g.setFill(Color.DARKRED);
                         g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
                     }
@@ -195,6 +195,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         // ignore blank/control characters
         if (c.isEmpty() || Character.isISOControl(c.charAt(0))) return;
 
+
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
             if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
@@ -202,15 +203,20 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 correct.setVolume(0.1);
                 correct.play();
             }
+            if(input[currentWord].length() == text[currentWord].length()){
+                correctChars++;
+                parent.moveRope(true);
+            }
         }
         // handle the other characters
         else {
             input[currentWord].append(c);
-            typedChars++;
             // if this char was correct, increase the correct char count.
-            if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
+        }
+        if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
                 && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
                 correctChars++;
+                parent.moveRope(true);
                 correct.setVolume(0.1);
                 correct.play();
             } else {
@@ -219,6 +225,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 incorrect.play();
             }
         }
+        typedChars++;
 
         // increment correct word count if the input matches the sentence
         if (text[currentWord].contentEquals(input[currentWord])) correctWords++;
