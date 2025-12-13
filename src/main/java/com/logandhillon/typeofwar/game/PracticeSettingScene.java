@@ -14,15 +14,16 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 public class PracticeSettingScene extends UIScene {
     private final NumberBoxEntity wpmInput;
 
-    PracticeSettingScene(TypeOfWar mgr){
+    PracticeSettingScene(TypeOfWar mgr) {
 
         wpmInput = new NumberBoxEntity(16, 47, 530, "80", "COMPUTER WPM", 3);
 
-        DarkMenuButton startPracticeButton = new DarkMenuButton("START PRACTICE", 16, 129, 530, 48, ()-> {
-           mgr.setScene(new TypeOfWarPracticeScene(mgr, getWPM()));
+        DarkMenuButton startPracticeButton = new DarkMenuButton("START PRACTICE", 16, 129, 530, 48, () -> {
+            mgr.setScene(new TypeOfWarPracticeScene(mgr, getWPM()));
         });
 
-        LabeledModalEntity practiceModal = new LabeledModalEntity(359, 232, 562, 256, "PRACTICE", mgr, wpmInput, startPracticeButton);
+        LabeledModalEntity practiceModal = new LabeledModalEntity(
+                359, 232, 562, 256, "PRACTICE", mgr, wpmInput, startPracticeButton);
         addEntity(practiceModal);
     }
 
@@ -36,5 +37,7 @@ public class PracticeSettingScene extends UIScene {
         super.render(g);
     }
 
-    public int getWPM() {return wpmInput.getInput().isBlank() ? 80 : Integer.parseInt(wpmInput.getInput());}
+    public int getWPM() {
+        return wpmInput.getInput().isBlank() ? 80 : Integer.parseInt(wpmInput.getInput());
+    }
 }

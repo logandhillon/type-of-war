@@ -212,16 +212,15 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 if (backspaces > 0) {
                     backspaces--;
                 } else {
-                    correctChars++;
                     parent.moveRope(true);
+                    correctChars++;
                 }
             }
-        }
-        // handle the other characters
-        else {
+        } else {
             input[currentWord].append(c);
-            // if this char was correct, increase the correct char count.
         }
+
+        // handle the other characters
         if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
             && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
             SFX_CORRECT.setVolume(0.1);
@@ -233,8 +232,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 correctChars++;
                 parent.moveRope(true);
             }
-        } else {
-            // if not correct
+        } else if (!c.equals(" ")) /* don't play err sfx if it's a space */ {
             SFX_INCORRECT.setVolume(0.2);
             SFX_INCORRECT.play();
         }
