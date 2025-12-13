@@ -19,18 +19,18 @@ public class EndResultEntity extends Entity{
     private static final Font FONT_STAT    = Font.font(Fonts.DM_MONO_MEDIUM, 34);
     private static final Font FONT_SUBTEXT   = Font.font(Fonts.DM_MONO, 18);
 
-    private final String wpm;
-    private final String accuracy;
-    private final String words;
+    private final int wpm;
+    private final int accuracy;
+    private final int words;
     private final PlayerObject player;
 
 
 
     public EndResultEntity(int wpm, int accuracy, int words, PlayerObject player) {
         super(0, 0);
-        this.wpm = String.valueOf(wpm);
-        this.accuracy = String.valueOf(accuracy);
-        this.words = String.valueOf(words);
+        this.wpm = wpm;
+        this.accuracy = accuracy;
+        this.words = words;
         this.player = player;
     }
 
@@ -58,13 +58,13 @@ public class EndResultEntity extends Entity{
         g.setFont(FONT_STAT);
 
         // render wpm results
-        g.fillText(this.wpm, center, 375 + (2 * GAP));
+        g.fillText(String.valueOf(this.wpm), center, 375 + (2 * GAP));
 
         // render accuracy results
-        g.fillText(this.accuracy, center, 375 + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
+        g.fillText(String.valueOf(this.accuracy), center, 375 + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
 
         // render words results
-        g.fillText(this.words, center, 375 + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
+        g.fillText(String.valueOf(this.words), center, 375 + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
 
         // render subtitles
         g.setFont(FONT_SUBTEXT);
