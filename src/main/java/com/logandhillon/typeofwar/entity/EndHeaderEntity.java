@@ -19,7 +19,6 @@ public class EndHeaderEntity extends Entity{
     private boolean win;
     private String text;
     private final float midScreen = TypeOfWar.WINDOW_WIDTH.floatValue() / 2 - (float)FONT_HEADER.getSize() / 2;
-
     /**
      *
      * @param win changes display if player's team won or lost game

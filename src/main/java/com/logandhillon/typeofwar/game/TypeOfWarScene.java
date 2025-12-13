@@ -3,12 +3,20 @@ package com.logandhillon.typeofwar.game;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.entity.*;
+import com.logandhillon.typeofwar.resource.WordGen;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.List;
+
+import java.io.IOException;
+import java.util.Objects;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -24,11 +32,14 @@ public class TypeOfWarScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(TypeOfWarScene.class);
 
     protected final GameStatisticsEntity stats;
-    protected final TypeOfWar game;
+    protected final TypeOfWar            game;
+    protected final RopeEntity rope;
 
     private boolean isWinning = true;
 
-    protected final RopeEntity rope;
+    private static final MediaPlayer BG_MUSIC = new MediaPlayer(new Media(
+            Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm()));
+
     public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2) {
         this.game = game;
         stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
@@ -37,8 +48,12 @@ public class TypeOfWarScene extends GameScene {
         SentenceEntity sentence = new SentenceEntity(
                 WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
         addEntity(sentence);
-        sentence.setText("The quick brown fox jumps over the lazy dog.");
 
+        try {
+            sentence.setText(WordGen.generateSentence(10000));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
         for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
@@ -90,6 +105,19 @@ public class TypeOfWarScene extends GameScene {
     public void onTypingFinished() {
         LOG.info("Typing finished, closing session");
         stats.finishSession();
+    }
+
+    @Override
+    public Scene build(Stage stage) {
+        BG_MUSIC.setVolume(0.3);
+        BG_MUSIC.play();
+        return super.build(stage);
+    }
+
+    @Override
+    public void discard(Scene scene) {
+        BG_MUSIC.stop();
+        super.discard(scene);
     }
 
     public void moveRope(boolean team1) {
