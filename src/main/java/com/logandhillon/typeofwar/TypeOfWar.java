@@ -3,14 +3,16 @@ package com.logandhillon.typeofwar;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
+import com.logandhillon.typeofwar.entity.EndHeaderEntity;
+import com.logandhillon.typeofwar.entity.EndResultEntity;
+import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
-import com.logandhillon.typeofwar.game.LobbyGameScene;
-import com.logandhillon.typeofwar.game.MainMenuScene;
-import com.logandhillon.typeofwar.game.MenuAlertScene;
-import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.game.*;
 import com.logandhillon.typeofwar.networking.GameClient;
 import com.logandhillon.typeofwar.networking.GamePacket;
 import com.logandhillon.typeofwar.networking.GameServer;
+import com.logandhillon.typeofwar.networking.NetUtils;
+import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -35,6 +37,11 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     private Stage     stage;
     private GameScene activeScene;
+
+    // used only for end game
+    private EndGameProto.PlayerStats endGameStats;
+    private boolean                  isGameEndSignalled;
+    private int                      winningTeam;
 
     private static GameServer server;
     private static GameClient client;
@@ -115,6 +122,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
 
         server = new GameServer(this);
+        isGameEndSignalled = false;
         try {
             server.start();
         } catch (IOException e) {
@@ -148,6 +156,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
             throw new IllegalStateException("You cannot start the game without an active server or client!");
         }
 
+        isGameEndSignalled = false;
         Platform.runLater(() -> setScene(new TypeOfWarScene(this, t1, t2)));
     }
 
@@ -192,6 +201,45 @@ public class TypeOfWar extends Application implements GameSceneManager {
             terminateClient();
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Checks the active {@link TypeOfWar.NetworkRole} and, if it is a SERVER, signals a game end to connected clients.
+     */
+    public void signalGameEnd(int winningTeam) {
+        LOG.info("Signalling game end now");
+        this.winningTeam = winningTeam;
+        if (isGameEndSignalled) return;
+
+        if (getNetworkRole() != TypeOfWar.NetworkRole.SERVER) {
+            LOG.warn("Tried to end the game as client, but only the server can end the game");
+            return;
+        }
+
+        // ask everyone for game stats
+        server.broadcast(new GamePacket(GamePacket.Type.SRV_REQ_END_GAME_STATS));
+        isGameEndSignalled = true;
+    }
+
+    /**
+     * Immediately shows the end game screen without any additional checks
+     */
+    public void showEndGameScreen(EndGameProto.AllStats stats) {
+        LOG.info("Showing end screen; winning team = {}", winningTeam);
+
+        List<EndResultEntity> t1 = stats.getStatsList()
+                                        .stream()
+                                        .filter(s -> s.getTeam() == 1)
+                                        .map(NetUtils::endStatProtoToEntity)
+                                        .toList();
+
+        List<EndResultEntity> t2 = stats.getStatsList()
+                                        .stream()
+                                        .filter(s -> s.getTeam() == 2)
+                                        .map(NetUtils::endStatProtoToEntity)
+                                        .toList();
+
+        this.setScene(new EndGameScene(this, t1, t2, new EndHeaderEntity(winningTeam == 1)));
     }
 
     /**
@@ -248,5 +296,38 @@ public class TypeOfWar extends Application implements GameSceneManager {
             throw new GameSceneMismatchException(activeScene.getClass(), type);
 
         return type.cast(activeScene);
+    }
+
+    /**
+     * Gets the current network role based on the active network manager (server or client)
+     *
+     * @return SERVER, CLIENT, or NONE
+     */
+    public NetworkRole getNetworkRole() {
+        if (server != null) return NetworkRole.SERVER;
+        else if (client != null) return NetworkRole.CLIENT;
+        return NetworkRole.NONE;
+    }
+
+    /**
+     * A network role is the "active" type of network manager
+     */
+    public enum NetworkRole {
+        SERVER, CLIENT, NONE
+    }
+
+    public EndGameProto.PlayerStats getEndGameStats() {
+        return endGameStats;
+    }
+
+    public void setEndGameStats(GameStatisticsEntity stats) {
+        this.endGameStats = EndGameProto.PlayerStats.newBuilder()
+                                                    .setPlayerName("PLACEHOLDER") // TODO: populate w/ real values
+                                                    .setTeam(1) // TODO: populate w/ real values
+                                                    .setR(255).setG(255).setB(255) // TODO: populate w/ real values
+                                                    .setWpm(stats.getWpm())
+                                                    .setAccuracy(stats.getAccuracy())
+                                                    .setWords(stats.getCorrectWords())
+                                                    .build();
     }
 }

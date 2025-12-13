@@ -3,6 +3,7 @@ package com.logandhillon.typeofwar.networking;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
@@ -153,6 +154,31 @@ public class GameClient {
 
                 // team1 = if the team (that is the first-byte of the payload) is one
                 scene.moveRope((packet.payload()[0] & 0xFF) == 1);
+            }
+            case SRV_REQ_END_GAME_STATS -> {
+                TypeOfWarScene scene = game.getActiveScene(TypeOfWarScene.class);
+                if (scene == null) {
+                    LOG.warn("Was requested end game stats, but was not in TypeOfWarScene. Ignoring");
+                    return;
+                }
+                var stats = scene.getStats();
+
+                // send the stats as a protobuf :)
+                sendServer(new GamePacket(
+                        GamePacket.Type.CLT_END_GAME_STATS,
+                        EndGameProto.PlayerStats.newBuilder()
+                                                .setPlayerName("PLACEHOLDER") // TODO: populate w/ real values
+                                                .setTeam(1) // TODO: populate w/ real values
+                                                .setR(255).setG(255).setB(255) // TODO: populate w/ real values
+                                                .setWpm(stats.getWpm())
+                                                .setAccuracy(stats.getAccuracy())
+                                                .setWords(stats.getCorrectWords())
+                                                .build()));
+            }
+
+            case SRV_END_GAME -> {
+                var stats = EndGameProto.AllStats.parseFrom(packet.payload());
+                Platform.runLater(() -> game.showEndGameScreen(stats));
             }
         }
     }

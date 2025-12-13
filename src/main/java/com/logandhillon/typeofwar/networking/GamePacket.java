@@ -45,14 +45,16 @@ public record GamePacket(Type type, byte[] payload) {
         SRV_GAME_STARTING, // announces that the game is starting
         SRV_UNEXPECTED, // generic error for if the server wasn't expecting something (e.g. not ready for a request)
         /**
-         * send on correct key pressed<br>
-         * the payload of this packet should be 1 byte: your team number
+         * send on correct key pressed<br> the payload of this packet should be 1 byte: your team number
          */
         SRV_KEY_PRESS,
+        SRV_REQ_END_GAME_STATS, // asks clients for all end games
+        SRV_END_GAME, // actually end the game
 
         // client-side types
         CLT_REQ_CONN, // used to request registration upon joining a server
         CLT_KEY_PRESS, // tell the srv a key was pressed; do not incl. any payload
+        CLT_END_GAME_STATS, // provides the SRV with the end game stats upon request
     }
 
     /**

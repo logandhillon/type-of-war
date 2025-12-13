@@ -3,7 +3,9 @@ package com.logandhillon.typeofwar.networking;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
+import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -41,6 +43,10 @@ public class GameServer implements Runnable {
 
     /** list of all REGISTERED client connections; maps socket to name */
     private final HashMap<Socket, ConnectionDetails> registeredClients = new HashMap<>();
+
+    /** used to retrieve all stats in end game and display them on
+     *  {@link com.logandhillon.typeofwar.game.EndGameScene} */
+    private final HashMap<Socket, EndGameProto.PlayerStats> endGameStats = new HashMap<>();
 
     private record ConnectionDetails(String name, Color color, int team, PacketWriter out) {}
 
@@ -175,6 +181,30 @@ public class GameServer implements Runnable {
 
                     scene.moveRope(team == 1);
                     broadcast(new GamePacket(GamePacket.Type.SRV_KEY_PRESS, new byte[]{ (byte)team }));
+                }
+
+                case CLT_END_GAME_STATS -> {
+                    if (endGameStats.containsKey(client)) {
+                        LOG.warn(
+                                "Client {} gave their end game stats again, ignoring duplicate",
+                                client.getInetAddress());
+                        return;
+                    }
+
+                    // collect every client's stats one by one
+                    endGameStats.put(client, EndGameProto.PlayerStats.parseFrom(packet.payload()));
+
+                    // check if all stats are collected, if they are, show the end screen
+                    if (endGameStats.size() == registeredClients.size()) {
+                        var stats = EndGameProto.AllStats.newBuilder()
+                                                         .addAllStats(endGameStats.values())
+                                                         .addStats(game.getEndGameStats())
+                                                         .build();
+
+                        out.send(new GamePacket(GamePacket.Type.SRV_END_GAME, stats));
+
+                        Platform.runLater(() -> game.showEndGameScreen(stats));
+                    }
                 }
             }
         } catch (IOException e) {

@@ -107,14 +107,17 @@ public class TypeOfWarScene extends GameScene {
         else rope.moveRopeR(1);
     }
 
-    public void endGame(boolean won) {
-        EndResultEntity[] team1results = new EndResultEntity[1];
-        team1results[0] = stats.toEndResultEntity(
-                new PlayerObject("Player1", Color.CYAN)); //TODO #6: Change this to work with multiplayer
+    /**
+     * Checks the active {@link TypeOfWar.NetworkRole} and, if it is a SERVER, signals a game end to connected clients.
+     *
+     * @param winningTeam the team# of the winner
+     */
+    public void signalGameEnd(int winningTeam) {
+        game.signalGameEnd(winningTeam);
+        game.setEndGameStats(stats);
+    }
 
-        EndResultEntity[] team2results = new EndResultEntity[1];
-        team2results[0] = new EndResultEntity(100, 67, 41, (new PlayerObject("COMPUTER", Color.GREY)));
-
-        this.game.setScene(new EndGameScene(game, team1results, team2results, new EndHeaderEntity(won)));
+    public GameStatisticsEntity getStats() {
+        return stats;
     }
 }

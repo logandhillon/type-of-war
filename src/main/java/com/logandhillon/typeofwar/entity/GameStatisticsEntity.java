@@ -196,6 +196,18 @@ public class GameStatisticsEntity extends Entity {
     }
 
     public EndResultEntity toEndResultEntity(PlayerObject player) {
-        return new EndResultEntity((int)wpm, (int)(accuracy * 100), this.correctWords, player);
+        return new EndResultEntity(getWpm(), getAccuracy(), getCorrectWords(), player);
+    }
+
+    public int getWpm() {
+        return (int)wpm;
+    }
+
+    public int getAccuracy() {
+        return (int)accuracy*100;
+    }
+
+    public int getCorrectWords() {
+        return correctWords;
     }
 }

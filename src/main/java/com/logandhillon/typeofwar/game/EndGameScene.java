@@ -6,6 +6,8 @@ import com.logandhillon.typeofwar.entity.EndHeaderEntity;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.util.List;
+
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
@@ -28,7 +30,7 @@ public class EndGameScene extends GameScene {
      * @param leftTeamResults is the sum of statistics for the team on the left of the rope
      * @param rightTeamResults is the sum of statistics for the team on the right of the rope
      */
-    public EndGameScene(TypeOfWar mgr, EndResultEntity[] leftTeamResults, EndResultEntity[] rightTeamResults, EndHeaderEntity header){
+    public EndGameScene(TypeOfWar mgr, List<EndResultEntity> leftTeamResults, List<EndResultEntity> rightTeamResults, EndHeaderEntity header){
 
         this.win = header.getResult();
         addEntity(header);
@@ -36,7 +38,7 @@ public class EndGameScene extends GameScene {
         float dx = 0f;
         for(EndResultEntity p : leftTeamResults) {
             // displace entities on left away from center, displacement increases per teammate
-            p.setPosition((TypeOfWar.WINDOW_WIDTH.floatValue() / 2) - (leftTeamResults.length * ENTITY_GAP) + dx - BUFFER_GAP, 170);
+            p.setPosition((TypeOfWar.WINDOW_WIDTH.floatValue() / 2) - (leftTeamResults.size() * ENTITY_GAP) + dx - BUFFER_GAP, 170);
             dx += ENTITY_GAP;
             addEntity(p);
         }

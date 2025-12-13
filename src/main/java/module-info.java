@@ -16,4 +16,5 @@ module com.logandhillon.typeofwar {
     exports com.logandhillon.typeofwar.entity;
     exports com.logandhillon.typeofwar.entity.ui;
     exports com.logandhillon.typeofwar.game;
+    exports com.logandhillon.typeofwar.networking.proto;
 }

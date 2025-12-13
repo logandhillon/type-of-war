@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -35,9 +36,9 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
     @Override
     public void onUpdate(float dt) {
         if (goalpostLeftX + 324 < FLAG_X) {
-            parent.endGame(true);
+            parent.signalGameEnd(1);
         } else if (goalpostLeftX > FLAG_X) {
-            parent.endGame(false);
+            parent.signalGameEnd(2);
         }
     }
 
