@@ -2,6 +2,7 @@ package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
+import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
@@ -142,8 +143,31 @@ public class GameClient {
                         "Could not " + host + ": " + packet.type().name()));
                 this.close();
             }
-            case SRV_GAME_STARTING -> game.startGame(false);
+            case SRV_GAME_STARTING -> game.startGame();
+            case SRV_KEY_PRESS -> {
+                TypeOfWarScene scene = game.getActiveScene(TypeOfWarScene.class);
+                if (scene == null) {
+                    LOG.warn("Got a key press signal, but was not in TypeOfWarScene. Ignoring");
+                    return;
+                }
+
+                // team1 = if the team (that is the first-byte of the payload) is one
+                scene.moveRope((packet.payload()[0] & 0xFF) == 1);
+            }
         }
+    }
+
+    /**
+     * Sends a packet to the connected server.
+     *
+     * @param pkt the packet to send
+     *
+     * @throws IllegalStateException if the {@link PacketWriter} is null (i.e. client not connected)
+     */
+    public void sendServer(GamePacket pkt) {
+        if (out == null)
+            throw new IllegalStateException("Cannot send packets from null PacketWriter; is the client connected?");
+        out.send(pkt);
     }
 
     /**
@@ -169,7 +193,7 @@ public class GameClient {
      */
     public List<PlayerProto.PlayerData> getTeam(int team) {
         if (team == 1) return team1;
-        if (team == 2) return team1;
+        if (team == 2) return team2;
 
         throw new IllegalArgumentException("Can only get team for 1 or 2.");
     }

@@ -1,8 +1,8 @@
 package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
-import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
+import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
@@ -152,8 +152,30 @@ public class GameServer implements Runnable {
         LOG.debug("Received {} from {}", packet.type(), client.getInetAddress());
 
         try {
+            // first, check if the client asked to be registered
+            if (packet.type() == GamePacket.Type.CLT_REQ_CONN) handleClientRegistration(client, packet, out);
+
+            // next, if they didn't ask and they still aren't registered, kick them
+            if (!registeredClients.containsKey(client)) {
+                LOG.warn("Got packet from unregistered client; closing connection");
+                client.close();
+            }
+
+            // finally, parse the request
             switch (packet.type()) {
-                case CLT_REQ_CONN -> handleClientRegistration(client, packet, out);
+                // when clt presses a key, find their team and broadcast that
+                case CLT_KEY_PRESS -> {
+                    int team = registeredClients.get(client).team;
+
+                    TypeOfWarScene scene = game.getActiveScene(TypeOfWarScene.class);
+                    if (scene == null) {
+                        LOG.warn("Got a key press signal, but was not in TypeOfWarScene. Ignoring");
+                        return;
+                    }
+
+                    scene.moveRope(team == 1);
+                    broadcast(new GamePacket(GamePacket.Type.SRV_KEY_PRESS, new byte[]{ (byte)team }));
+                }
             }
         } catch (IOException e) {
             LOG.error("Failed to close client at {}", client.getInetAddress(), e);
@@ -165,53 +187,53 @@ public class GameServer implements Runnable {
      * packet.
      */
     private void handleClientRegistration(Socket client, GamePacket packet, PacketWriter out) throws IOException {
-        try {
-            if (registeredClients.size() < MAX_CONNECTIONS) {
-                PlayerProto.PlayerData pkt = PlayerProto.PlayerData.parseFrom(packet.payload());
+        if (registeredClients.size() < MAX_CONNECTIONS) {
+            PlayerProto.PlayerData pkt = PlayerProto.PlayerData.parseFrom(packet.payload());
 
-                // check if name is already used
-                if (registeredClients.values().stream().anyMatch(p -> p.name.equals(pkt.getName()))) {
-                    LOG.info(
-                            "Denying connection from {} (name '{}' in use)", client.getInetAddress(),
-                            packet.payload());
-                    out.send(GamePacket.Type.SRV_DENY_CONN__USERNAME_TAKEN);
-                    client.close();
-                    return;
-                }
-
-                // get the lobby in advance, so it can throw GameSceneMismatchException if we shouldn't do this
-                var lobby = game.getActiveScene(LobbyGameScene.class);
-
-                // all good now! register the client
-                Color color = Color.rgb(pkt.getR(), pkt.getG(), pkt.getB());
-                lobby.addPlayer(pkt.getName(), color, 1); // TODO: send player color in join packet
-                registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, 1, out));
-
-                // get the players on each team...
-
-                // ... and send them to the client
-                out.send(new GamePacket(
-                        GamePacket.Type.SRV_ALLOW_CONN,
-                        PlayerProto.Lobby.newBuilder()
-                                         .setName(lobby.getRoomName())
-                                         .addAllTeam1(getTeam(1).toList())
-                                         .addAllTeam2(getTeam(2).toList())
-                                         .build()));
-
-                LOG.info("Registered new client '{}' at {}!", pkt.getName(), client.getInetAddress());
-            }
-
-            // check if srv is full
-            else {
-                LOG.info("Denying connection from {} (server full)", client.getInetAddress());
-                out.send(GamePacket.Type.SRV_DENY_CONN__FULL);
+            // check if name is already used
+            if (registeredClients.values().stream().anyMatch(p -> p.name.equals(pkt.getName()))) {
+                LOG.info(
+                        "Denying connection from {} (name '{}' in use)", client.getInetAddress(),
+                        packet.payload());
+                out.send(GamePacket.Type.SRV_DENY_CONN__USERNAME_TAKEN);
                 client.close();
+                return;
             }
-        } catch (GameSceneMismatchException e) {
-            LOG.warn(
-                    "Server got a registration request, but was not ready for it. Closing client at {}.",
-                    client.getInetAddress());
-            out.send(GamePacket.Type.SRV_UNEXPECTED);
+
+            // get the lobby in advance, so it can get null if we shouldn't do this
+            var lobby = game.getActiveScene(LobbyGameScene.class);
+
+            // if lobby IS null, then just throw a warn and return early ;)
+            if (lobby == null) {
+                LOG.warn(
+                        "Server got a registration request, but was not ready for it. Closing client at {}.",
+                        client.getInetAddress());
+                out.send(GamePacket.Type.SRV_UNEXPECTED);
+                client.close();
+                return;
+            }
+
+            // all good now! register the client
+            Color color = Color.rgb(pkt.getR(), pkt.getG(), pkt.getB());
+            lobby.addPlayer(pkt.getName(), color, 1); // TODO: send player color in join packet
+            registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, 1, out));
+
+            // get the players on each team and send them to the client
+            out.send(new GamePacket(
+                    GamePacket.Type.SRV_ALLOW_CONN,
+                    PlayerProto.Lobby.newBuilder()
+                                     .setName(lobby.getRoomName())
+                                     .addAllTeam1(getTeam(1).toList())
+                                     .addAllTeam2(getTeam(2).toList())
+                                     .build()));
+
+            LOG.info("Registered new client '{}' at {}!", pkt.getName(), client.getInetAddress());
+        }
+
+        // check if srv is full
+        else {
+            LOG.info("Denying connection from {} (server full)", client.getInetAddress());
+            out.send(GamePacket.Type.SRV_DENY_CONN__FULL);
             client.close();
         }
     }

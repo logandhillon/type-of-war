@@ -36,10 +36,11 @@ public class TypeOfWar extends Application implements GameSceneManager {
     private Stage     stage;
     private GameScene activeScene;
 
-    private static GameServer             server;
-    private static GameClient             client;
-    public static  ReadOnlyDoubleProperty WINDOW_WIDTH;
-    public static  ReadOnlyDoubleProperty WINDOW_HEIGHT;
+    private static GameServer server;
+    private static GameClient client;
+
+    public static ReadOnlyDoubleProperty WINDOW_WIDTH;
+    public static ReadOnlyDoubleProperty WINDOW_HEIGHT;
 
     /**
      * Handles communication with JavaFX when this program is signalled to start.
@@ -121,20 +122,54 @@ public class TypeOfWar extends Application implements GameSceneManager {
         }
     }
 
-    public void startGame(boolean isServer) {
+    /**
+     * Handles a game start
+     *
+     * @throws IllegalStateException if there is no active server or client
+     */
+    public void startGame() {
         List<PlayerObject> t1;
         List<PlayerObject> t2;
 
-        if (isServer) {
-            t1 = server.getTeam(1).map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
-            t2 = server.getTeam(2).map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+        if (server != null) {
+            t1 = server.getTeam(1)
+                       .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
+                       .toList();
+            t2 = server.getTeam(2)
+                       .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
+                       .toList();
             server.broadcast(new GamePacket(GamePacket.Type.SRV_GAME_STARTING));
+        } else if (client != null) {
+            t1 = client.getTeam(1).stream().map(
+                    p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+            t2 = client.getTeam(2).stream().map(
+                    p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
         } else {
-            t1 = client.getTeam(1).stream().map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
-            t2 = client.getTeam(2).stream().map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+            throw new IllegalStateException("You cannot start the game without an active server or client!");
         }
 
         Platform.runLater(() -> setScene(new TypeOfWarScene(this, t1, t2)));
+    }
+
+    /**
+     * Handles a correct key press
+     *
+     * @return true if this is the server (and the rope should be moved)
+     *
+     * @throws IllegalStateException if there is no active server or client
+     */
+    public boolean sendCorrectKeyPress() {
+        if (server != null) {
+            // tell everyone a key was pressed
+            server.broadcast(new GamePacket(GamePacket.Type.SRV_KEY_PRESS, new byte[]{ 1 }));
+            return true;
+        } else if (client != null) {
+            // tell the server a key was pressed (the server will broadcast it to everyone else)
+            client.sendServer(new GamePacket(GamePacket.Type.CLT_KEY_PRESS));
+            return false;
+        } else {
+            throw new IllegalStateException("You cannot run onCorrectKeyPressed without an active server or client!");
+        }
     }
 
     /**
@@ -201,23 +236,14 @@ public class TypeOfWar extends Application implements GameSceneManager {
     }
 
     /**
-     * @return the active GameScene
-     */
-    public GameScene getActiveScene() {
-        return activeScene;
-    }
-
-    /**
-     * Tries to return the active scene as the (expected) type, casting it to said type, and throwing an exception if
-     * such fails.
+     * Tries to return the active scene as the (expected) type, casting it to said type, and returning null if such
+     * fails.
      *
      * @param type the expected type of {@link GameScene}
      *
-     * @return the active {@link GameScene} if it is the right type
-     *
-     * @throws GameSceneMismatchException if the active scene is not the expected type
+     * @return the active {@link GameScene} if it is the right type, or null if it's not
      */
-    public <T extends GameScene> T getActiveScene(Class<T> type) throws GameSceneMismatchException {
+    public <T extends GameScene> T getActiveScene(Class<T> type) {
         if (!type.isInstance(activeScene))
             throw new GameSceneMismatchException(activeScene.getClass(), type);
 
