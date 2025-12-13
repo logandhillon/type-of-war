@@ -2,12 +2,9 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
-import com.logandhillon.typeofwar.entity.PlayerObject;
-import com.logandhillon.typeofwar.entity.RopeEntity;
-import com.logandhillon.typeofwar.entity.SentenceEntity;
+import com.logandhillon.typeofwar.entity.*;
 import com.logandhillon.typeofwar.resource.WordGen;
-import javafx.scene.Scene;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
