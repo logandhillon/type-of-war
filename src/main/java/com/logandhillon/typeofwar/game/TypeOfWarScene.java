@@ -94,17 +94,14 @@ public class TypeOfWarScene extends GameScene {
     }
 
     public void moveRope(boolean team1) {
-        if (team1) {
-            rope.moveRopeL(1);
-        } else {
-            rope.moveRopeR(1);
-        }
+        if (team1)  rope.moveRopeL(1);
+        else        rope.moveRopeR(1);
     }
 
     public void endGame(boolean won) {
-
         EndResultEntity[] team1results = new EndResultEntity[1];
         team1results[0] = stats.toEndResultEntity(new PlayerObject("Player1", Color.CYAN)); //TODO #6: Change this to work with multiplayer
+
         EndResultEntity[] team2results = new EndResultEntity[1];
         team2results[0] = new EndResultEntity(100, 67, 41, (new PlayerObject("COMPUTER", Color.GREY)));
 
