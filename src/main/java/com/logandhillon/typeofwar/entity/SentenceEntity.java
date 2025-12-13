@@ -203,7 +203,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 correct.setVolume(0.1);
                 correct.play();
             }
-            if(input[currentWord].length() == text[currentWord].length()){
+            if (input[currentWord].length() == text[currentWord].length()) {
                 correctChars++;
                 parent.moveRope(true);
             }
@@ -215,15 +215,14 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         }
         if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
                 && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
-                correctChars++;
-                parent.moveRope(true);
-                correct.setVolume(0.1);
-                correct.play();
-            } else {
-                // if not correct
-                incorrect.setVolume(0.2);
-                incorrect.play();
-            }
+            correctChars++;
+            parent.moveRope(true);
+            correct.setVolume(0.1);
+            correct.play();
+        } else {
+            // if not correct
+            incorrect.setVolume(0.2);
+            incorrect.play();
         }
         typedChars++;
 

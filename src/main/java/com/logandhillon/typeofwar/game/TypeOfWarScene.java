@@ -2,10 +2,7 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
-import com.logandhillon.typeofwar.entity.PlayerObject;
-import com.logandhillon.typeofwar.entity.RopeEntity;
-import com.logandhillon.typeofwar.entity.SentenceEntity;
+import com.logandhillon.typeofwar.entity.*;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.media.AudioClip;
@@ -121,6 +118,7 @@ public class TypeOfWarScene extends GameScene {
         super.discard(scene);
 
         // stop music
+    }
     public void moveRope(boolean team1) {
         if (team1)  rope.moveRopeL(1);
         else        rope.moveRopeR(1);
