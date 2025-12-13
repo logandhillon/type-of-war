@@ -1,7 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
-import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
