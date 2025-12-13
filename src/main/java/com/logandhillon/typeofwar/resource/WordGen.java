@@ -6,8 +6,12 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 /**
- * <explain your class>
+ * Word generation creates random sentences for users to type in their game
+ * Originating from MonkeyType, a major source of inspiration for Type Of War, the library used is a 200-word
+ * english-language library consisting of the most commonly used words in the language.
+ *
  * @author Daniel Gisondi
+ * @see <a href="https://monkeytype.com">MonkeyType.com</a>
  */
 public class WordGen {
     private static final String WORDS_PATH = "/words/english.txt";
