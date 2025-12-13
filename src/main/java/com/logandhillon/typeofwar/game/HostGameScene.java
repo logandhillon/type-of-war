@@ -99,7 +99,7 @@ public class HostGameScene extends UIScene {
 
         DarkMenuButton startButton = new DarkMenuButton("START GAME", 16, 337, 530, 50, () -> {
             // sets new scene when clicked
-            mgr.setScene(new TypeOfWarScene(mgr)); // TODO #6: Make this go to server on click (not game)
+//            mgr.setScene(new LobbyGameScene(mgr)); // TODO #6: Make this go to server on click (not game)
         });
 
         // create background modal

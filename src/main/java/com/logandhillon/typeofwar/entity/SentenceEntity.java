@@ -38,6 +38,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int typedChars;
     private int correctChars;
     private int correctWords;
+    private int backspaces;
 
     private boolean isFirstKeyPress;
     private boolean isComplete;
@@ -168,6 +169,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle backspace
         if (e.getCode() == KeyCode.BACK_SPACE) {
+            backspaces++;
             // decrease correct word count if word was correct
             if (text[currentWord].contentEquals(input[currentWord])) {
                 correctWords--;
@@ -201,29 +203,36 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
-            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
-                currentWord++; // increment word counter LAST so we can do statistics checks
+            if(input[currentWord].length() == text[currentWord].length()){
                 SFX_CORRECT.setVolume(0.1);
                 SFX_CORRECT.play();
+
+                if (backspaces > 0) {
+                    backspaces--;
+                } else {
+                    correctChars++;
+                    parent.moveRope(true);
+                }
             }
-            if (input[currentWord].length() == text[currentWord].length()) {
+            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
+                currentWord++;// increment word counter LAST so we can do statistics checks
+        } else {
+            input[currentWord].append(c);
+        }
+
+        // handle the other characters
+        if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
+            && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
+            SFX_CORRECT.setVolume(0.1);
+            SFX_CORRECT.play();
+
+            if (backspaces > 0) {
+                backspaces--;
+            } else {
                 correctChars++;
                 parent.moveRope(true);
             }
-        }
-        // handle the other characters
-        else {
-            input[currentWord].append(c);
-            // if this char was correct, increase the correct char count.
-        }
-        if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
-            && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
-            correctChars++;
-            parent.moveRope(true);
-            SFX_CORRECT.setVolume(0.1);
-            SFX_CORRECT.play();
-        } else {
-            // if not correct
+        } else if (!c.equals(" ")) /* don't play err sfx if it's a space */ {
             SFX_INCORRECT.setVolume(0.2);
             SFX_INCORRECT.play();
         }

@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
+import java.util.List;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -29,17 +31,16 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 public class TypeOfWarScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(TypeOfWarScene.class);
 
-    private final GameStatisticsEntity stats;
-    private final TypeOfWar            game;
+    protected final GameStatisticsEntity stats;
+    protected final TypeOfWar            game;
+    protected final RopeEntity rope;
 
     private boolean isWinning = true;
-
-    private final RopeEntity rope;
 
     private static final MediaPlayer BG_MUSIC = new MediaPlayer(new Media(
             Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm()));
 
-    public TypeOfWarScene(TypeOfWar game) {
+    public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2) {
         this.game = game;
         stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
         addEntity(stats);
@@ -54,12 +55,9 @@ public class TypeOfWarScene extends GameScene {
             throw new RuntimeException(e);
         }
 
-        PlayerObject testPlayer = new PlayerObject("Player1", Color.CYAN);
-
         rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
-        rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
-        rope.addPlayer(testPlayer, RopeEntity.Team.LEFT);
-        rope.addPlayer(testPlayer, RopeEntity.Team.RIGHT);
+        for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
+        for (var p: team2) rope.addPlayer(p, RopeEntity.Team.RIGHT);
         addEntity(rope);
     }
 
@@ -123,14 +121,13 @@ public class TypeOfWarScene extends GameScene {
     }
 
     public void moveRope(boolean team1) {
-        if (team1) rope.moveRopeL(1);
-        else rope.moveRopeR(1);
+        if (team1)  rope.moveRopeL(1);
+        else        rope.moveRopeR(1);
     }
 
     public void endGame(boolean won) {
         EndResultEntity[] team1results = new EndResultEntity[1];
-        team1results[0] = stats.toEndResultEntity(
-                new PlayerObject("Player1", Color.CYAN)); //TODO #6: Change this to work with multiplayer
+        team1results[0] = stats.toEndResultEntity(new PlayerObject("Player1", Color.CYAN)); //TODO #6: Change this to work with multiplayer
 
         EndResultEntity[] team2results = new EndResultEntity[1];
         team2results[0] = new EndResultEntity(100, 67, 41, (new PlayerObject("COMPUTER", Color.GREY)));

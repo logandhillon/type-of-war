@@ -26,20 +26,21 @@ public class MainMenuScene extends UIScene {
      */
     public MainMenuScene(TypeOfWar mgr) {
         float x = 314;
-        int y = 205;
+        int y = 176;
         int dy = 48 + 16; // ∆y per button height
 
         MenuController controller = new MenuController(
-                new MenuButton("Host Game", x, y, 256, 48, () -> mgr.setScene(new HostGameScene(mgr))),
-                new MenuButton("Join Game", x, y + dy, 256, 48, () -> mgr.setScene(new JoinGameScene(mgr))),
-                new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
-                new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
-                new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))
+                new MenuButton("Practice", x, y, 256, 48, ()-> mgr.setScene(new PracticeSettingScene(mgr))),
+                new MenuButton("Host Game", x, y + dy, 256, 48, () -> mgr.setScene(new HostGameScene(mgr))),
+                new MenuButton("Join Game", x, y + 2 * dy, 256, 48, () -> mgr.setScene(new JoinGameScene(mgr))),
+                new MenuButton("Settings", x, y + 3 * dy, 256, 48, () -> {}),
+                new MenuButton("Credits", x, y + 4 * dy, 256, 48, () -> {}),
+                new MenuButton("Quit", x, y + 5 * dy, 256, 48, () -> System.exit(0))
         );
         addEntity(controller);
 
         InputBoxEntity userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
-        addEntity(new ModalEntity(618, y, 348, 310,
+        addEntity(new ModalEntity(618, y, 348, 368,
                                   userInput
         ));
     }
