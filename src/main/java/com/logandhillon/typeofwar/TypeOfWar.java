@@ -134,7 +134,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
             t2 = client.getTeam(2).stream().map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
         }
 
-        Platform.runLater(() -> setScene(new TypeOfWarScene(t1, t2)));
+        Platform.runLater(() -> setScene(new TypeOfWarScene(this, t1, t2)));
     }
 
     /**

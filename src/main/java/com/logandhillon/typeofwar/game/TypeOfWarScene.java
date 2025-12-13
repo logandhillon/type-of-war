@@ -1,10 +1,8 @@
 package com.logandhillon.typeofwar.game;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
-import com.logandhillon.typeofwar.entity.PlayerObject;
-import com.logandhillon.typeofwar.entity.RopeEntity;
-import com.logandhillon.typeofwar.entity.SentenceEntity;
+import com.logandhillon.typeofwar.entity.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
@@ -26,10 +24,13 @@ public class TypeOfWarScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(TypeOfWarScene.class);
 
     private final GameStatisticsEntity stats;
+    private final TypeOfWar game;
+    private final RopeEntity rope;
 
     private boolean isWinning = true;
 
-    public TypeOfWarScene(List<PlayerObject> team1, List<PlayerObject> team2) {
+    public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2) {
+        this.game = game;
         stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
         addEntity(stats);
 
@@ -38,7 +39,7 @@ public class TypeOfWarScene extends GameScene {
         addEntity(sentence);
         sentence.setText("The quick brown fox jumps over the lazy dog.");
 
-        RopeEntity rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
+        rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
         for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
         for (var p: team2) rope.addPlayer(p, RopeEntity.Team.RIGHT);
         addEntity(rope);
@@ -88,5 +89,20 @@ public class TypeOfWarScene extends GameScene {
     public void onTypingFinished() {
         LOG.info("Typing finished, closing session");
         stats.finishSession();
+    }
+
+    public void moveRope(boolean team1) {
+        if (team1)  rope.moveRopeL(1);
+        else        rope.moveRopeR(1);
+    }
+
+    public void endGame(boolean won) {
+        EndResultEntity[] team1results = new EndResultEntity[1];
+        team1results[0] = stats.toEndResultEntity(new PlayerObject("Player1", Color.CYAN)); //TODO #6: Change this to work with multiplayer
+
+        EndResultEntity[] team2results = new EndResultEntity[1];
+        team2results[0] = new EndResultEntity(100, 67, 41, (new PlayerObject("COMPUTER", Color.GREY)));
+
+        this.game.setScene(new EndGameScene(game, team1results, team2results, new EndHeaderEntity(won)));
     }
 }
