@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
@@ -23,7 +24,7 @@ public class MainMenuScene extends UIScene {
      *
      * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
      */
-    public MainMenuScene(GameSceneManager mgr) {
+    public MainMenuScene(TypeOfWar mgr) {
         float x = 314;
         int y = 205;
         int dy = 48 + 16; // ∆y per button height

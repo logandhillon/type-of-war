@@ -43,6 +43,7 @@ public class GameStatisticsEntity extends Entity {
     private float   accuracy;
     private int     typedChars = 0;
     private int     wordCount;
+    private int     correctWords;
 
     /**
      * Creates an entity at the specified position.
@@ -153,6 +154,7 @@ public class GameStatisticsEntity extends Entity {
         this.typedChars = typedChars;
         this.accuracy = typedChars == 0 ? 0 : (float)correctChars / typedChars;
         this.accuracyText = (int)(accuracy * 100) + "% accuracy";
+        this.correctWords = correctWords;
         this.completionText = this.wordCount == 0 ? "-" : correctWords + "/" + this.wordCount + " words";
         this.isWinning = isWinning;
 
@@ -191,5 +193,9 @@ public class GameStatisticsEntity extends Entity {
         isComplete = true;
         // set the "correct words" to the amount of words (assume the user is done)
         this.completionText = this.wordCount + "/" + this.wordCount + " words";
+    }
+
+    public EndResultEntity toEndResultEntity(PlayerObject player) {
+        return new EndResultEntity((int)wpm, (int)(accuracy * 100), this.correctWords, player);
     }
 }
