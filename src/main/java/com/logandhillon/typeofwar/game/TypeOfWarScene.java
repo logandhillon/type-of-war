@@ -3,10 +3,14 @@ package com.logandhillon.typeofwar.game;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.entity.*;
+import com.logandhillon.typeofwar.resource.WordGen;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+
+import java.io.IOException;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -35,7 +39,12 @@ public class TypeOfWarScene extends GameScene {
         SentenceEntity sentence = new SentenceEntity(
                 WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
         addEntity(sentence);
-        sentence.setText("The quick brown fox jumps over the lazy dog.");
+
+        try {
+            sentence.setText(WordGen.generateSentence(10000));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         PlayerObject testPlayer = new PlayerObject("Player1", Color.CYAN);
 
