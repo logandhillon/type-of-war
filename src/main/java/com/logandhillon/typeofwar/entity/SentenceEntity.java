@@ -203,19 +203,19 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
-            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
-                currentWord++; // increment word counter LAST so we can do statistics checks
+            if(input[currentWord].length() == text[currentWord].length()){
                 SFX_CORRECT.setVolume(0.1);
                 SFX_CORRECT.play();
-            }
-            if (input[currentWord].length() == text[currentWord].length()) {
+
                 if (backspaces > 0) {
                     backspaces--;
                 } else {
-                    parent.moveRope(true);
                     correctChars++;
+                    parent.moveRope(true);
                 }
             }
+            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
+                currentWord++;// increment word counter LAST so we can do statistics checks
         } else {
             input[currentWord].append(c);
         }
