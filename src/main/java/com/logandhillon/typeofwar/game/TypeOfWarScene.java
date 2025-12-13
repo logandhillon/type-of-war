@@ -6,7 +6,8 @@ import com.logandhillon.typeofwar.entity.*;
 import com.logandhillon.typeofwar.resource.WordGen;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,9 @@ public class TypeOfWarScene extends GameScene {
     private boolean isWinning = true;
 
     private final RopeEntity rope;
+
+    private static final MediaPlayer BG_MUSIC = new MediaPlayer(new Media(
+            Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm()));
 
     public TypeOfWarScene(TypeOfWar game) {
         this.game = game;
@@ -107,24 +111,15 @@ public class TypeOfWarScene extends GameScene {
 
     @Override
     public Scene build(Stage stage) {
-        AudioClip bgMusic = new AudioClip(
-                Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm());
-        bgMusic.setVolume(0.3);
-        bgMusic.play();
+        BG_MUSIC.setVolume(0.3);
+        BG_MUSIC.play();
         return super.build(stage);
-
-        // start music
-
     }
 
     @Override
     public void discard(Scene scene) {
-        AudioClip bgMusic = new AudioClip(
-                Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm());
-        bgMusic.stop();
+        BG_MUSIC.stop();
         super.discard(scene);
-
-        // stop music
     }
 
     public void moveRope(boolean team1) {

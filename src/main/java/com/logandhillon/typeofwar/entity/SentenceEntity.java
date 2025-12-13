@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A SentenceEntity is the entity responsible for displaying the sentence and user input. Handles keyboard input and
@@ -41,8 +42,11 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private boolean isFirstKeyPress;
     private boolean isComplete;
 
-    AudioClip correct = new AudioClip(SentenceEntity.class.getResource("/sound/click_1.wav").toExternalForm());
-    AudioClip incorrect = new AudioClip(SentenceEntity.class.getResource("/sound/error_1.wav").toExternalForm());
+    private static final AudioClip SFX_CORRECT   = new AudioClip(
+            Objects.requireNonNull(SentenceEntity.class.getResource("/sound/click_1.wav")).toExternalForm());
+    private static final AudioClip SFX_INCORRECT = new AudioClip(
+            Objects.requireNonNull(SentenceEntity.class.getResource("/sound/error_1.wav")).toExternalForm());
+
     /**
      * Creates a new SentenceEntity at the provided coordinates.
      *
@@ -195,13 +199,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         // ignore blank/control characters
         if (c.isEmpty() || Character.isISOControl(c.charAt(0))) return;
 
-
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
             if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
                 currentWord++; // increment word counter LAST so we can do statistics checks
-                correct.setVolume(0.1);
-                correct.play();
+                SFX_CORRECT.setVolume(0.1);
+                SFX_CORRECT.play();
             }
             if (input[currentWord].length() == text[currentWord].length()) {
                 correctChars++;
@@ -214,15 +217,15 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             // if this char was correct, increase the correct char count.
         }
         if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
-                && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
+            && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
             correctChars++;
             parent.moveRope(true);
-            correct.setVolume(0.1);
-            correct.play();
+            SFX_CORRECT.setVolume(0.1);
+            SFX_CORRECT.play();
         } else {
             // if not correct
-            incorrect.setVolume(0.2);
-            incorrect.play();
+            SFX_INCORRECT.setVolume(0.2);
+            SFX_INCORRECT.play();
         }
         typedChars++;
 
