@@ -245,8 +245,8 @@ public class GameServer implements Runnable {
 
             // all good now! register the client
             Color color = Color.rgb(pkt.getR(), pkt.getG(), pkt.getB());
-            lobby.addPlayer(pkt.getName(), color, 1); // TODO: send player color in join packet
-            registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, 1, out));
+            lobby.addPlayer(pkt.getName(), color, pkt.getTeam()); // TODO: send player color in join packet
+            registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, pkt.getTeam(), out));
 
             // get the players on each team and send them to the client
             out.send(new GamePacket(
@@ -257,7 +257,7 @@ public class GameServer implements Runnable {
                                      .addAllTeam2(getTeam(2).toList())
                                      .build()));
 
-            LOG.info("Registered new client '{}' at {}!", pkt.getName(), client.getInetAddress());
+            LOG.info("Registered new client '{}' on team {} at {}!", pkt.getName(), pkt.getTeam(), client.getInetAddress());
         }
 
         // check if srv is full
@@ -294,8 +294,7 @@ public class GameServer implements Runnable {
         // add the host to team 1
         if (team == 1) {
             list = Stream.concat(
-                    Stream.of(PlayerProto.PlayerData.newBuilder().setName("You").setR(255).setG(0).setB(0).build()),
-                    list);
+                    Stream.of(PlayerProto.PlayerData.newBuilder().setName("Host").setR(255).setG(0).setB(0).build()), list);
         }
 
         return list;

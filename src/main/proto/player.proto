@@ -10,6 +10,8 @@ message PlayerData {
   uint32 r = 2;
   uint32 g = 3;
   uint32 b = 4;
+
+  uint32 team = 5;
 }
 
 message Lobby {

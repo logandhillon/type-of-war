@@ -29,6 +29,7 @@ public class GameClient {
     private final String    host;
     private final int       port;
     private final TypeOfWar game;
+    private final int       team;
 
     private Socket          socket;
     private DataInputStream in;
@@ -48,10 +49,11 @@ public class GameClient {
      *
      * @see GameClient#connect()
      */
-    public GameClient(String host, int port, TypeOfWar game) {
+    public GameClient(String host, int port, TypeOfWar game, int team) {
         this.host = host;
         this.port = port;
         this.game = game;
+        this.team = team;
 
         isRegistered = false;
     }
@@ -75,6 +77,7 @@ public class GameClient {
                 GamePacket.Type.CLT_REQ_CONN,
                 PlayerProto.PlayerData.newBuilder()
                                       .setName(System.getProperty("user.name"))
+                                      .setTeam(team)
                                       .setR(255).setG(255).setB(255)
                                       .build()));
 

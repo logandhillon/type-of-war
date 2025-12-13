@@ -38,6 +38,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
     private Stage     stage;
     private GameScene activeScene;
 
+    private volatile int team;
+
     // used only for end game
     private EndGameProto.PlayerStats endGameStats;
     private boolean                  isGameEndSignalled;
@@ -116,7 +118,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         LOG.info("Creating lobby named {}", roomName);
 
         var lobby = new LobbyGameScene(this, roomName, true);
-        lobby.addPlayer("You", Color.DEEPSKYBLUE, 1);
+        lobby.addPlayer("Host", Color.DEEPSKYBLUE, 1);
         setScene(lobby);
 
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
@@ -191,8 +193,15 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
         if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
 
+        setScene(new MenuQuestionScene(this, "JOINING SERVER...", "CHOOSE A TEAM TO JOIN.",
+                                       "TEAM 1", () -> joinGameWithTeam(serverAddress, 1),
+                                       "TEAM 2", () -> joinGameWithTeam(serverAddress, 2)));
+    }
+
+    private void joinGameWithTeam(String serverAddress, int team) {
+        this.team = team;
         try {
-            client = new GameClient(serverAddress, 20670, this);
+            client = new GameClient(serverAddress, 20670, this, team);
             client.connect();
         } catch (ConnectException e) {
             terminateClient();
@@ -239,7 +248,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
                                         .map(NetUtils::endStatProtoToEntity)
                                         .toList();
 
-        this.setScene(new EndGameScene(this, t1, t2, new EndHeaderEntity(winningTeam == 1)));
+        this.setScene(new EndGameScene(this, t1, t2, new EndHeaderEntity(winningTeam == team)));
     }
 
     /**
@@ -323,11 +332,15 @@ public class TypeOfWar extends Application implements GameSceneManager {
     public void setEndGameStats(GameStatisticsEntity stats) {
         this.endGameStats = EndGameProto.PlayerStats.newBuilder()
                                                     .setPlayerName("PLACEHOLDER") // TODO: populate w/ real values
-                                                    .setTeam(1) // TODO: populate w/ real values
+                                                    .setTeam(team) // TODO: populate w/ real values
                                                     .setR(255).setG(255).setB(255) // TODO: populate w/ real values
                                                     .setWpm(stats.getWpm())
                                                     .setAccuracy(stats.getAccuracy())
                                                     .setWords(stats.getCorrectWords())
                                                     .build();
+    }
+
+    public int getTeam() {
+        return team;
     }
 }
