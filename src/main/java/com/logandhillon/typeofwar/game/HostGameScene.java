@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.Entity;
@@ -40,7 +41,7 @@ public class HostGameScene extends UIScene {
      *
      * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
      */
-    public HostGameScene(GameSceneManager mgr) {
+    public HostGameScene(TypeOfWar mgr) {
 
         /*
           Basic label above buttons indicating purpose of the base strength multiplier
@@ -98,7 +99,7 @@ public class HostGameScene extends UIScene {
 
         DarkMenuButton startButton = new DarkMenuButton("START GAME", 16, 337, 530, 50, () -> {
             // sets new scene when clicked
-            mgr.setScene(new TypeOfWarScene()); // TODO #6: Make this go to server on click (not game)
+            mgr.setScene(new TypeOfWarScene(mgr)); // TODO #6: Make this go to server on click (not game)
         });
 
         // create background modal
