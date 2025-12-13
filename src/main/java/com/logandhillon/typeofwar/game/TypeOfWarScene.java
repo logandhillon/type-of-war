@@ -12,7 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
-import javafx.scene.media.AudioClip;
+
+import java.util.Objects;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -99,7 +100,7 @@ public class TypeOfWarScene extends GameScene {
 
     @Override
     public Scene build(Stage stage) {
-        AudioClip bgMusic = new AudioClip(SentenceEntity.class.getResource("/sound/bgMusic1.wav").toExternalForm());
+        AudioClip bgMusic = new AudioClip(Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm());
         bgMusic.setVolume(0.3);
         bgMusic.play();
         return super.build(stage);
@@ -110,7 +111,7 @@ public class TypeOfWarScene extends GameScene {
 
     @Override
     public void discard(Scene scene) {
-        AudioClip bgMusic = new AudioClip(SentenceEntity.class.getResource("/sound/bgMusic1.wav").toExternalForm());
+        AudioClip bgMusic = new AudioClip(Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm());
         bgMusic.stop();
         super.discard(scene);
 

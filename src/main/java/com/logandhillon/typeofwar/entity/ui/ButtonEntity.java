@@ -59,6 +59,7 @@ public class ButtonEntity extends Clickable {
 
     @Override
     public void onClick(MouseEvent e) {
+        correct.setVolume(0.1);
         correct.play();
         clickHandler.handle(e);
     }
