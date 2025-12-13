@@ -4,7 +4,6 @@ import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -20,7 +19,6 @@ public class EndHeaderEntity extends Entity{
     private boolean win;
     private String text;
     private final float midScreen = TypeOfWar.WINDOW_WIDTH.floatValue() / 2 - (float)FONT_HEADER.getSize() / 2;
-    AudioClip victory = new AudioClip(SentenceEntity.class.getResource("/sound/victory.wav").toExternalForm());
     /**
      *
      * @param win changes display if player's team won or lost game
@@ -55,7 +53,6 @@ public class EndHeaderEntity extends Entity{
 
         if(win) {
             // set win settings
-            victory.play();
             text = "VICTORY!";
             g.setFill(Colors.GOLD_GRADIENT);
             g.setStroke(Colors.GOLD_GRADIENT);
