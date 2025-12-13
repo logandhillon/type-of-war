@@ -37,10 +37,10 @@ public class InputBoxEntity extends Clickable {
     private final float  maxWidth;
     private final String placeholder;
     private final String label;
-    private final int    charLimit;
+    protected final int    charLimit;
 
-    private StringBuilder input;
-    private boolean       isActive;
+    protected StringBuilder input;
+    protected boolean       isActive;
 
     /**
      * Creates an input field at the specified position. THe height will be calculated from a fixed y-margin of 12px and
@@ -157,6 +157,10 @@ public class InputBoxEntity extends Clickable {
 
     public void setInput(String input) {
         this.input = new StringBuilder(input);
+    }
+
+    public void backspace() {
+        this.input.deleteCharAt(this.input.length() - 1);
     }
 
     @Override

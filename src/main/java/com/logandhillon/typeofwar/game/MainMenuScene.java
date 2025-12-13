@@ -30,7 +30,7 @@ public class MainMenuScene extends UIScene {
         int dy = 48 + 16; // ∆y per button height
 
         MenuController controller = new MenuController(
-                new MenuButton("Practice", x, y, 256, 48, ()-> mgr.setScene(new InitAIScene(mgr))),
+                new MenuButton("Practice", x, y, 256, 48, ()-> mgr.setScene(new PracticeSettingScene(mgr))),
                 new MenuButton("Host Game", x, y + dy, 256, 48, () -> mgr.setScene(new HostGameScene(mgr))),
                 new MenuButton("Join Game", x, y + 2 * dy, 256, 48, () -> mgr.setScene(new JoinGameScene(mgr))),
                 new MenuButton("Settings", x, y + 3 * dy, 256, 48, () -> {}),
