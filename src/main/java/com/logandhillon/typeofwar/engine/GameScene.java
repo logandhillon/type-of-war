@@ -52,7 +52,7 @@ public abstract class GameScene {
      * Called every tick for non-graphics-related updates (Entity lifecycle, etc.) This implementation updates all
      * entities.
      */
-    protected void onUpdate(float dt) {
+    protected void onUpdate(float dt) { //FIXME(Logan Dhillon): Please fix this!
         for (Entity e: entities)
             e.onUpdate(dt);
     }

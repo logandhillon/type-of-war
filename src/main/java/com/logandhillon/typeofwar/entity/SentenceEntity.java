@@ -197,6 +197,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         if (c.equals(" ")) {
             if(input[currentWord].length() == text[currentWord].length()){
                 correctChars++;
+                parent.moveRope(true);
             }
             if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
                 currentWord++;// increment word counter LAST so we can do statistics checks
@@ -209,7 +210,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
                 && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
             correctChars++;
-
+            parent.moveRope(true);
         }
         typedChars++;
 

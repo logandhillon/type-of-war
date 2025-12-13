@@ -1,5 +1,7 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -13,12 +15,15 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  * @see com.logandhillon.typeofwar.game.TypeOfWarScene
  */
-public class RopeEntity extends Entity {
+public class RopeEntity extends BoundEntity<TypeOfWarScene> {
+    private static final int X_CONSTANT     = 4;
     private static final int THICKNESS      = 3;
     private static final int WIDTH          = WINDOW_WIDTH.intValue() - 128;
     private static final int PLAYER_MARGIN  = 16;
     private static final int DIVIDER_HEIGHT = 144;
-
+    private static final int FLAG_HEIGHT    = 68;
+    private static float flagX              = WINDOW_WIDTH.floatValue() / 2;
+    private static float goalpostLeftX      = 478;
     private final ArrayList<PlayerObject> leftTeam;
     private final ArrayList<PlayerObject> rightTeam;
 
@@ -30,6 +35,11 @@ public class RopeEntity extends Entity {
 
     @Override
     public void onUpdate(float dt) {
+        if (goalpostLeftX + 324 < WINDOW_WIDTH.intValue() / 2){
+            parent.endGame(true);
+        } else if (goalpostLeftX > WINDOW_WIDTH.intValue() / 2) {
+            parent.endGame(false);
+        }
     }
 
     /**
@@ -46,16 +56,30 @@ public class RopeEntity extends Entity {
         g.setLineWidth(2);
         g.setLineDashes(8);
         g.strokeLine(
-                WINDOW_WIDTH.floatValue() / 2f,
+                goalpostLeftX,
                 (y - DIVIDER_HEIGHT) / 2f,
-                WINDOW_WIDTH.floatValue() / 2f,
+                goalpostLeftX,
                 (y + DIVIDER_HEIGHT) / 2f
         );
 
-        // main rope
-        g.setStroke(Color.WHITE);
+        g.strokeLine(goalpostLeftX + 324,
+                (y - DIVIDER_HEIGHT) / 2f,
+                goalpostLeftX + 324,
+                (y + DIVIDER_HEIGHT) / 2f
+        );
+
+        // flag
+        g.setStroke(Color.RED);
         g.setLineWidth(THICKNESS);
         g.setLineDashes(null);
+        g.strokeLine(
+                flagX,
+                ((y + FLAG_HEIGHT) / 2),
+                flagX,
+                (y / 2) + THICKNESS);
+
+        // main rope
+        g.setStroke(Color.WHITE);
         g.strokeLine(
                 x,
                 (y + THICKNESS) / 2f,
@@ -108,6 +132,14 @@ public class RopeEntity extends Entity {
      * <p>
      * The player on this client should always be on the left, and the relative enemy team should appear on the right.
      */
+
+    public void moveRopeL(int multiplier){
+        goalpostLeftX -= X_CONSTANT * multiplier;
+    }
+
+    public void moveRopeR(int multiplier){
+        goalpostLeftX += X_CONSTANT * multiplier;
+    }
     public enum Team {
         LEFT, RIGHT
     }

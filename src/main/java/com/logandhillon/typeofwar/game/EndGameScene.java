@@ -28,7 +28,7 @@ public class EndGameScene extends GameScene {
      * @param leftTeamResults is the sum of statistics for the team on the left of the rope
      * @param rightTeamResults is the sum of statistics for the team on the right of the rope
      */
-    public EndGameScene(EndResultEntity[] leftTeamResults, EndResultEntity[] rightTeamResults, EndHeaderEntity header){
+    public EndGameScene(TypeOfWar mgr, EndResultEntity[] leftTeamResults, EndResultEntity[] rightTeamResults, EndHeaderEntity header){
 
         this.win = header.getResult();
         addEntity(header);
