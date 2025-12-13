@@ -6,6 +6,8 @@ import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class TypeOfWarPracticeScene extends TypeOfWarScene{
     private final int computerWPM;
     private final float secondsPerCharacter;
@@ -13,9 +15,10 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene{
     private float elapsedSeconds;
     private float wordsCounter;
     public TypeOfWarPracticeScene(TypeOfWar game, int computerWPM) {
-        super(game);
+        super(game, List.of(new PlayerObject("Player1", Color.CYAN)), List.of(new PlayerObject("Computer", Color.GREY))); //TODO: Connect this to main menu values
         this.computerWPM = computerWPM;
         secondsPerCharacter = 60f / (this.computerWPM * 5);
+
     }
 
     @Override
