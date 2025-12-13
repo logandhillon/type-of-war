@@ -36,6 +36,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int typedChars;
     private int correctChars;
     private int correctWords;
+    private int backspaces;
 
     private boolean isFirstKeyPress;
     private boolean isComplete;
@@ -161,6 +162,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle backspace
         if (e.getCode() == KeyCode.BACK_SPACE) {
+            backspaces++;
             // decrease correct word count if word was correct
             if (text[currentWord].contentEquals(input[currentWord])) {
                 correctWords--;
@@ -184,6 +186,8 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
      * @param e KeyEvent from {@link Scene#onKeyTypedProperty()}
      */
     public void onKeyTyped(KeyEvent e) {
+
+
         // don't allow updates if session is complete
         if (isComplete) return;
 
@@ -192,12 +196,15 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         // ignore blank/control characters
         if (c.isEmpty() || Character.isISOControl(c.charAt(0))) return;
 
-
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
             if(input[currentWord].length() == text[currentWord].length()){
-                correctChars++;
-                parent.moveRope(true);
+                if (backspaces > 0) {
+                    backspaces--;
+                } else {
+                    correctChars++;
+                    parent.moveRope(true);
+                }
             }
             if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
                 currentWord++;// increment word counter LAST so we can do statistics checks
@@ -209,8 +216,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         }
         if (input[currentWord].length() <= text[currentWord].length() // automatically fail if the word is too long
                 && String.valueOf(text[currentWord].charAt(Math.max(input[currentWord].length() - 1, 0))).equals(c)) {
-            correctChars++;
-            parent.moveRope(true);
+            if (backspaces > 0) {
+                backspaces--;
+            } else {
+                correctChars++;
+                parent.moveRope(true);
+            }
         }
         typedChars++;
 

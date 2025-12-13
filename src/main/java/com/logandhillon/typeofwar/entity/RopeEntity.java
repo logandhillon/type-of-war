@@ -15,7 +15,7 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @see com.logandhillon.typeofwar.game.TypeOfWarScene
  */
 public class RopeEntity extends BoundEntity<TypeOfWarScene> {
-    private static final int   X_CONSTANT     = 4;
+    private static final float X_CONSTANT     = 5f;
     private static final int   THICKNESS      = 3;
     private static final int   WIDTH          = WINDOW_WIDTH.intValue() - 128;
     private static final int   PLAYER_MARGIN  = 16;

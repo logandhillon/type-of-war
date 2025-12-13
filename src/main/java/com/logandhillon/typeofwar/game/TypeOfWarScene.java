@@ -21,8 +21,8 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 public class TypeOfWarScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(TypeOfWarScene.class);
 
-    private final GameStatisticsEntity stats;
-    private final TypeOfWar game;
+    protected final GameStatisticsEntity stats;
+    protected final TypeOfWar game;
 
     private boolean isWinning = true;
 

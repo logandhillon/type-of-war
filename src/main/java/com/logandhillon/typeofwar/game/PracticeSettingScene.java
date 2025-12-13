@@ -19,7 +19,7 @@ public class PracticeSettingScene extends UIScene {
         wpmInput = new NumberBoxEntity(16, 47, 530, "80", "COMPUTER WPM", 3);
 
         DarkMenuButton startPracticeButton = new DarkMenuButton("START PRACTICE", 16, 129, 530, 48, ()-> {
-           mgr.setScene(new TypeOfWarScene());
+           mgr.setScene(new TypeOfWarPracticeScene(mgr, getWPM()));
         });
 
         LabeledModalEntity practiceModal = new LabeledModalEntity(359, 232, 562, 256, "PRACTICE", mgr, wpmInput, startPracticeButton);
