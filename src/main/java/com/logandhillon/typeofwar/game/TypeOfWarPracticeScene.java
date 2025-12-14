@@ -18,8 +18,11 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
     private float updateTimer;
     private float wordsCounter;
 
+    private volatile boolean isEndScreenQueued = false;
+
     public TypeOfWarPracticeScene(TypeOfWar game, int computerWPM) throws IOException {
-        super(game, List.of(new PlayerObject(System.getProperty("user.name"), Color.CYAN)), // TODO: Connect this to main menu values
+        super(game, List.of(new PlayerObject(System.getProperty("user.name"), Color.CYAN)),
+              // TODO: Connect this to main menu values
               List.of(new PlayerObject("Computer", Color.GREY)),
               WordGen.generateSentence(10000), 1);
         this.computerWPM = computerWPM;
@@ -30,7 +33,8 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
     protected void onUpdate(float dt) {
         try {
             super.onUpdate(dt);
-        } catch (ConcurrentModificationException ignored) {}
+        } catch (ConcurrentModificationException ignored) {
+        }
 
         updateTimer += dt;
         if (updateTimer >= secondsPerCharacter) {
@@ -45,7 +49,14 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
      */
     @Override
     public void sendCorrectKeyPress() {
+        if (!isCountdownOver) return;
         moveRope(true);
+    }
+
+    @Override
+    public void moveRope(boolean team1) {
+        if (!isCountdownOver) return;
+        super.moveRope(team1);
     }
 
     /**
@@ -55,6 +66,7 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
      */
     @Override
     public void signalGameEnd(int winningTeam) {
+        if (isEndScreenQueued) return; // only run ONCE
         this.game.setScene(new EndGameScene(
                 game,
                 List.of(stats.toEndResultEntity(new PlayerObject("Player1", Color.CYAN))),
@@ -64,5 +76,7 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
                         Math.round(wordsCounter),
                         new PlayerObject("COMPUTER", Color.GREY))),
                 winningTeam == 1)); // since player is always team 1, them winning is if team 1 won
+
+        isEndScreenQueued = true;
     }
 }

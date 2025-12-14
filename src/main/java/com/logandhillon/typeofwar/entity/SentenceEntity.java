@@ -47,7 +47,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int correctWords;
     private int backspaces;
 
-    private final float cursorY = y - (LINE_HEIGHT * 0.8f);
+    private final float cursorY = y - (LINE_HEIGHT * 0.25f);
 
     private boolean isFirstKeyPress;
     private boolean isComplete;
@@ -281,5 +281,13 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         super.onAttach(parent);
         parent.addHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
         parent.addHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
+    }
+
+    /**
+     * Marking this as complete simply prevents input from being registered. You can also use this to freeze the input
+     * field beforehand (i.e. for a countdown).
+     */
+    public void setComplete(boolean complete) {
+        isComplete = complete;
     }
 }

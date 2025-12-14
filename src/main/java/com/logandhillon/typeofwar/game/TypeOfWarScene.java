@@ -2,10 +2,7 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
-import com.logandhillon.typeofwar.entity.PlayerObject;
-import com.logandhillon.typeofwar.entity.RopeEntity;
-import com.logandhillon.typeofwar.entity.SentenceEntity;
+import com.logandhillon.typeofwar.entity.*;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.media.Media;
@@ -34,7 +31,8 @@ public class TypeOfWarScene extends GameScene {
     protected final TypeOfWar            game;
     protected final RopeEntity           rope;
 
-    private boolean isWinning = true;
+    private   boolean isWinning = true;
+    protected boolean isCountdownOver;
 
     private static final MediaPlayer BG_MUSIC = new MediaPlayer(new Media(
             Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm()));
@@ -45,16 +43,22 @@ public class TypeOfWarScene extends GameScene {
         stats = new GameStatisticsEntity(64, 144, CANVAS_WIDTH - 128);
         addEntity(stats);
 
-        SentenceEntity sentence = new SentenceEntity(
-                CANVAS_WIDTH / 2f, (CANVAS_HEIGHT + 300) / 2f);
+        SentenceEntity sentence = new SentenceEntity(CANVAS_WIDTH / 2f, (CANVAS_HEIGHT + 300) / 2f);
         addEntity(sentence);
         sentence.setText(sentenceText);
+        sentence.setComplete(true);
 
         rope = new RopeEntity(64, CANVAS_HEIGHT);
         for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
         for (var p: team2) rope.addPlayer(p, RopeEntity.Team.RIGHT);
         rope.setMultiplier(multiplier);
         addEntity(rope);
+
+        isCountdownOver = false;
+        addEntity(new CountdownEntity(CANVAS_WIDTH / 2f, 140, () -> {
+            sentence.setComplete(false);
+            isCountdownOver = true;
+        }));
     }
 
     @Override
@@ -109,6 +113,8 @@ public class TypeOfWarScene extends GameScene {
      * @throws IllegalStateException if there is no active server or client
      */
     public void sendCorrectKeyPress() {
+        if (!isCountdownOver) return;
+
         boolean isServer = game.sendCorrectKeyPress();
         if (isServer) moveRope(true); // server host is always on team 1
         // if a client sent a key press, wait for the server to tell us to move the rope.
