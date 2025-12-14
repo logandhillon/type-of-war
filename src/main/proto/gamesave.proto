@@ -1,9 +1,11 @@
 syntax = "proto3";
 
+import "google/protobuf/wrappers.proto";
+
 option java_package = "com.logandhillon.typeofwar.networking.proto";
 option java_outer_classname = "ConfigProto";
 
 message UserConfig {
   string name = 1;
-  uint32 colorIdx = 2;
+  google.protobuf.UInt32Value colorIdx = 2;
 }

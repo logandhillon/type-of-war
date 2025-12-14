@@ -76,7 +76,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         WINDOW_WIDTH = stage.widthProperty();
         WINDOW_HEIGHT = stage.heightProperty();
 
-        setScene(new MainMenuScene(this, 1));
+        setScene(new MainMenuScene(this));
         stage.show();
     }
 
@@ -115,7 +115,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     @Override
     public void goToMainMenu() {
-        this.setScene(new MainMenuScene(this, 1));
+        this.setScene(new MainMenuScene(this));
         setInMenu(true);
         terminateClient();
         terminateServer();
@@ -438,8 +438,17 @@ public class TypeOfWar extends Application implements GameSceneManager {
      *
      * @throws NullPointerException if there is no stored user config (this shouldn't happen)
      */
-    public ConfigProto.UserConfig getUserConfig() {
+    public static ConfigProto.UserConfig getUserConfig() {
         if (userConfig == null) throw new NullPointerException("User config is null!");
         return userConfig;
+    }
+
+    /**
+     * Updates only the fields specified and saves the resulting config.
+     *
+     * @param partial the partial values, whatever is set here will be updated, otherwise it will remain the same.
+     */
+    public static void updateUserConfig(ConfigProto.UserConfig partial) {
+        userConfig = UserConfigManager.update(userConfig, partial);
     }
 }

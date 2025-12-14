@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.engine.disk;
 
+import com.google.protobuf.UInt32Value;
 import com.logandhillon.typeofwar.networking.proto.ConfigProto.UserConfig;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -19,13 +20,17 @@ public class UserConfigManager {
     private static final File       FILE           = new File("typeofwar.dat");
     private static final UserConfig DEFAULT_CONFIG = UserConfig.newBuilder()
                                                                .setName(System.getProperty("user.name"))
-                                                               .setColorIdx(0)
+                                                               .setColorIdx(UInt32Value.of(0))
                                                                .build();
 
     /**
      * Saves the provided {@link UserConfig} to the disk.
+     *
+     * @return user config that is now saved to disk
+     *
+     * @throws RuntimeException if the user config cannot be saved to disk
      */
-    public static void save(UserConfig config) {
+    public static UserConfig save(UserConfig config) {
         try (FileOutputStream file = new FileOutputStream(FILE)) {
             if (FILE.getParent() != null) {
                 LOG.warn("Parent directory for user config file doesn't exist, creating folder(s).");
@@ -34,8 +39,10 @@ public class UserConfigManager {
 
             LOG.info("Writing user configuration to {}", FILE.getAbsolutePath());
             config.writeTo(file);
+            return config;
         } catch (IOException e) {
-            LOG.error("Failed to load user configuration from disk", e);
+            LOG.error("Failed to save user configuration to {}", FILE.getAbsolutePath());
+            throw new RuntimeException(e);
         }
     }
 
@@ -58,8 +65,32 @@ public class UserConfigManager {
             LOG.info("Successfully loaded user config for '{}' from disk", c.getName());
             return c;
         } catch (IOException e) {
-            LOG.error("Failed to load user configuration from disk", e);
+            LOG.error("Failed to load user configuration from {}", FILE.getAbsolutePath(), e);
             return DEFAULT_CONFIG;
         }
+    }
+
+    /**
+     * Updates only the fields specified and saves the resulting config.
+     *
+     * @param partial the partial values, whatever is set here will be updated, otherwise it will remain the same.
+     */
+    public static UserConfig update(UserConfig current, UserConfig partial) {
+        UserConfig.Builder builder = current.toBuilder();
+
+        if (!partial.getName().isEmpty()) {
+            LOG.info("Setting name to {}", partial.getName());
+            builder.setName(partial.getName());
+        }
+
+        // Only override if the field is explicitly set (non-default)
+        if (partial.hasColorIdx()) {
+            LOG.info("Setting color to index {}", partial.getColorIdx().getValue());
+            builder.setColorIdx(partial.getColorIdx());
+        }
+
+        // Build and save
+        UserConfig merged = builder.build();
+        return save(merged);
     }
 }

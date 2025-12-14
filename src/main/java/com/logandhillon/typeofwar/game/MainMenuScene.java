@@ -1,9 +1,11 @@
 package com.logandhillon.typeofwar.game;
 
+import com.google.protobuf.UInt32Value;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.*;
+import com.logandhillon.typeofwar.networking.proto.ConfigProto;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
@@ -12,8 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.*;
 
 /**
  * The main menu allows the user to navigate to other submenus, play or quit the game, and view game branding.
@@ -36,8 +37,8 @@ public class MainMenuScene extends UIScene {
      *
      * @param game the main class that can switch scenes, manage connections, etc.
      */
-    public MainMenuScene(TypeOfWar game, int defaultColor) {
-        this.defaultColor = defaultColor;
+    public MainMenuScene(TypeOfWar game) {
+        this.defaultColor = TypeOfWar.getUserConfig().getColorIdx().getValue();
         float x = 314;
         int y = 176;
         int dy = 48 + 16; // ∆y per button height
@@ -55,6 +56,7 @@ public class MainMenuScene extends UIScene {
         addEntity(controller);
 
         userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
+        userInput.setInput(TypeOfWar.getUserConfig().getName());
 
         TextEntity skinLabel = new TextEntity("CHOOSE SKIN", Font.font(Fonts.DM_MONO_MEDIUM, 18),
                                               Color.WHITE, TextAlignment.LEFT, VPos.TOP, 16, 113);
@@ -109,5 +111,8 @@ public class MainMenuScene extends UIScene {
                     SKIN_OPTION_POSITIONS[clickedSkin][(i * 2) + 1]);
             skins[i].setClicked(i == clickedSkin);
         }
+
+        // save the new color to the disk
+        updateUserConfig(ConfigProto.UserConfig.newBuilder().setColorIdx(UInt32Value.of(clickedSkin)).buildPartial());
     }
 }
