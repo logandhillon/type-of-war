@@ -108,6 +108,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 wordsInLine++;
             }
 
+            // do not render characters that go off the screen
+            if (dy > CANVAS_HEIGHT) continue;
+
             // for each letter in each word
             for (int j = 0; j < Math.max(text[i].length(), input[i].length()); j++) {
                 // if input is long enough
