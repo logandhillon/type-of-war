@@ -2,6 +2,7 @@ package com.logandhillon.typeofwar.engine;
 
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.Clickable;
+import javafx.geometry.Point3D;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import org.apache.logging.log4j.Logger;
@@ -20,9 +21,6 @@ import java.util.HashMap;
  */
 public abstract class UIScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(UIScene.class);
-
-    /** javaFX hitboxes are TERRIBLE and wrong, so this constant corrects the Y axis */
-    private static final int HITBOX_Y_CORRECTION = -13;
 
     private final HashMap<Clickable, ClickableFlags> clickables       = new HashMap<>();
     private       Clickable[]                        cachedClickables = new Clickable[0];
@@ -144,7 +142,8 @@ public abstract class UIScene extends GameScene {
      * @return true if the cursor is inside the clickable.
      */
     private boolean checkHitbox(MouseEvent e, Clickable c) {
-        return e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() &&
-               e.getY() >= c.getY() + HITBOX_Y_CORRECTION && e.getY() <= c.getY() + HITBOX_Y_CORRECTION + c.getHeight();
+        Point3D p = e.getPickResult().getIntersectedPoint();
+        return p.getX() >= c.getX() && p.getX() <= c.getX() + c.getWidth() &&
+               p.getY() >= c.getY() && p.getY() <= c.getY() + c.getHeight();
     }
 }
