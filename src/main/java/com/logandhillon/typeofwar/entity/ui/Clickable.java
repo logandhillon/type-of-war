@@ -66,4 +66,9 @@ public abstract class Clickable extends BoundEntity<UIScene> {
     public float getHeight() {
         return h;
     }
+
+    public void setSize(float w, float h){
+        this.w = w;
+        this.h = h;
+    }
 }

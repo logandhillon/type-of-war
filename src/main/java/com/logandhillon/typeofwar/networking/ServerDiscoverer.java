@@ -84,7 +84,7 @@ public class ServerDiscoverer {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    LOG.warn("Thread interupted, this is normal");
+                    LOG.warn("Thread interrupted, this is normal");
                 }
             }
         }, "Discoverer/ServerListUpdater").start();
