@@ -79,4 +79,19 @@ public class ModalEntity extends Entity {
         e.translate(x, y); // translate to relative 0,0
         parent.addEntity(e);
     }
+
+    /**
+     * Removes an entity from this modal
+     *
+     * @param e       the entity to remove
+     * @param discard if the entity should also be discarded (and trigger {@link Entity#onDestroy()}
+     *
+     * @throws NullPointerException if this modal has not been attached to a {@link GameScene} yet
+     * @throws IllegalArgumentException if the specified entity is not part of this modal
+     */
+    public void removeEntity(Entity e, boolean discard) {
+        if (parent == null)
+            throw new NullPointerException("This ModalEntity has not been attached to a GameScene yet, and thus you cannot remove entities from it yet.");
+        parent.removeEntity(e, discard);
+    }
 }

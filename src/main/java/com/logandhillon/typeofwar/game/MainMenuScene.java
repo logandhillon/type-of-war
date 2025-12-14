@@ -30,7 +30,7 @@ public class MainMenuScene extends UIScene {
 
         MenuController controller = new MenuController(
                 new MenuButton("Host Game", x, y, 256, 48, () -> game.setScene(new HostGameScene(game))),
-                new MenuButton("Join Game", x, y + dy, 256, 48, () -> game.joinGame("127.0.0.1")), // TODO #32: use join game scene when it's done
+                new MenuButton("Join Game", x, y + dy, 256, 48, () -> game.setScene(new JoinGameScene(game, game::joinGame))),
                 new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
                 new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))

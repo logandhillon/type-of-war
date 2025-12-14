@@ -154,6 +154,23 @@ public abstract class GameScene {
     }
 
     /**
+     * Removes an entity from this scene
+     *
+     * @param e       the entity to remove
+     * @param discard if the entity should also be discarded (and trigger {@link Entity#onDestroy()}
+     *
+     * @throws IllegalArgumentException if the specified entity is not part of this {@link GameScene}
+     */
+    public void removeEntity(Entity e, boolean discard) {
+        if (!entities.contains(e))
+            throw new IllegalArgumentException(
+                    "Cannot remove entity " + e + " from scene: entity is not attached to this scene.");
+
+        entities.remove(e);
+        if (discard) e.onDestroy(); // discard entity if specified
+    }
+
+    /**
      * Registers an event handler that will be attached to the scene when it is built.
      *
      * @param type    the type of event to fire on
