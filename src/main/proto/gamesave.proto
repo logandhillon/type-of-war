@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.logandhillon.typeofwar.networking.proto";
+option java_outer_classname = "ConfigProto";
+
+message UserConfig {
+  string name = 1;
+  uint32 colorIdx = 2;
+}

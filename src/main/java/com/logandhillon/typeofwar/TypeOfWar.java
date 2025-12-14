@@ -2,12 +2,13 @@ package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
-import com.logandhillon.typeofwar.entity.EndHeaderEntity;
+import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.game.*;
 import com.logandhillon.typeofwar.networking.*;
+import com.logandhillon.typeofwar.networking.proto.ConfigProto;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.GameInitProto;
 import com.logandhillon.typeofwar.resource.WordGen;
@@ -48,6 +49,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
     private static GameClient       client;
     private static ServerDiscoverer discoverer;
 
+    private static ConfigProto.UserConfig userConfig;
+
     public static ReadOnlyDoubleProperty WINDOW_WIDTH;
     public static ReadOnlyDoubleProperty WINDOW_HEIGHT;
     private       float                  baseMultiplier;
@@ -85,6 +88,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
      * @see TypeOfWar#start(Stage)
      */
     public static void main(String[] args) throws IOException {
+        // load user config first
+        userConfig = UserConfigManager.load();
+
+        // then start the javafx program
         launch();
 
         // this runs AFTER the javafx window closes
@@ -422,5 +429,17 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     public void setInMenu(boolean inMenu) {
         isInMenu = inMenu;
+    }
+
+    /**
+     * Gets the user config that is actively loaded in memory, NOT from disk.
+     *
+     * @return stored user confirm
+     *
+     * @throws NullPointerException if there is no stored user config (this shouldn't happen)
+     */
+    public ConfigProto.UserConfig getUserConfig() {
+        if (userConfig == null) throw new NullPointerException("User config is null!");
+        return userConfig;
     }
 }
