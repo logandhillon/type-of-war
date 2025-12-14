@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.resource.Fonts;
@@ -14,6 +15,8 @@ import javafx.scene.text.TextAlignment;
 
 import java.util.Arrays;
 import java.util.Objects;
+
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 
 /**
  * A SentenceEntity is the entity responsible for displaying the sentence and user input. Handles keyboard input and
@@ -34,6 +37,11 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private String[]        text;
     private StringBuilder[] input;
     private int             currentWord;
+    private int             currentWordInLine = 1;
+    private int             wordsInLine;
+    private int             ignoredWords;
+    private boolean         countWords = true;
+
 
     private int typedChars;
     private int correctChars;
@@ -48,6 +56,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private static final AudioClip SFX_INCORRECT = new AudioClip(
             Objects.requireNonNull(SentenceEntity.class.getResource("/sound/error_1.wav")).toExternalForm());
 
+    private float cursorY = y - (LINE_HEIGHT * 0.8f);
     /**
      * Creates a new SentenceEntity at the provided coordinates.
      *
@@ -85,10 +94,21 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         g.setTextAlign(TextAlignment.LEFT);
 
         float dx = 64; // left-margin of text
+        float dy = (WINDOW_HEIGHT.floatValue() + 300) / 2f;
         float cursorX = dx - 2 * CHAR_WIDTH;
 
         // for each word
         for (int i = 0; i < text.length; i++) {
+            if (i < ignoredWords) continue;
+            if(dx > TypeOfWar.WINDOW_WIDTH.floatValue() - 128) {
+                dx = 64;
+                dy += 2 * CHAR_WIDTH;
+                countWords = false;
+
+            } else if (countWords){
+                wordsInLine++;
+            }
+
             // for each letter in each word
             for (int j = 0; j < Math.max(text[i].length(), input[i].length()); j++) {
                 // if input is long enough
@@ -97,18 +117,18 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                     if (j < text[i].length()) {
                         // white for correct character, red for incorrect character
                         g.setFill(text[i].charAt(j) == input[i].charAt(j) ? Color.WHITE : Color.RED);
-                        g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
+                        g.fillText(String.valueOf(text[i].charAt(j)), dx, dy);
                     } else {
                         // fill dark red if text extends too long
                         g.setFill(Color.DARKRED);
-                        g.fillText(String.valueOf(input[i].charAt(j)), dx, y);
+                        g.fillText(String.valueOf(input[i].charAt(j)), dx, dy);
                     }
 
                     cursorX = dx;
                 } else {
                     // show dark red if word current word is ahead of this word (thus word incomplete) otherwise gray
                     g.setFill(i >= currentWord ? Color.GRAY : Color.DARKRED);
-                    g.fillText(String.valueOf(text[i].charAt(j)), dx, y);
+                    g.fillText(String.valueOf(text[i].charAt(j)), dx, dy);
                 }
 
                 dx += CHAR_WIDTH;
@@ -123,8 +143,9 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             else cursorX += (text[currentWord - 1].length() - input[currentWord - 1].length() + 1) * CHAR_WIDTH;
         }
 
+
         g.setFill(Color.WHITE);
-        g.fillRect(cursorX + CHAR_WIDTH, y - (LINE_HEIGHT * 0.8), 1, LINE_HEIGHT);
+        g.fillRect(cursorX + CHAR_WIDTH, cursorY, 1, LINE_HEIGHT);
     }
 
     /**
@@ -178,6 +199,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             // decrement word counters if current word is empty OR if this is the last word and it was full
             if (input[currentWord].isEmpty() && currentWord > 0) {
                 currentWord--;
+                currentWordInLine--;
             } else if (!input[currentWord].isEmpty()) {
                 input[currentWord].deleteCharAt(input[currentWord].length() - 1);
             }
@@ -203,6 +225,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
 
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
+            if (currentWordInLine - 1 == wordsInLine - 1) {
+                ignoredWords += wordsInLine;
+                wordsInLine = 0;
+                currentWordInLine = 0;
+                countWords = true;
+            }
             if(input[currentWord].length() == text[currentWord].length()){
                 SFX_CORRECT.setVolume(0.1);
                 SFX_CORRECT.play();
@@ -214,8 +242,10 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                     parent.moveRope(true);
                 }
             }
-            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length)
+            if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
                 currentWord++;// increment word counter LAST so we can do statistics checks
+                currentWordInLine++;
+            }
         } else {
             input[currentWord].append(c);
         }
