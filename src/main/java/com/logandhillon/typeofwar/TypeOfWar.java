@@ -217,26 +217,37 @@ public class TypeOfWar extends Application implements GameSceneManager {
     /**
      * Joins a remote server, registers itself, and displays the lobby.
      *
-     * @param serverAddress address of the server to join
+     * @param serverAddress address and port of the server to join (addr:port)
      */
     public void joinGame(String serverAddress) {
+        String host;
+        int port;
+        int i = serverAddress.lastIndexOf(':');
+        if (i == -1) {
+            host = serverAddress;
+            port = GameServer.DEFAULT_PORT;
+        } else {
+            host = serverAddress.substring(0, i);
+            port = Integer.parseInt(serverAddress.substring(i + 1));
+        }
+
         discoverer.stop();
 
-        LOG.info("Attempting to join game at {}", serverAddress);
+        LOG.info("Attempting to join game at {}, port {}", host, port);
 
         if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
 
         setScene(new MenuQuestionScene(this, "JOINING SERVER...", "CHOOSE A TEAM TO JOIN.",
-                                       "TEAM 1", () -> joinGameWithTeam(serverAddress, 1),
-                                       "TEAM 2", () -> joinGameWithTeam(serverAddress, 2)));
+                                       "TEAM 1", () -> joinGameWithTeam(host, port, 1),
+                                       "TEAM 2", () -> joinGameWithTeam(host, port, 2)));
     }
 
-    private void joinGameWithTeam(String serverAddress, int team) {
+    private void joinGameWithTeam(String host, int port, int team) {
         this.team = team;
         setInMenu(false);
         LOG.info("Setting team number to {}", team);
         try {
-            client = new GameClient(serverAddress, 20670, this, team);
+            client = new GameClient(host, port, this, team);
             client.connect();
         } catch (ConnectException e) {
             terminateClient();

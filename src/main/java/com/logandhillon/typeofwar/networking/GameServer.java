@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 public class GameServer implements Runnable {
     private static final Logger LOG             = LoggerContext.getContext().getLogger(GameServer.class);
-    private static final int    PORT            = 20670;
+    public static final  int    DEFAULT_PORT    = 20670; // default port for game
     public static final  int    ADVERTISE_PORT  = 20671; // for UDP broadcast discovery
     private static final int    MAX_CONNECTIONS = 8;
 
@@ -60,8 +60,8 @@ public class GameServer implements Runnable {
      * @throws IOException if the server socket fails to start.
      */
     public void start() throws IOException {
-        LOG.info("Starting server on port {}...", PORT);
-        socket = new ServerSocket(PORT);
+        LOG.info("Starting server on port {}...", DEFAULT_PORT);
+        socket = new ServerSocket(DEFAULT_PORT);
         running = true;
         new Thread(this, "ServerAcceptor").start();
         startAdvertising(); // start the udp advertiser
@@ -351,7 +351,8 @@ public class GameServer implements Runnable {
 
                     LOG.debug("Broadcasting server advertisement for port");
 
-                    String msg = "TypeOfWarServer:" + lobby.getRoomName() + ":" + PORT; // incl. lobby name and port
+                    String msg =
+                            "TypeOfWarServer:" + lobby.getRoomName() + ":" + DEFAULT_PORT; // incl. lobby name and port
                     byte[] buffer = msg.getBytes();
                     DatagramPacket packet = new DatagramPacket(
                             buffer,
