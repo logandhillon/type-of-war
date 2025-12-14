@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar;
 
+import com.logandhillon.typeofwar.engine.GameEngine;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
@@ -101,10 +102,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
      * @param scene the GameScene to switch
      */
     public void setScene(GameScene scene) {
-        LOG.info("Switching scene to {}", scene);
-        if (activeScene != null) activeScene.discard(stage.sceneProperty().get());
-        stage.setScene(scene.build(stage));
-        activeScene = scene;
+        activeScene = GameEngine.setScene(stage, activeScene, scene);
     }
 
     @Override
