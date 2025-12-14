@@ -37,6 +37,12 @@ public class SkinOptionsEntity extends Clickable {
     protected void onRender(GraphicsContext g, float x, float y) {
         g.setFill(this.color);
         g.fillRect(x, y, w, h);
+
+        if (clicked) {
+            g.setLineWidth(3);
+            g.setStroke(this.color.brighter());
+            g.strokeRect(x, y, w, h);
+        }
     }
 
     @Override

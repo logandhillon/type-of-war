@@ -35,7 +35,11 @@ public final class Colors {
             new Stop(0, Color.rgb(39, 3, 3)),
             new Stop(0.33, Color.BLACK));
 
+    /**
+     * The color of the player skin, indexed by the order they appear on the main menu.
+     */
     public static final List<Color> PLAYER_SKINS = List.of(
-            Color.YELLOW, Color.BLUE, Color.RED, Color.TURQUOISE
+            // red, blue, turquoise, yellow
+            Color.valueOf("#E92727"), Color.valueOf("424CDF"), Color.valueOf("#27E9A8"), Color.valueOf("#E5E927")
     );
 }
