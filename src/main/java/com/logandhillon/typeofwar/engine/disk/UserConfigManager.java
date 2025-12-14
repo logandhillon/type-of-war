@@ -2,6 +2,8 @@ package com.logandhillon.typeofwar.engine.disk;
 
 import com.google.protobuf.UInt32Value;
 import com.logandhillon.typeofwar.networking.proto.ConfigProto.UserConfig;
+import com.logandhillon.typeofwar.resource.Colors;
+import javafx.scene.paint.Color;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
@@ -92,5 +94,16 @@ public class UserConfigManager {
         // Build and save
         UserConfig merged = builder.build();
         return save(merged);
+    }
+
+    /**
+     * Pure method to get the color index from user config and parse it into a {@link Color}
+     *
+     * @param config the user config to get the color idx from
+     *
+     * @return the javafx color
+     */
+    public static Color parseColor(UserConfig config) {
+        return Colors.PLAYER_SKINS.get(config.getColorIdx().getValue());
     }
 }

@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
@@ -73,13 +74,17 @@ public class GameClient {
         in = new DataInputStream(socket.getInputStream());
         out = new PacketWriter(socket.getOutputStream());
 
+        Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
+
         // ask to connect
         out.send(new GamePacket(
                 GamePacket.Type.CLT_REQ_CONN,
                 PlayerProto.PlayerData.newBuilder()
-                                      .setName(System.getProperty("user.name"))
+                                      .setName(TypeOfWar.getUserConfig().getName())
                                       .setTeam(team)
-                                      .setR(255).setG(255).setB(255)
+                                      .setR((int)(color.getRed() * 255))
+                                      .setG((int)(color.getGreen() * 255))
+                                      .setB((int)(color.getBlue() * 255))
                                       .build()));
 
         new Thread(this::readLoop, "Client-ReadLoop").start();
@@ -175,15 +180,17 @@ public class GameClient {
                     return;
                 }
                 var stats = scene.getStats();
+                Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
 
                 // send the stats as a protobuf :)
                 sendServer(new GamePacket(
                         GamePacket.Type.CLT_END_GAME_STATS,
                         EndGameProto.PlayerStats.newBuilder()
-                                                .setPlayerName(System.getProperty(
-                                                        "user.name")) // TODO: populate w/ real values
-                                                .setTeam(team) // TODO: populate w/ real values
-                                                .setR(255).setG(255).setB(255) // TODO: populate w/ real values
+                                                .setPlayerName(TypeOfWar.getUserConfig().getName())
+                                                .setTeam(team)
+                                                .setR((int)(color.getRed() * 255))
+                                                .setG((int)(color.getGreen() * 255))
+                                                .setB((int)(color.getBlue() * 255))
                                                 .setWpm(stats.getWpm())
                                                 .setAccuracy(stats.getAccuracy())
                                                 .setWords(stats.getCorrectWords())

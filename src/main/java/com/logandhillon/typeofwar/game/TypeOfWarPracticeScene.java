@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.resource.WordGen;
@@ -19,7 +20,9 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
     private float wordsCounter;
 
     public TypeOfWarPracticeScene(TypeOfWar game, int computerWPM) throws IOException {
-        super(game, List.of(new PlayerObject(System.getProperty("user.name"), Color.CYAN)), // TODO: Connect this to main menu values
+        super(game, List.of(new PlayerObject(
+                      TypeOfWar.getUserConfig().getName(),
+                      UserConfigManager.parseColor(TypeOfWar.getUserConfig()))),
               List.of(new PlayerObject("Computer", Color.GREY)),
               WordGen.generateSentence(10000), 1);
         this.computerWPM = computerWPM;
@@ -30,7 +33,8 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
     protected void onUpdate(float dt) {
         try {
             super.onUpdate(dt);
-        } catch (ConcurrentModificationException ignored) {}
+        } catch (ConcurrentModificationException ignored) {
+        }
 
         updateTimer += dt;
         if (updateTimer >= secondsPerCharacter) {
@@ -55,9 +59,12 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
      */
     @Override
     public void signalGameEnd(int winningTeam) {
+
         this.game.setScene(new EndGameScene(
                 game,
-                List.of(stats.toEndResultEntity(new PlayerObject("Player1", Color.CYAN))),
+                List.of(stats.toEndResultEntity(new PlayerObject(
+                        TypeOfWar.getUserConfig().getName(),
+                        UserConfigManager.parseColor(TypeOfWar.getUserConfig())))),
                 List.of(new EndResultEntity(
                         this.computerWPM,
                         -1,

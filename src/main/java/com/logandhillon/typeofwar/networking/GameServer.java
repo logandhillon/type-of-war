@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
@@ -282,7 +283,10 @@ public class GameServer implements Runnable {
         LOG.info("Propagating update for lobby player list");
         lobby.clearPlayers();
 
-        lobby.addPlayer("Host", Color.RED, 1); // hardcode the host
+        lobby.addPlayer(
+                TypeOfWar.getUserConfig().getName(),
+                UserConfigManager.parseColor(TypeOfWar.getUserConfig()),
+                1); // hardcode the host's team
         for (ConnectionDetails player: registeredClients.values())
             lobby.addPlayer(player.name, player.color, player.team);
 
@@ -319,11 +323,15 @@ public class GameServer implements Runnable {
                                                                     .build()
                                     );
 
+        Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
+
         // add the host to team 1
         if (team == 1) {
             list = Stream.concat(
-                    Stream.of(PlayerProto.PlayerData.newBuilder().setName("Host").setR(255).setG(0).setB(0).build()),
-                    list);
+                    Stream.of(PlayerProto.PlayerData.newBuilder().setName(TypeOfWar.getUserConfig().getName())
+                                                    .setR((int)(color.getRed() * 255))
+                                                    .setG((int)(color.getGreen() * 255))
+                                                    .setB((int)(color.getBlue() * 255)).build()), list);
         }
 
         return list;

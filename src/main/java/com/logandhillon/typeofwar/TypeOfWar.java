@@ -137,7 +137,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
         LOG.info("Setting team number to 1 (host default)");
 
         var lobby = new LobbyGameScene(this, roomName, true);
-        lobby.addPlayer("Host", Color.RED, 1);
+        lobby.addPlayer(
+                TypeOfWar.getUserConfig().getName(), UserConfigManager.parseColor(TypeOfWar.getUserConfig()), 1);
         setScene(lobby);
 
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
@@ -402,10 +403,14 @@ public class TypeOfWar extends Application implements GameSceneManager {
     public void setEndGameStats(GameStatisticsEntity stats) {
         if (getNetworkRole() != NetworkRole.SERVER) return; // this is only for the sever
 
+        Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
+
         this.endGameStats = EndGameProto.PlayerStats.newBuilder()
-                                                    .setPlayerName("Host") // TODO: populate w/ real values
-                                                    .setTeam(team) // TODO: populate w/ real values
-                                                    .setR(255).setG(255).setB(255) // TODO: populate w/ real values
+                                                    .setPlayerName(getUserConfig().getName())
+                                                    .setTeam(team)
+                                                    .setR((int)(color.getRed() * 255))
+                                                    .setG((int)(color.getGreen() * 255))
+                                                    .setB((int)(color.getBlue() * 255))
                                                     .setWpm(stats.getWpm())
                                                     .setAccuracy(stats.getAccuracy())
                                                     .setWords(stats.getCorrectWords())
