@@ -29,17 +29,14 @@ public class GameStatisticsEntity extends Entity {
     private float elapsedSeconds; // used to calculate time (min) for wpm
     private float updateTimer; // used to recalculate stats every second
 
-    private float  wpm                 =  0 ;
+    private float  wpm                 = 0;
     private String wpmDisplay          = "0";
     private String accuracyText        = "-";
     private String accuracyTextDisplay = "-";
     private String completionText      = "-";
-    private String speedRankText       = "-";
-    private String accuracyRankText    = "-";
 
     private boolean isWinning;
     private boolean isComplete;
-    private int     rawWpm;
     private float   accuracy;
     private int     typedChars = 0;
     private int     wordCount;
@@ -75,7 +72,7 @@ public class GameStatisticsEntity extends Entity {
         updateTimer += dt;
 
         // raw WPM is defined as (total characters / 5) per delta minutes
-        rawWpm = (int)(((typedChars + 2) / 5f) / (elapsedSeconds / 60f));
+        int rawWpm = (int)(((typedChars + 2) / 5f) / (elapsedSeconds / 60f));
         // net WPM is a function of rWPM and accuracy
         wpm = rawWpm * accuracy;
 
@@ -116,12 +113,9 @@ public class GameStatisticsEntity extends Entity {
         // right side stats
         g.setTextAlign(TextAlignment.RIGHT);
 
-        g.fillText(speedRankText, x + width, y + BODY_LINE_HEIGHT);
-        g.fillText(accuracyRankText, x + width, y + 2 * BODY_LINE_HEIGHT);
-
         g.setFont(FONT_HEADER);
         g.setFill(isWinning ? Colors.GOLD_GRADIENT : Color.RED);
-        g.fillText(isWinning ? "You're in the lead!" : "Catch-up!", x + width, y);
+        g.fillText(isWinning ? "You're in the lead!" : "Catch-up!", x + width, y); // TODO: impl.
 
         // completed message
         if (isComplete) {
@@ -155,12 +149,8 @@ public class GameStatisticsEntity extends Entity {
         this.accuracy = typedChars == 0 ? 0 : (float)correctChars / typedChars;
         this.accuracyText = (int)(accuracy * 100) + "% accuracy";
         this.correctWords = correctWords;
-        this.completionText = this.wordCount == 0 ? "-" : correctWords + "/" + this.wordCount + " words";
+        this.completionText = this.wordCount == 0 ? "-" : correctWords + " words";
         this.isWinning = isWinning;
-
-        // TODO: placeholder values, impl. these when multiplayer comes
-        this.speedRankText = "#0 in speed";
-        this.accuracyRankText = "#0 in accuracy";
     }
 
     /**
@@ -191,8 +181,6 @@ public class GameStatisticsEntity extends Entity {
      */
     public void finishSession() {
         isComplete = true;
-        // set the "correct words" to the amount of words (assume the user is done)
-        this.completionText = this.wordCount + "/" + this.wordCount + " words";
     }
 
     public EndResultEntity toEndResultEntity(PlayerObject player) {
@@ -204,7 +192,7 @@ public class GameStatisticsEntity extends Entity {
     }
 
     public int getAccuracy() {
-        return (int)accuracy*100;
+        return Math.round(accuracy * 100);
     }
 
     public int getCorrectWords() {

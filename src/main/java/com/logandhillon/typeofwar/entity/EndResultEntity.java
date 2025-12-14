@@ -62,7 +62,7 @@ public class EndResultEntity extends Entity{
         g.fillText(String.valueOf(this.wpm), center, y + PLAYER_GAP + (2 * GAP));
 
         // render accuracy results
-        g.fillText(this.accuracy == -1 ? "-" : String.valueOf(this.accuracy), center, y + PLAYER_GAP + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
+        g.fillText(this.accuracy == -1 ? "-" : this.accuracy + "%", center, y + PLAYER_GAP + (3 * GAP) + STAT_LINE_HEIGHT + SUBTEXT_LINE_HEIGHT);
 
         // render words results
         g.fillText(String.valueOf(this.words), center, y + PLAYER_GAP + (4 * GAP) + (2 * STAT_LINE_HEIGHT) + (2 * SUBTEXT_LINE_HEIGHT));
