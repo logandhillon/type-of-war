@@ -61,69 +61,10 @@ public class MainMenuScene extends UIScene {
 
         skins = new SkinOptionsEntity[4];
 
-        skins[0] = new SkinOptionsEntity(20, 152, 64, 64, Color.YELLOW, false, () -> {
-            if (!skins[0].isClicked()) {
-                skins[0].setPosition(SKIN_OPTION_POSITIONS[0][0], SKIN_OPTION_POSITIONS[0][1]);
-                skins[0].setSize(80, 80);
-                for (int i = 0; i < skins.length; i++) {
-                    if (i == 0) {
-                        continue;
-                    }
-                    skins[i].setSize(64, 64);
-                    skins[i].setPosition(SKIN_OPTION_POSITIONS[0][(i * 2)], SKIN_OPTION_POSITIONS[0][(i * 2) + 1]);
-                    skins[i].setClicked(false);
-                }
-                skins[0].setClicked(true);
-            }
-        });
-
-        skins[1] = new SkinOptionsEntity(96, 152, 64, 64, Color.BLUE, false, () -> {
-            if (!skins[1].isClicked()) {
-                skins[1].setPosition(SKIN_OPTION_POSITIONS[1][2], SKIN_OPTION_POSITIONS[1][3]);
-                skins[1].setSize(80, 80);
-                for (int i = 0; i < skins.length; i++) {
-                    if (i == 1) {
-                        continue;
-                    }
-                    skins[i].setSize(64, 64);
-                    skins[i].setPosition(SKIN_OPTION_POSITIONS[1][(i * 2)], SKIN_OPTION_POSITIONS[1][(i * 2) + 1]);
-                    skins[i].setClicked(false);
-                }
-                skins[1].setClicked(true);
-            }
-        });
-
-        skins[2] = new SkinOptionsEntity(172, 152, 64, 64, Color.RED, false, () -> {
-            if (!skins[2].isClicked()) {
-                skins[2].setPosition(SKIN_OPTION_POSITIONS[2][4], SKIN_OPTION_POSITIONS[2][5]);
-                skins[2].setSize(80, 80);
-                for (int i = 0; i < skins.length; i++) {
-                    if (i == 2) {
-                        continue;
-                    }
-                    skins[i].setSize(64, 64);
-                    skins[i].setPosition(SKIN_OPTION_POSITIONS[2][(i * 2)], SKIN_OPTION_POSITIONS[2][(i * 2) + 1]);
-                    skins[i].setClicked(false);
-                }
-                skins[2].setClicked(true);
-            }
-        });
-
-        skins[3] = new SkinOptionsEntity(248, 152, 64, 64, Color.AQUA, false, () -> {
-            if (!skins[3].isClicked()) {
-                skins[3].setPosition(SKIN_OPTION_POSITIONS[3][6], SKIN_OPTION_POSITIONS[3][7]);
-                skins[3].setSize(80, 80);
-                for (int i = 0; i < skins.length; i++) {
-                    if (i == 3) {
-                        continue;
-                    }
-                    skins[i].setSize(64, 64);
-                    skins[i].setPosition(SKIN_OPTION_POSITIONS[3][(i * 2)], SKIN_OPTION_POSITIONS[3][(i * 2) + 1]);
-                    skins[i].setClicked(false);
-                }
-                skins[3].setClicked(true);
-            }
-        });
+        skins[0] = new SkinOptionsEntity(20, 152, 64, 64, Color.YELLOW, false, () -> handleSkinClick(0));
+        skins[1] = new SkinOptionsEntity(96, 152, 64, 64, Color.BLUE, false, () -> handleSkinClick(1));
+        skins[2] = new SkinOptionsEntity(172, 152, 64, 64, Color.RED, false, () -> handleSkinClick(2));
+        skins[3] = new SkinOptionsEntity(248, 152, 64, 64, Color.AQUA, false, () -> handleSkinClick(3));
 
         addEntity(new ModalEntity(618, y, 348, 368, userInput, skinLabel, skins[0], skins[1], skins[2], skins[3]));
         skins[this.defaultColor].setClicked(false);
@@ -151,5 +92,22 @@ public class MainMenuScene extends UIScene {
             }
         }
         return skins[defaultColor].getColor();
+    }
+
+    /**
+     * Handles the click event of the {@link SkinOptionsEntity} in the main menu player configuration modal.
+     *
+     * @param clickedSkin the index of the skin that was clicked.
+     */
+    private void handleSkinClick(int clickedSkin) {
+        if (skins[clickedSkin].isClicked()) return;
+
+        for (int i = 0; i < skins.length; i++) {
+            int size = i == clickedSkin ? 80 : 64;
+            skins[i].setSize(size, size);
+            skins[i].setPosition(
+                    SKIN_OPTION_POSITIONS[clickedSkin][(i * 2)], SKIN_OPTION_POSITIONS[clickedSkin][(i * 2) + 1]);
+            skins[i].setClicked(i == clickedSkin);
+        }
     }
 }
