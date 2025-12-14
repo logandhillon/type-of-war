@@ -164,7 +164,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
                        .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
                        .toList();
 
-            sentence = customSentence == null ? "Hello world" : customSentence;
+            sentence = customSentence.isBlank() ? "Hello world" : customSentence; // TODO: impl. random sentence generation
             multiplier = baseMultiplier;
 
             server.broadcast(new GamePacket(

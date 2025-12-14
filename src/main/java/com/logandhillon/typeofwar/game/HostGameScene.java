@@ -97,7 +97,11 @@ public class HostGameScene extends UIScene {
 
         sentenceInput = new InputBoxEntity(16, 255, 530, "Leave blank to randomly generate", "CUSTOM SENTENCE", 500);
 
-        DarkMenuButton startButton = new DarkMenuButton("START GAME", 16, 337, 530, 50, () -> mgr.createLobby(getRoomName(), getStartingMultiplier(), getRoomName()));
+        DarkMenuButton startButton = new DarkMenuButton("START GAME", 16, 337, 530, 50,
+                                                        () -> mgr.createLobby(
+                                                                getRoomName(),
+                                                                getStartingMultiplier(),
+                                                                getCustomSentence()));
 
         // create background modal
         addEntity(new LabeledModalEntity(
