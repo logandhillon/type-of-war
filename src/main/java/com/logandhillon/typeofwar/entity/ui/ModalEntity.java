@@ -4,6 +4,10 @@ import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+
+import java.util.function.Predicate;
 
 /**
  * A modal is a group of other entities that is rendered inside it. This modal is made for generic menus, without any
@@ -13,7 +17,8 @@ import javafx.scene.canvas.GraphicsContext;
  * @apiNote Do not attach entities inside this modal, just the modal itself.
  */
 public class ModalEntity extends Entity {
-    private static final int CORNER_RADIUS = 16;
+    private static final Logger LOG           = LoggerContext.getContext().getLogger(ModalEntity.class);
+    private static final int    CORNER_RADIUS = 16;
 
     protected final float w, h;
     private final Entity[] entities;
@@ -75,23 +80,10 @@ public class ModalEntity extends Entity {
      */
     public void addEntity(Entity e) {
         if (parent == null)
-            throw new NullPointerException("This ModalEntity has not been attached to a GameScene yet, and thus you cannot add entities to it yet.");
+            throw new NullPointerException(
+                    "This ModalEntity has not been attached to a GameScene yet, and thus you cannot add entities to " +
+                    "it yet.");
         e.translate(x, y); // translate to relative 0,0
         parent.addEntity(e);
-    }
-
-    /**
-     * Removes an entity from this modal
-     *
-     * @param e       the entity to remove
-     * @param discard if the entity should also be discarded (and trigger {@link Entity#onDestroy()}
-     *
-     * @throws NullPointerException if this modal has not been attached to a {@link GameScene} yet
-     * @throws IllegalArgumentException if the specified entity is not part of this modal
-     */
-    public void removeEntity(Entity e, boolean discard) {
-        if (parent == null)
-            throw new NullPointerException("This ModalEntity has not been attached to a GameScene yet, and thus you cannot remove entities from it yet.");
-        parent.removeEntity(e, discard);
     }
 }

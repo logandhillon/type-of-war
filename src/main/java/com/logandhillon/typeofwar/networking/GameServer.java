@@ -128,6 +128,15 @@ public class GameServer implements Runnable {
                     try {
                         length = dataInputStream.readInt();
                     } catch (IOException e) {
+                        LOG.info("Client {} disconnected", client.getInetAddress());
+                        registeredClients.remove(client);
+                        clients.remove(client);
+
+                        var lobby = game.getActiveScene(LobbyGameScene.class);
+                        if (lobby != null) {
+                            propagateLobbyUpdate(lobby);
+                        }
+
                         break; // client disconnected or stream closed
                     }
                     if (length <= 0) {
@@ -223,10 +232,10 @@ public class GameServer implements Runnable {
      */
     private void handleClientRegistration(Socket client, GamePacket packet, PacketWriter out) throws IOException {
         if (registeredClients.size() < MAX_CONNECTIONS) {
-            PlayerProto.PlayerData pkt = PlayerProto.PlayerData.parseFrom(packet.payload());
+            PlayerProto.PlayerData data = PlayerProto.PlayerData.parseFrom(packet.payload());
 
             // check if name is already used
-            if (registeredClients.values().stream().anyMatch(p -> p.name.equals(pkt.getName()))) {
+            if (registeredClients.values().stream().anyMatch(p -> p.name.equals(data.getName()))) {
                 LOG.info(
                         "Denying connection from {} (name '{}' in use)", client.getInetAddress(),
                         packet.payload());
@@ -249,22 +258,13 @@ public class GameServer implements Runnable {
             }
 
             // all good now! register the client
-            Color color = Color.rgb(pkt.getR(), pkt.getG(), pkt.getB());
-            lobby.addPlayer(pkt.getName(), color, pkt.getTeam()); // TODO: send player color in join packet
-            registeredClients.put(client, new ConnectionDetails(pkt.getName(), color, pkt.getTeam(), out));
+            Color color = Color.rgb(data.getR(), data.getG(), data.getB());
+            registeredClients.put(client, new ConnectionDetails(data.getName(), color, data.getTeam(), out));
+            LOG.info("Registered new client '{}' on team {} at {}!",
+                     data.getName(), data.getTeam(), client.getInetAddress());
 
-            // get the players on each team and send them to the client
-            out.send(new GamePacket(
-                    GamePacket.Type.SRV_ALLOW_CONN,
-                    PlayerProto.Lobby.newBuilder()
-                                     .setName(lobby.getRoomName())
-                                     .addAllTeam1(getTeam(1).toList())
-                                     .addAllTeam2(getTeam(2).toList())
-                                     .build()));
-
-            LOG.info(
-                    "Registered new client '{}' on team {} at {}!", pkt.getName(), pkt.getTeam(),
-                    client.getInetAddress());
+            // update everyone's player list
+            propagateLobbyUpdate(lobby);
         }
 
         // check if srv is full
@@ -273,6 +273,27 @@ public class GameServer implements Runnable {
             out.send(GamePacket.Type.SRV_DENY_CONN__FULL);
             client.close();
         }
+    }
+
+    /**
+     * Updates the player list and broadcasts the new list to every client
+     */
+    private void propagateLobbyUpdate(LobbyGameScene lobby) {
+        LOG.info("Propagating update for lobby player list");
+        lobby.clearPlayers();
+
+        lobby.addPlayer("Host", Color.RED, 1); // hardcode the host
+        for (ConnectionDetails player: registeredClients.values())
+            lobby.addPlayer(player.name, player.color, player.team);
+
+        // get the players on each team and send them to the client
+        broadcast(new GamePacket(
+                GamePacket.Type.SRV_UPDATE_PLAYERLIST,
+                PlayerProto.Lobby.newBuilder()
+                                 .setName(lobby.getRoomName())
+                                 .addAllTeam1(getTeam(1).toList())
+                                 .addAllTeam2(getTeam(2).toList())
+                                 .build()));
     }
 
     /**

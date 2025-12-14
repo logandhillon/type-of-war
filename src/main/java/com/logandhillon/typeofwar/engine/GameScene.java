@@ -15,7 +15,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -154,21 +156,22 @@ public abstract class GameScene {
     }
 
     /**
-     * Removes an entity from this scene
+     * Removes all entities from this modal that match the predicate
      *
-     * @param e       the entity to remove
-     * @param discard if the entity should also be discarded (and trigger {@link Entity#onDestroy()}
-     *
-     * @throws IllegalArgumentException if the specified entity is not part of this {@link GameScene}
+     * @param discard   if the entities should also be discarded (and trigger {@link Entity#onDestroy()}
+     * @param predicate the predicate to only remove entities that match it.
      */
-    public void removeEntity(Entity e, boolean discard) {
-        if (!entities.contains(e))
-            throw new IllegalArgumentException(
-                    "Cannot remove entity " + e + " from scene: entity is not attached to this scene.");
-
-        LOG.debug("Removing entity {} (discard={})", e, discard);
-        entities.remove(e);
-        if (discard) e.onDestroy(); // discard entity if specified
+    public void clearEntities(boolean discard, Predicate<Entity> predicate) {
+        int removed = 0;
+        for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+            if (predicate.test(e)) {
+                it.remove(); // safe removal
+                if (discard) e.onDestroy();
+                removed++;
+            }
+        }
+        LOG.info("Successfully removed {} entities from this modal", removed);
     }
 
     /**

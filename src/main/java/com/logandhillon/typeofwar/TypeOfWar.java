@@ -129,7 +129,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         LOG.info("Setting team number to 1 (host default)");
 
         var lobby = new LobbyGameScene(this, roomName, true);
-        lobby.addPlayer("Host", Color.DEEPSKYBLUE, 1);
+        lobby.addPlayer("Host", Color.RED, 1);
         setScene(lobby);
 
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");

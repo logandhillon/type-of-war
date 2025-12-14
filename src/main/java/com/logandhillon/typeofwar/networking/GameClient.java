@@ -13,11 +13,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -128,15 +124,19 @@ public class GameClient {
         LOG.debug("Received {} from SERVER", packet.type());
 
         switch (packet.type()) {
-            case SRV_ALLOW_CONN -> {
-                isRegistered = true;
-                LOG.info("Successfully registered with remote server");
+            case SRV_UPDATE_PLAYERLIST -> {
+                if (!isRegistered) {
+                    LOG.info("Successfully registered with remote server");
+                    isRegistered = true;
+                }
 
                 var data = PlayerProto.Lobby.parseFrom(packet.payload());
                 this.team1 = data.getTeam1List();
                 this.team2 = data.getTeam2List();
 
                 var lobby = new LobbyGameScene(game, data.getName(), false);
+                lobby.clearPlayers();
+
                 for (var p: data.getTeam1List())
                     lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
                 for (var p: data.getTeam2List())

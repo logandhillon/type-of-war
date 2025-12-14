@@ -1,7 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
-import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
@@ -33,7 +32,7 @@ public class LobbyGameScene extends UIScene {
     private static final float  ENTITY_GAP = 48;
 
     private final LabeledModalEntity lobbyModal;
-    private final String roomName;
+    private final String             roomName;
 
     private float dyTeam1;
     private float dyTeam2;
@@ -100,6 +99,13 @@ public class LobbyGameScene extends UIScene {
 
         // if neither of the if-branches were handled, throw error
         throw new IllegalArgumentException("Team must be either 1 or 2!");
+    }
+
+    public void clearPlayers() {
+        LOG.info("Clearing player list");
+        clearEntities(true, LobbyPlayerEntity.class::isInstance);
+        dyTeam1 = 0;
+        dyTeam2 = 0;
     }
 
     @Override

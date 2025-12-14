@@ -41,7 +41,7 @@ public record GamePacket(Type type, byte[] payload) {
      */
     public enum Type {
         // server-side types
-        SRV_ALLOW_CONN, SRV_DENY_CONN__FULL, SRV_DENY_CONN__USERNAME_TAKEN, // used for managing connections
+        SRV_UPDATE_PLAYERLIST, SRV_DENY_CONN__FULL, SRV_DENY_CONN__USERNAME_TAKEN, // used for managing connections
         SRV_GAME_STARTING, // announces that the game is starting
         SRV_UNEXPECTED, // generic error for if the server wasn't expecting something (e.g. not ready for a request)
         /**
