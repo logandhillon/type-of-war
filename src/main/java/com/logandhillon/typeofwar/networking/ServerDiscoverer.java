@@ -21,7 +21,8 @@ public class ServerDiscoverer {
     private final List<JoinGameScene.ServerEntry> discoveredServers = new ArrayList<>();
     private final TypeOfWar                       game;
 
-    private boolean listening = false;
+    private volatile boolean listening        = false;
+    private volatile long    lastUpdateMillis = System.currentTimeMillis();
 
     public ServerDiscoverer(TypeOfWar game) {
         this.game = game;
@@ -63,6 +64,7 @@ public class ServerDiscoverer {
                     LOG.info("Discovered server at {}:{}", ip, pkt);
 
                     updateJoinGameScene();
+                    lastUpdateMillis = System.currentTimeMillis();
                 }
             } catch (SocketException e) {
                 LOG.info("UDP listener socket closed");
@@ -71,12 +73,16 @@ public class ServerDiscoverer {
             }
         }, "UDP-ServerDiscovery").start();
 
-        // updates the server list every 4
+        // updates the server list if it becomes stale
         new Thread(() -> {
             while (listening) {
-                try {
+                // only update 4s after the last update
+                if (lastUpdateMillis + 4000 > System.currentTimeMillis()) continue;
+
                 updateJoinGameScene();
-                    Thread.sleep(4000);
+
+                try {
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     LOG.warn("Thread interupted, this is normal");
                 }
