@@ -282,7 +282,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
         if (getNetworkRole() == NetworkRole.SERVER) isInMenu = true;
 
-        this.setScene(new EndGameScene(this, t1, t2, new EndHeaderEntity(stats.getWinningTeam() == team)));
+        this.setScene(new EndGameScene(this, t1, t2, stats.getWinningTeam() == team));
     }
 
     /**
