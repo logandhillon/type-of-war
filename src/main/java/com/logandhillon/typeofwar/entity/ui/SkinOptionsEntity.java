@@ -4,10 +4,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
-public class SkinOptionsEntity extends Clickable{
-    private final Color color;
+public class SkinOptionsEntity extends Clickable {
+    private final Color    color;
     private final Runnable onPress;
-    private boolean clicked;
+    private       boolean  clicked;
 
     /**
      * Creates an entity at the specified position.
@@ -49,9 +49,15 @@ public class SkinOptionsEntity extends Clickable{
 
     }
 
-    public boolean isClicked() {return this.clicked;}
+    public boolean isClicked() {
+        return this.clicked;
+    }
 
-    public void setClicked(boolean clicked) {this.clicked = clicked;}
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
+    }
 
-    public Color getColor() {return color;}
+    public Color getColor() {
+        return color;
+    }
 }
