@@ -226,7 +226,6 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         // handle spaces (new words); increment word counter only if current word isn't blank
         if (c.equals(" ")) {
             if (currentWordInLine - 1 == wordsInLine - 1) {
-                System.out.println(currentWordInLine);
                 ignoredWords += wordsInLine;
                 wordsInLine = 0;
                 currentWordInLine = 0;
