@@ -143,9 +143,9 @@ public class GameClient {
                 lobby.clearPlayers();
 
                 for (var p: data.getTeam1List())
-                    lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
+                    lobby.addPlayer(p.getName(), Color.rgb(p.getR()*255, p.getG()*255, p.getB()*255), 1);
                 for (var p: data.getTeam2List())
-                    lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
+                    lobby.addPlayer(p.getName(), Color.rgb(p.getR()*255, p.getG()*255, p.getB()*255), 2);
 
                 game.setInMenu(true);
 

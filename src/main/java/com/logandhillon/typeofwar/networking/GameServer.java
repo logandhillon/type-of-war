@@ -236,7 +236,8 @@ public class GameServer implements Runnable {
             PlayerProto.PlayerData data = PlayerProto.PlayerData.parseFrom(packet.payload());
 
             // check if name is already used
-            if (registeredClients.values().stream().anyMatch(p -> p.name.equals(data.getName()))) {
+            if (data.getName().equals(TypeOfWar.getUserConfig().getName()) || // remote client matches host
+                registeredClients.values().stream().anyMatch(p -> p.name.equals(data.getName()))) { // or remote client matches another client
                 LOG.info(
                         "Denying connection from {} (name '{}' in use)", client.getInetAddress(),
                         packet.payload());
