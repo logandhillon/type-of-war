@@ -18,8 +18,8 @@ import java.util.List;
 public class ServerDiscoverer {
     private static final Logger LOG = LoggerContext.getContext().getLogger(ServerDiscoverer.class);
 
-    private final List<String> discoveredServers = new ArrayList<>();
-    private final TypeOfWar    game;
+    private final List<JoinGameScene.ServerEntry> discoveredServers = new ArrayList<>();
+    private final TypeOfWar                       game;
 
     private boolean listening = false;
 
@@ -48,14 +48,19 @@ public class ServerDiscoverer {
                     socket.receive(packet);
 
                     String pkt = new String(packet.getData(), 0, packet.getLength());
-                    if (!pkt.startsWith("TypeOfWarServer")) return; // ignore other services
+                    if (!pkt.startsWith("TypeOfWarServer")) {
+                        return;
+                    } // ignore other services
+                    String[] parts = pkt.split(":", 3); // {service name:lobby name:port}
+                    if (parts.length < 3) {
+                        LOG.warn(
+                                "Received malformed server advertisement, there is likely a bad server on the network");
+                        return;
+                    }
 
                     String ip = packet.getAddress().getHostAddress();
-
-                    if (!discoveredServers.contains(ip)) {
-                        discoveredServers.add(ip);
-                        LOG.info("Discovered server at {}:{}", ip, pkt);
-                    }
+                    discoveredServers.add(new JoinGameScene.ServerEntry(parts[1], ip, 0));
+                    LOG.info("Discovered server at {}:{}", ip, pkt);
 
                     updateJoinGameScene();
                 }
@@ -65,22 +70,32 @@ public class ServerDiscoverer {
                 LOG.error("Exception while receiving server discovery packet", e);
             }
         }, "UDP-ServerDiscovery").start();
+
+        // updates the server list every 4
+        new Thread(() -> {
+            while (listening) {
+                try {
+                updateJoinGameScene();
+                    Thread.sleep(4000);
+                } catch (InterruptedException e) {
+                    LOG.warn("Thread interupted, this is normal");
+                }
+            }
+        }, "Discoverer/ServerListUpdater").start();
     }
 
     /**
      * Stops the server discoverer
      */
     public void stop() {
-        LOG.info("Stopping UDP server discovery thread");
+        LOG.info("Asking discovery threads to stop");
         listening = false;
     }
 
     private void updateJoinGameScene() {
         var scene = game.getActiveScene(JoinGameScene.class);
         if (scene == null) return;
-        LOG.debug("Updating join game scene");
-        scene.setDiscoveredServers(discoveredServers.stream()
-                                                    .map(addr -> new JoinGameScene.ServerEntry("TODO", addr, 0))
-                                                    .toList());
+        LOG.debug("Updating join game scene with {} servers", discoveredServers.size());
+        scene.setDiscoveredServers(discoveredServers);
     }
 }

@@ -116,6 +116,15 @@ public class JoinGameScene extends UIScene {
                 joinDiscoverButton);
         addEntity(joinModal);
 
+        for (int i = 0; i < serverButtons.length; i++) {
+            // populate with dummy values and hide them
+            serverButtons[i] = new ServerEntryEntity(32, 231 + (ENTITY_GAP * i), 498, 37,
+                                                     "...", "...", 0, () -> {});
+            serverButtons[i].hidden = true;
+            LOG.debug("Creating (hidden) server button for this modal. {}/{}", i + 1, serverButtons.length);
+            joinModal.addEntity(serverButtons[i]);
+        }
+
         // create event handler that uses the event and the array of buttons
         this.addHandler(KeyEvent.KEY_PRESSED, e -> onKeyPressed(e, serverButtons));
     }
@@ -134,43 +143,41 @@ public class JoinGameScene extends UIScene {
      * Clears the UI discovered server list and repopulates it with the values of {@link JoinGameScene#serverList}
      */
     private void updateServerList() {
+        // repopulate items and add to list
         AtomicInteger currentServer = new AtomicInteger();
 
-        // clear the list
-        for (ServerEntryEntity listItem: serverButtons) {
-            try {
-                joinModal.removeEntity(listItem, true);
-            } catch (IllegalArgumentException ignored) {
-                // if the list item was never in the scene, we can just move on
+        for (int i = 0; i < serverButtons.length; i++) {
+            if (i >= serverList.size()) {
+                serverButtons[i].hidden = true;
+                continue;
             }
-        }
 
-        // repopulate items and add to list
-        for (int i = 0; i < Math.min(serverButtons.length, serverList.size()); i++) {
+            // get it immediately so it doesn't change
+            var entry = serverList.get(i);
             int finalI = i;
+
             // set new server button with available information
-            serverButtons[i] = new ServerEntryEntity(
-                    32, 231 + (ENTITY_GAP * i), 498, 37,
-                    serverList.get(i).name, serverList.get(i).address, serverList.get(i).ping,
-                    () -> {
-                        // runnable (runs on click)
+            LOG.debug("Preparing server button with data: {{}, {}}", entry.name, entry.address);
+            serverButtons[i].setData(entry);
+            serverButtons[i].setOnClick(() -> {
+                // runnable (runs on click)
 
-                        // highlight button
-                        serverButtons[finalI].setActive(true, true);
-                        currentServer.set(finalI);
+                // highlight button
+                serverButtons[finalI].setActive(true, true);
+                currentServer.set(finalI);
 
-                        currentServerIndex = finalI;
-                        rawCurrentServerIndex = finalI;
-                        selectedServerAddr = serverList.get(finalI).address;
+                currentServerIndex = finalI;
+                rawCurrentServerIndex = finalI;
+                selectedServerAddr = entry.address;
 
-                        // reset button highlight for non-clicked buttons
-                        for (int j = 0; j < serverButtons.length; j++) {
-                            if (currentServer.get() != j) {
-                                serverButtons[j].setActive(false, false);
-                            }
-                        }
-                    });
-            joinModal.addEntity(serverButtons[i]);
+                // reset button highlight for non-clicked buttons
+                for (int j = 0; j < serverButtons.length; j++) {
+                    if (currentServer.get() != j) {
+                        serverButtons[j].setActive(false, false);
+                    }
+                }
+            });
+            serverButtons[i].hidden = false;
         }
     }
 

@@ -320,11 +320,17 @@ public class GameServer implements Runnable {
             try (DatagramSocket socket = new DatagramSocket()) {
                 socket.setBroadcast(true);
                 while (running) {
-                    if (game.isInGame()) continue; // only listen in lobby
+                    // only listen in lobby
+                    if (game.isInGame()) continue;
+                    var lobby = game.getActiveScene(LobbyGameScene.class);
+                    if (lobby == null) {
+                        LOG.warn("Supposed to be in lobby, but lobby was null. Will not advertise this frame.");
+                        return;
+                    }
 
                     LOG.debug("Broadcasting server advertisement for port");
 
-                    String msg = "TypeOfWarServer:" + PORT; // include the game port
+                    String msg = "TypeOfWarServer:" + lobby.getRoomName() + ":" + PORT; // incl. lobby name and port
                     byte[] buffer = msg.getBytes();
                     DatagramPacket packet = new DatagramPacket(
                             buffer,
@@ -336,8 +342,11 @@ public class GameServer implements Runnable {
                     socket.send(packet);
                     Thread.sleep(2000); // broadcast every 2 seconds
                 }
-            } catch (Exception e) {
-                LOG.error("Error in broadcast thread", e);
+            } catch (IOException e) {
+                LOG.error("IO exception in server advertiser", e);
+            } catch (InterruptedException e) {
+                LOG.info("Advertiser interrupted, stopping");
+                stopAdvertising();
             }
         }, "ServerAdvertiser");
 

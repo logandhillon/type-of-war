@@ -87,6 +87,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         LOG.info("Program terminated, exiting cleanly");
         if (server != null) server.stop();
         if (client != null) client.close();
+        terminateDiscoverer();
     }
 
     /**
@@ -280,6 +281,19 @@ public class TypeOfWar extends Application implements GameSceneManager {
             LOG.error("Failed to close socket during termination", e);
         }
         client = null;
+    }
+
+    /**
+     * Closes the terminator and nullifies the pointer.
+     */
+    private static void terminateDiscoverer() {
+        if (discoverer == null) {
+            LOG.warn("Server discoverer does not exist, skipping termination");
+            return;
+        }
+
+        discoverer.stop();
+        discoverer = null;
     }
 
     /**

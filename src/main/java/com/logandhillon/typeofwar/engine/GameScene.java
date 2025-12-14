@@ -166,6 +166,7 @@ public abstract class GameScene {
             throw new IllegalArgumentException(
                     "Cannot remove entity " + e + " from scene: entity is not attached to this scene.");
 
+        LOG.debug("Removing entity {} (discard={})", e, discard);
         entities.remove(e);
         if (discard) e.onDestroy(); // discard entity if specified
     }
