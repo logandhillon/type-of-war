@@ -7,6 +7,7 @@ import com.logandhillon.typeofwar.resource.WordGen;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class TypeOfWarPracticeScene extends TypeOfWarScene {
@@ -27,7 +28,10 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
 
     @Override
     protected void onUpdate(float dt) {
-        super.onUpdate(dt);
+        try {
+            super.onUpdate(dt);
+        } catch (ConcurrentModificationException ignored) {}
+
         updateTimer += dt;
         if (updateTimer >= secondsPerCharacter) {
             moveRope(false);
