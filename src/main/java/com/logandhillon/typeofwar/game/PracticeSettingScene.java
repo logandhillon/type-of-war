@@ -1,0 +1,43 @@
+package com.logandhillon.typeofwar.game;
+
+import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.UIScene;
+import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
+import com.logandhillon.typeofwar.entity.ui.LabeledModalEntity;
+import com.logandhillon.typeofwar.entity.ui.NumberBoxEntity;
+import com.logandhillon.typeofwar.resource.Colors;
+import javafx.scene.canvas.GraphicsContext;
+
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+
+public class PracticeSettingScene extends UIScene {
+    private final NumberBoxEntity wpmInput;
+
+    PracticeSettingScene(TypeOfWar mgr) {
+
+        wpmInput = new NumberBoxEntity(16, 47, 530, "80", "COMPUTER WPM", 3);
+
+        DarkMenuButton startPracticeButton = new DarkMenuButton("START PRACTICE", 16, 129, 530, 48, () -> {
+            mgr.setScene(new TypeOfWarPracticeScene(mgr, getWPM()));
+        });
+
+        LabeledModalEntity practiceModal = new LabeledModalEntity(
+                359, 232, 562, 256, "PRACTICE", mgr, wpmInput, startPracticeButton);
+        addEntity(practiceModal);
+    }
+
+    @Override
+    protected void render(GraphicsContext g) {
+        // background
+        g.setFill(Colors.BG_WINNING);
+        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+
+        // render all other entities
+        super.render(g);
+    }
+
+    public int getWPM() {
+        return wpmInput.getInput().isBlank() ? 80 : Integer.parseInt(wpmInput.getInput());
+    }
+}

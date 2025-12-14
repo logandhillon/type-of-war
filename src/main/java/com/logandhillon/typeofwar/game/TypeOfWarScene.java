@@ -2,13 +2,20 @@ package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.entity.*;
+import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
+import com.logandhillon.typeofwar.entity.PlayerObject;
+import com.logandhillon.typeofwar.entity.RopeEntity;
+import com.logandhillon.typeofwar.entity.SentenceEntity;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
+import java.util.Objects;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -23,13 +30,17 @@ import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 public class TypeOfWarScene extends GameScene {
     private static final Logger LOG = LoggerContext.getContext().getLogger(TypeOfWarScene.class);
 
-    private final GameStatisticsEntity stats;
-    private final TypeOfWar            game;
-    private final RopeEntity           rope;
+    protected final GameStatisticsEntity stats;
+    protected final TypeOfWar            game;
+    protected final RopeEntity           rope;
 
     private boolean isWinning = true;
 
-    public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2, String sentenceText, float multiplier) {
+    private static final MediaPlayer BG_MUSIC = new MediaPlayer(new Media(
+            Objects.requireNonNull(SentenceEntity.class.getResource("/sound/bgMusic1.mp3")).toExternalForm()));
+
+    public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2, String sentenceText,
+                          float multiplier) {
         this.game = game;
         stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
         addEntity(stats);
@@ -101,6 +112,19 @@ public class TypeOfWarScene extends GameScene {
         boolean isServer = game.sendCorrectKeyPress();
         if (isServer) moveRope(true); // server host is always on team 1
         // if a client sent a key press, wait for the server to tell us to move the rope.
+    }
+
+    @Override
+    public Scene build(Stage stage) {
+        BG_MUSIC.setVolume(0.3);
+        BG_MUSIC.play();
+        return super.build(stage);
+    }
+
+    @Override
+    public void discard(Scene scene) {
+        BG_MUSIC.stop();
+        super.discard(scene);
     }
 
     public void moveRope(boolean team1) {

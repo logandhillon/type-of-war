@@ -8,6 +8,8 @@ module com.logandhillon.typeofwar {
     requires org.apache.logging.log4j.core;
     requires jdk.compiler;
     requires com.google.protobuf;
+    requires java.desktop;
+    requires javafx.media;
 
     opens com.logandhillon.typeofwar to javafx.fxml;
     exports com.logandhillon.typeofwar;
