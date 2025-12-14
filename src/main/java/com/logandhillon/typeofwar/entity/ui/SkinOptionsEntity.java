@@ -10,23 +10,23 @@ public class SkinOptionsEntity extends Clickable {
     private       boolean  clicked;
 
     /**
-     * Creates an entity at the specified position.
+     * Creates a singular skin option entity.
      *
-     * @param x x-position (from left)
-     * @param y y-position (from top)
-     * @param w width of this element's hitbox
-     * @param h width of this element's hitbox
+     * @param x       x-position (from left)
+     * @param y       y-position (from top)
+     * @param color   the color of the skin
+     * @param onPress the event handler to run when this option is pressed
      */
-    public SkinOptionsEntity(float x, float y, float w, float h, Color color, boolean clicked, Runnable onPress) {
-        super(x, y, w, h);
+    public SkinOptionsEntity(float x, float y, Color color, Runnable onPress) {
+        super(x, y, 64, 64);
         this.color = color;
-        this.clicked = clicked;
         this.onPress = onPress;
+        this.clicked = false;
     }
 
     @Override
     public void onClick(MouseEvent e) {
-        onPress.run();
+        this.onPress();
     }
 
     public void onPress() {
@@ -47,6 +47,16 @@ public class SkinOptionsEntity extends Clickable {
     @Override
     public void onDestroy() {
 
+    }
+
+    /**
+     * Sets the size to 80px if big, 64px otherwise.
+     *
+     * @param isBig if the size should be big (i.e. if it is selected)
+     */
+    public void setSize(boolean isBig) {
+        this.w = isBig ? 80 : 64;
+        this.h = isBig ? 80 : 64;
     }
 
     public boolean isClicked() {

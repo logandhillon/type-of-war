@@ -21,9 +21,9 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    private final InputBoxEntity      userInput;
+    private final InputBoxEntity userInput;
     private final SkinOptionsEntity[] skins;
-    private final int                 defaultColor;
+    private final int defaultColor;
 
     private static final int[][] SKIN_OPTION_POSITIONS = new int[][]{
             { 638, 320, 730, 328, 806, 328, 882, 328 },
@@ -56,19 +56,19 @@ public class MainMenuScene extends UIScene {
 
         userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
 
-        TextEntity skinLabel = new TextEntity(
-                "CHOOSE SKIN", Font.font(Fonts.DM_MONO_MEDIUM, 18), Color.WHITE, TextAlignment.LEFT, VPos.TOP, 16, 113);
+        TextEntity skinLabel = new TextEntity("CHOOSE SKIN", Font.font(Fonts.DM_MONO_MEDIUM, 18),
+                                              Color.WHITE, TextAlignment.LEFT, VPos.TOP, 16, 113);
 
         skins = new SkinOptionsEntity[4];
 
-        skins[0] = new SkinOptionsEntity(20, 152, 64, 64, Color.YELLOW, false, () -> handleSkinClick(0));
-        skins[1] = new SkinOptionsEntity(96, 152, 64, 64, Color.BLUE, false, () -> handleSkinClick(1));
-        skins[2] = new SkinOptionsEntity(172, 152, 64, 64, Color.RED, false, () -> handleSkinClick(2));
-        skins[3] = new SkinOptionsEntity(248, 152, 64, 64, Color.AQUA, false, () -> handleSkinClick(3));
+        for (int i = 0; i < skins.length; i++) {
+            int idx = i; // final for use in lambda
+            // create at 0,0, since they are updates once the default color is selected.
+            skins[i] = new SkinOptionsEntity(0, 0, Colors.PLAYER_SKINS.get(i), () -> handleSkinClick(idx));
+        }
 
         addEntity(new ModalEntity(618, y, 348, 368, userInput, skinLabel, skins[0], skins[1], skins[2], skins[3]));
-        skins[this.defaultColor].setClicked(false);
-        skins[this.defaultColor].onPress();
+        skins[this.defaultColor].onPress(); // select the default color
     }
 
     @Override
@@ -103,10 +103,10 @@ public class MainMenuScene extends UIScene {
         if (skins[clickedSkin].isClicked()) return;
 
         for (int i = 0; i < skins.length; i++) {
-            int size = i == clickedSkin ? 80 : 64;
-            skins[i].setSize(size, size);
+            skins[i].setSize(i == clickedSkin);
             skins[i].setPosition(
-                    SKIN_OPTION_POSITIONS[clickedSkin][(i * 2)], SKIN_OPTION_POSITIONS[clickedSkin][(i * 2) + 1]);
+                    SKIN_OPTION_POSITIONS[clickedSkin][(i * 2)],
+                    SKIN_OPTION_POSITIONS[clickedSkin][(i * 2) + 1]);
             skins[i].setClicked(i == clickedSkin);
         }
     }
