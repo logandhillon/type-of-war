@@ -16,8 +16,8 @@ import javafx.scene.text.TextAlignment;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 
 /**
  * The host game menu allows the user to input parameters needed for hosting a live server
@@ -112,7 +112,7 @@ public class HostGameScene extends UIScene {
     @Override
     protected void render(GraphicsContext g) {
         g.setFill(Colors.BG_WINNING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all entities
         super.render(g);
