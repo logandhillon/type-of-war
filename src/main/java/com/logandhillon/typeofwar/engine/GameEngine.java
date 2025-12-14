@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.engine;
 
+import com.logandhillon.typeofwar.resource.Colors;
 import javafx.animation.FadeTransition;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -37,7 +38,7 @@ public class GameEngine {
         Pane overlayPane = new Pane();
         overlayPane.setPrefSize(stage.getWidth(), stage.getHeight());
 
-        Rectangle fadeRect = new Rectangle(stage.getWidth(), stage.getHeight(), Color.BLACK);
+        Rectangle fadeRect = new Rectangle(stage.getWidth(), stage.getHeight(), Colors.BG_WINNING);
         fadeRect.setOpacity(0);
         overlayPane.getChildren().add(fadeRect);
 
