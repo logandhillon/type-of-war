@@ -34,13 +34,15 @@ public class InputBoxEntity extends Clickable {
     private static final Font INPUT_FONT       = Font.font(Fonts.DM_MONO, INPUT_FONT_SIZE);
     private static final Font LABEL_FONT       = Font.font(Fonts.DM_MONO_MEDIUM, 18);
 
-    private final float  maxWidth;
-    private final String placeholder;
-    private final String label;
+    private final   float  maxWidth;
+    private final   String placeholder;
+    private final   String label;
     protected final int    charLimit;
 
     protected StringBuilder input;
     protected boolean       isActive;
+
+    private Runnable onBlur;
 
     /**
      * Creates an input field at the specified position. THe height will be calculated from a fixed y-margin of 12px and
@@ -114,6 +116,10 @@ public class InputBoxEntity extends Clickable {
             if (e.getCode() == KeyCode.BACK_SPACE && !input.isEmpty()) {
                 input.deleteCharAt(input.length() - 1);
             }
+            // blur on enter or esc
+            if (e.getCode() == KeyCode.ENTER || e.getCode() == KeyCode.ESCAPE) {
+                this.onBlur();
+            }
             e.consume(); // consume if active
         }
     }
@@ -159,10 +165,6 @@ public class InputBoxEntity extends Clickable {
         this.input = new StringBuilder(input);
     }
 
-    public void backspace() {
-        this.input.deleteCharAt(this.input.length() - 1);
-    }
-
     @Override
     public void onClick(MouseEvent e) {
         LOG.debug("Input box clicked");
@@ -170,8 +172,16 @@ public class InputBoxEntity extends Clickable {
     }
 
     @Override
-    public void onBlur(MouseEvent e) {
+    public void onBlur() {
         LOG.debug("Input box blurred");
         this.isActive = false;
+        if (onBlur != null) onBlur.run();
+    }
+
+    /**
+     * Sets the event that will run when the enter key is pressed.
+     */
+    public void setOnBlur(Runnable onBlur) {
+        this.onBlur = onBlur;
     }
 }

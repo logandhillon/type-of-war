@@ -43,7 +43,7 @@ public abstract class Clickable extends BoundEntity<UIScene> {
      *
      * @param e the mouse event from JavaFX
      */
-    public void onBlur(MouseEvent e) {}
+    public void onBlur() {}
 
     /**
      * Runs the mouse enter handler if it was set.

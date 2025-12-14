@@ -57,6 +57,8 @@ public class MainMenuScene extends UIScene {
 
         userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
         userInput.setInput(TypeOfWar.getUserConfig().getName());
+        userInput.setOnBlur(() -> TypeOfWar.updateUserConfig(
+                ConfigProto.UserConfig.newBuilder().setName(userInput.getInput()).buildPartial()));
 
         TextEntity skinLabel = new TextEntity("CHOOSE SKIN", Font.font(Fonts.DM_MONO_MEDIUM, 18),
                                               Color.WHITE, TextAlignment.LEFT, VPos.TOP, 16, 113);
