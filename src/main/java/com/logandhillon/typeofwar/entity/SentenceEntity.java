@@ -47,7 +47,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int correctWords;
     private int backspaces;
 
-    private final float cursorY = y - (LINE_HEIGHT * 0.8f);
+    private final float cursorY = y - (LINE_HEIGHT * 0.25f);
 
     private boolean isFirstKeyPress;
     private boolean isComplete;
