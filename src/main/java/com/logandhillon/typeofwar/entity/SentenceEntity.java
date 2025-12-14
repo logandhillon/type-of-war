@@ -282,4 +282,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         parent.addHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
         parent.addHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
     }
+
+    /**
+     * Marking this as complete simply prevents input from being registered. You can also use this to freeze the input
+     * field beforehand (i.e. for a countdown).
+     */
+    public void setComplete(boolean complete) {
+        isComplete = complete;
+    }
 }

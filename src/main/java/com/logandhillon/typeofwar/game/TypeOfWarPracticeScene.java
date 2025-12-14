@@ -45,7 +45,14 @@ public class TypeOfWarPracticeScene extends TypeOfWarScene {
      */
     @Override
     public void sendCorrectKeyPress() {
+        if (!isCountdownOver) return;
         moveRope(true);
+    }
+
+    @Override
+    public void moveRope(boolean team1) {
+        if (!isCountdownOver) return;
+        super.moveRope(team1);
     }
 
     /**
