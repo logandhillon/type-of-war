@@ -10,6 +10,7 @@ import com.logandhillon.typeofwar.game.*;
 import com.logandhillon.typeofwar.networking.*;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.GameInitProto;
+import com.logandhillon.typeofwar.resource.WordGen;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -164,7 +165,11 @@ public class TypeOfWar extends Application implements GameSceneManager {
                        .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
                        .toList();
 
-            sentence = customSentence.isBlank() ? "Hello world" : customSentence; // TODO: impl. random sentence generation
+            try {
+                sentence = customSentence.isBlank() ? WordGen.generateSentence(10000) : customSentence;
+            } catch (IOException e) {
+                LOG.fatal("Could not generate sentence", e);
+            }
             multiplier = baseMultiplier;
 
             server.broadcast(new GamePacket(
