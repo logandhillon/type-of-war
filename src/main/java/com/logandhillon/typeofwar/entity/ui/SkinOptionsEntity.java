@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 
 public class SkinOptionsEntity extends Clickable{
     private final Color color;
-    private final Runnable onClick;
+    private final Runnable onPress;
     private boolean clicked;
 
     /**
@@ -17,16 +17,20 @@ public class SkinOptionsEntity extends Clickable{
      * @param w width of this element's hitbox
      * @param h width of this element's hitbox
      */
-    public SkinOptionsEntity(float x, float y, float w, float h, Color color, boolean clicked, Runnable onClick) {
+    public SkinOptionsEntity(float x, float y, float w, float h, Color color, boolean clicked, Runnable onPress) {
         super(x, y, w, h);
         this.color = color;
         this.clicked = clicked;
-        this.onClick = onClick;
+        this.onPress = onPress;
     }
 
     @Override
     public void onClick(MouseEvent e) {
-        onClick.run();
+        onPress.run();
+    }
+
+    public void onPress() {
+        onPress.run();
     }
 
     @Override
@@ -48,4 +52,6 @@ public class SkinOptionsEntity extends Clickable{
     public boolean isClicked() {return this.clicked;}
 
     public void setClicked(boolean clicked) {this.clicked = clicked;}
+
+    public Color getColor() {return color;}
 }

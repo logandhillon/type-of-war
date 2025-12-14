@@ -24,12 +24,17 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
+    private final InputBoxEntity userInput;
+    private final SkinOptionsEntity[] skins;
+    private final int defaultColor;
+
     /**
      * Creates a new main menu
      *
      * @param game the main class that can switch scenes, manage connections, etc.
      */
-    public MainMenuScene(TypeOfWar game) {
+    public MainMenuScene(TypeOfWar game, int defaultColor) {
+        this.defaultColor = defaultColor;
         float x = 314;
         int y = 176;
         int dy = 48 + 16; // ∆y per button height
@@ -46,11 +51,11 @@ public class MainMenuScene extends UIScene {
         );
         addEntity(controller);
 
-        InputBoxEntity userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
+        userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
 
         TextEntity skinLabel = new TextEntity("CHOOSE SKIN", Font.font(Fonts.DM_MONO_MEDIUM, 18), Color.WHITE, TextAlignment.LEFT, VPos.TOP, 16, 113);
 
-        SkinOptionsEntity[] skins = new SkinOptionsEntity[4];
+        skins = new SkinOptionsEntity[4];
 
         int[] firstSelected = {638, 320, 730, 328, 806, 328, 882, 328};
         int[] secondSelected = {638, 328, 714, 320, 806, 328, 882, 328};
@@ -120,7 +125,11 @@ public class MainMenuScene extends UIScene {
                 skins[3].setClicked(true);
             }
         });
+
         addEntity(new ModalEntity(618, y, 348, 368, userInput, skinLabel, skins[0], skins[1], skins[2], skins[3]));
+        skins[this.defaultColor].setClicked(false);
+        skins[this.defaultColor].onPress();
+
     }
 
     @Override
@@ -131,5 +140,16 @@ public class MainMenuScene extends UIScene {
 
         // render all other entities
         super.render(g);
+    }
+
+    public String getPlayerName() {return userInput.getInput();}
+
+    public Color getSkin() {
+        for (SkinOptionsEntity s : skins) {
+            if (s.isClicked()) {
+                return s.getColor();
+            }
+        }
+        return skins[defaultColor].getColor();
     }
 }
