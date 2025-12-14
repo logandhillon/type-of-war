@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.resource.Audios;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,6 +30,8 @@ public class CountdownEntity extends Entity {
         this.onTimerEnd = onTimerEnd;
         currentNumber = 3;
         timer = 0;
+        Audios.COUNTDOWN.setVolume(0.1);
+        Audios.COUNTDOWN.play();
     }
 
     @Override
@@ -39,11 +42,20 @@ public class CountdownEntity extends Entity {
         if (timer >= 1f) {
             currentNumber--;
             timer = 0;
+            if (currentNumber == 0) {
+                Audios.COUNTDOWN_END.setVolume(0.1);
+                Audios.COUNTDOWN_END.play();
+            } else {
+                Audios.COUNTDOWN.setVolume(0.1);
+                Audios.COUNTDOWN.play();
+            }
         }
 
         if (currentNumber < 0) {
             onTimerEnd.run();
             closed = true;
+            Audios.COUNTDOWN.setVolume(0);
+            Audios.COUNTDOWN.stop();
         }
     }
 
@@ -61,7 +73,7 @@ public class CountdownEntity extends Entity {
         g.translate(x, y);
         g.scale(delta, delta);
         g.setFill(Color.hsb(0, 0, 1, delta));
-        g.fillText(String.valueOf(currentNumber), 0, 0);
+        g.fillText(currentNumber == 0 ? "GO!" : String.valueOf(currentNumber), 0, 0);
         g.restore();
     }
 
