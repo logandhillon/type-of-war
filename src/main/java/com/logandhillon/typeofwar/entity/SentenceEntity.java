@@ -42,11 +42,12 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int             ignoredWords;
     private boolean         countWords        = true;
 
-    private int   typedChars;
-    private int   correctChars;
-    private int   correctWords;
-    private int   backspaces;
-    private float cursorY = y - (LINE_HEIGHT * 0.8f);
+    private int typedChars;
+    private int correctChars;
+    private int correctWords;
+    private int backspaces;
+
+    private final float cursorY = y - (LINE_HEIGHT * 0.8f);
 
     private boolean isFirstKeyPress;
     private boolean isComplete;
@@ -93,18 +94,17 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         g.setTextAlign(TextAlignment.LEFT);
 
         float dx = 64; // left-margin of text
-        float dy = (WINDOW_HEIGHT.floatValue() + 300) / 2f;
+        float dy = (WINDOW_HEIGHT.floatValue() + 310) / 2f;
         float cursorX = dx - 2 * CHAR_WIDTH;
 
         // for each word
         for (int i = 0; i < text.length; i++) {
             if (i < ignoredWords) continue;
-            if(dx > TypeOfWar.WINDOW_WIDTH.floatValue() - 128) {
+            if (dx > TypeOfWar.WINDOW_WIDTH.floatValue() - 128) {
                 dx = 64;
-                dy += 2 * CHAR_WIDTH;
+                dy += 4 * CHAR_WIDTH;
                 countWords = false;
-
-            } else if (countWords){
+            } else if (countWords) {
                 wordsInLine++;
             }
 
