@@ -7,10 +7,7 @@ import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.game.*;
-import com.logandhillon.typeofwar.networking.GameClient;
-import com.logandhillon.typeofwar.networking.GamePacket;
-import com.logandhillon.typeofwar.networking.GameServer;
-import com.logandhillon.typeofwar.networking.NetUtils;
+import com.logandhillon.typeofwar.networking.*;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -37,15 +34,17 @@ public class TypeOfWar extends Application implements GameSceneManager {
     private Stage     stage;
     private GameScene activeScene;
 
-    private volatile int team;
+    private volatile int     team;
+    private volatile boolean isInMenu;
 
     // used only for end game
     private volatile EndGameProto.PlayerStats endGameStats;
     private volatile boolean                  isGameEndSignalled;
     private volatile int                      winningTeam;
 
-    private static GameServer server;
-    private static GameClient client;
+    private static GameServer       server;
+    private static GameClient       client;
+    private static ServerDiscoverer discoverer;
 
     public static ReadOnlyDoubleProperty WINDOW_WIDTH;
     public static ReadOnlyDoubleProperty WINDOW_HEIGHT;
@@ -61,6 +60,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         Thread.currentThread().setName("FX");
 
         this.stage = stage;
+        isInMenu = true;
 
         stage.setTitle(GAME_NAME);
         stage.setWidth(1280);
@@ -104,6 +104,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
     @Override
     public void goToMainMenu() {
         this.setScene(new MainMenuScene(this));
+        setInMenu(true);
         terminateClient();
         terminateServer();
     }
@@ -126,6 +127,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
 
         server = new GameServer(this);
+        isInMenu = true;
         isGameEndSignalled = false;
         try {
             server.start();
@@ -161,6 +163,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
         }
 
         isGameEndSignalled = false;
+        isInMenu = false;
         Platform.runLater(() -> setScene(new TypeOfWarScene(this, t1, t2)));
     }
 
@@ -185,12 +188,20 @@ public class TypeOfWar extends Application implements GameSceneManager {
         }
     }
 
+    public void showJoinGameMenu() {
+        discoverer = new ServerDiscoverer(this);
+        discoverer.start();
+        setScene(new JoinGameScene(this, this::joinGame));
+    }
+
     /**
      * Joins a remote server, registers itself, and displays the lobby.
      *
      * @param serverAddress address of the server to join
      */
     public void joinGame(String serverAddress) {
+        discoverer.stop();
+
         LOG.info("Attempting to join game at {}", serverAddress);
 
         if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
@@ -202,6 +213,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     private void joinGameWithTeam(String serverAddress, int team) {
         this.team = team;
+        setInMenu(false);
         LOG.info("Setting team number to {}", team);
         try {
             client = new GameClient(serverAddress, 20670, this, team);
@@ -248,8 +260,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
                                         .map(NetUtils::endStatProtoToEntity)
                                         .toList();
 
-        System.out.println("t1 = " + t1);
-        System.out.println("t2 = " + t2);
+        if (getNetworkRole() == NetworkRole.SERVER) isInMenu = true;
 
         this.setScene(new EndGameScene(this, t1, t2, new EndHeaderEntity(stats.getWinningTeam() == team)));
     }
@@ -351,5 +362,16 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     public int getWinningTeam() {
         return winningTeam;
+    }
+
+    /**
+     * @return true if we are in a game, false if we are in the menu
+     */
+    public boolean isInGame() {
+        return !isInMenu;
+    }
+
+    public void setInMenu(boolean inMenu) {
+        isInMenu = inMenu;
     }
 }

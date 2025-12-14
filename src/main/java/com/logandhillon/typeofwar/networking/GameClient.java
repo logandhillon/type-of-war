@@ -12,7 +12,11 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -137,6 +141,8 @@ public class GameClient {
                 for (var p: data.getTeam2List())
                     lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
 
+                game.setInMenu(true);
+
                 // run setScene on the FX thread
                 Platform.runLater(() -> game.setScene(lobby));
             }
@@ -170,7 +176,8 @@ public class GameClient {
                 sendServer(new GamePacket(
                         GamePacket.Type.CLT_END_GAME_STATS,
                         EndGameProto.PlayerStats.newBuilder()
-                                                .setPlayerName(System.getProperty("user.name")) // TODO: populate w/ real values
+                                                .setPlayerName(System.getProperty(
+                                                        "user.name")) // TODO: populate w/ real values
                                                 .setTeam(team) // TODO: populate w/ real values
                                                 .setR(255).setG(255).setB(255) // TODO: populate w/ real values
                                                 .setWpm(stats.getWpm())

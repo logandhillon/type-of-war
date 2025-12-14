@@ -28,9 +28,11 @@ public class MainMenuScene extends UIScene {
         int y = 205;
         int dy = 48 + 16; // ∆y per button height
 
+        game.setInMenu(true);
+
         MenuController controller = new MenuController(
                 new MenuButton("Host Game", x, y, 256, 48, () -> game.setScene(new HostGameScene(game))),
-                new MenuButton("Join Game", x, y + dy, 256, 48, () -> game.setScene(new JoinGameScene(game, game::joinGame))),
+                new MenuButton("Join Game", x, y + dy, 256, 48, game::showJoinGameMenu),
                 new MenuButton("Settings", x, y + 2 * dy, 256, 48, () -> {}),
                 new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))

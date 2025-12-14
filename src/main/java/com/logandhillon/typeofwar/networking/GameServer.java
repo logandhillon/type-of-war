@@ -12,8 +12,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -29,11 +28,13 @@ import java.util.stream.Stream;
 public class GameServer implements Runnable {
     private static final Logger LOG             = LoggerContext.getContext().getLogger(GameServer.class);
     private static final int    PORT            = 20670;
+    public static final  int    ADVERTISE_PORT  = 20671; // for UDP broadcast discovery
     private static final int    MAX_CONNECTIONS = 8;
 
-    private volatile boolean      running;
+    private volatile boolean      running; // if the server is running
     private final    TypeOfWar    game;
     private          ServerSocket socket;
+    private          Thread       advertiser;
 
     /** the list of ALL active client connections, including unregistered ones. */
     private final Set<Socket> clients = Collections.synchronizedSet(new HashSet<>());
@@ -63,6 +64,7 @@ public class GameServer implements Runnable {
         socket = new ServerSocket(PORT);
         running = true;
         new Thread(this, "ServerAcceptor").start();
+        startAdvertising(); // start the udp advertiser
     }
 
     /**
@@ -77,6 +79,7 @@ public class GameServer implements Runnable {
             LOG.info("Closing server socket now");
             socket.close();
         }
+        stopAdvertising();
         LOG.info("Closing {} client connection(s)", clients.size());
         synchronized (clients) {
             for (Socket c: clients) {
@@ -303,5 +306,52 @@ public class GameServer implements Runnable {
         }
 
         return list;
+    }
+
+    /**
+     * Starts advertising this server on the IP broadcast channel with UDP discovery packets.
+     */
+    public void startAdvertising() {
+        if (advertiser != null && advertiser.isAlive()) return;
+
+        LOG.info("Starting UDP advertiser on port {}", ADVERTISE_PORT);
+
+        advertiser = new Thread(() -> {
+            try (DatagramSocket socket = new DatagramSocket()) {
+                socket.setBroadcast(true);
+                while (running) {
+                    if (game.isInGame()) continue; // only listen in lobby
+
+                    LOG.debug("Broadcasting server advertisement for port");
+
+                    String msg = "TypeOfWarServer:" + PORT; // include the game port
+                    byte[] buffer = msg.getBytes();
+                    DatagramPacket packet = new DatagramPacket(
+                            buffer,
+                            buffer.length,
+                            InetAddress.getByName("255.255.255.255"),
+                            ADVERTISE_PORT
+                    );
+
+                    socket.send(packet);
+                    Thread.sleep(2000); // broadcast every 2 seconds
+                }
+            } catch (Exception e) {
+                LOG.error("Error in broadcast thread", e);
+            }
+        }, "ServerAdvertiser");
+
+        advertiser.start();
+    }
+
+    /**
+     * Stops the ServerAdvertiser immediately.
+     */
+    public void stopAdvertising() {
+        if (advertiser != null) {
+            LOG.info("Stopping UDP advertiser on port {}", ADVERTISE_PORT);
+            advertiser.interrupt();
+            advertiser = null;
+        }
     }
 }

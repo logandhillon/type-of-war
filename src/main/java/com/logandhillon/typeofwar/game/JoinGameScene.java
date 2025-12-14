@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
@@ -46,7 +47,7 @@ public class JoinGameScene extends UIScene {
     private String selectedServerAddr; // the addr of the selected server in Discovery
 
     // TODO: temp code, this will be filled in with the actual server list later.
-    private final ArrayList<ServerEntry> serverList = new ArrayList<>();
+    private List<ServerEntry> serverList = new ArrayList<>();
 
     /**
      * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
@@ -136,7 +137,13 @@ public class JoinGameScene extends UIScene {
         AtomicInteger currentServer = new AtomicInteger();
 
         // clear the list
-        for (ServerEntryEntity listItem: serverButtons) joinModal.removeEntity(listItem, true);
+        for (ServerEntryEntity listItem: serverButtons) {
+            try {
+                joinModal.removeEntity(listItem, true);
+            } catch (IllegalArgumentException ignored) {
+                // if the list item was never in the scene, we can just move on
+            }
+        }
 
         // repopulate items and add to list
         for (int i = 0; i < Math.min(serverButtons.length, serverList.size()); i++) {
@@ -168,20 +175,12 @@ public class JoinGameScene extends UIScene {
     }
 
     /**
-     * Adds a server to the server list, then updates the list.
+     * Replaces the current server list with a new set of them
      *
-     * @param server the server to add to the list
+     * @param newList list of all discovered servers
      */
-    public void addDiscoveredServer(ServerEntry server) {
-        serverList.add(server);
-        updateServerList();
-    }
-
-    /**
-     * Removes all servers from the server list, then updates the list.
-     */
-    public void clearDiscoveredServers() {
-        serverList.clear();
+    public void setDiscoveredServers(List<ServerEntry> newList) {
+        serverList = newList;
         updateServerList();
     }
 
