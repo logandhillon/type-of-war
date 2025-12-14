@@ -40,8 +40,6 @@ public abstract class Clickable extends BoundEntity<UIScene> {
 
     /**
      * Called when this element WAS active, but was clicked away from and thus is no longer active.
-     *
-     * @param e the mouse event from JavaFX
      */
     public void onBlur() {}
 

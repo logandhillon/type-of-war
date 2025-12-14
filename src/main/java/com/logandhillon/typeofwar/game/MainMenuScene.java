@@ -53,7 +53,6 @@ public class MainMenuScene extends UIScene {
                 new MenuButton("Credits", x, y + 4 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 5 * dy, 256, 48, () -> System.exit(0))
         );
-        addEntity(controller);
 
         userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
         userInput.setInput(TypeOfWar.getUserConfig().getName());
@@ -72,6 +71,7 @@ public class MainMenuScene extends UIScene {
         }
 
         addEntity(new ModalEntity(618, y, 348, 368, userInput, skinLabel, skins[0], skins[1], skins[2], skins[3]));
+        addEntity(controller); // add the controller AFTER so input in the player configurator has priority
         skins[this.defaultColor].onPress(); // select the default color
     }
 

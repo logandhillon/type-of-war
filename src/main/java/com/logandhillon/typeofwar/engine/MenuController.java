@@ -63,7 +63,7 @@ public class MenuController extends Entity {
             buttons[activeBtnIdx].setActive(true, false);  // select new active button
         }
         // when ENTER/SPACE pressed, simulate a click on the active button
-        else if (e.getCode() == KeyCode.ENTER || e.getCode() == KeyCode.SPACE) {
+        else if ((e.getCode() == KeyCode.ENTER || e.getCode() == KeyCode.SPACE) && activeBtnIdx >= 0) {
             buttons[activeBtnIdx].onPress();
         }
     }
