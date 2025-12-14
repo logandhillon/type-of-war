@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 
 /**
  * The join game menu allows users to join existing servers through manual IP Address searching or local server
@@ -133,7 +133,7 @@ public class JoinGameScene extends UIScene {
     protected void render(GraphicsContext g) {
         // background
         g.setFill(Colors.BG_WINNING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all other entities
         super.render(g);

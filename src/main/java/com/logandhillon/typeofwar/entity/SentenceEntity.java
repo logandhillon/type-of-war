@@ -16,7 +16,7 @@ import javafx.scene.text.TextAlignment;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
 
 /**
  * A SentenceEntity is the entity responsible for displaying the sentence and user input. Handles keyboard input and
@@ -94,13 +94,13 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         g.setTextAlign(TextAlignment.LEFT);
 
         float dx = 64; // left-margin of text
-        float dy = (WINDOW_HEIGHT.floatValue() + 310) / 2f;
+        float dy = (CANVAS_HEIGHT + 310) / 2f;
         float cursorX = dx - 2 * CHAR_WIDTH;
 
         // for each word
         for (int i = 0; i < text.length; i++) {
             if (i < ignoredWords) continue;
-            if (dx > TypeOfWar.WINDOW_WIDTH.floatValue() - 128) {
+            if (dx > TypeOfWar.CANVAS_WIDTH - 128) {
                 dx = 64;
                 dy += 4 * CHAR_WIDTH;
                 countWords = false;

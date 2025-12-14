@@ -17,8 +17,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import java.util.List;
 import java.util.Objects;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
 import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 
@@ -42,15 +42,15 @@ public class TypeOfWarScene extends GameScene {
     public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2, String sentenceText,
                           float multiplier) {
         this.game = game;
-        stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
+        stats = new GameStatisticsEntity(64, 144, CANVAS_WIDTH - 128);
         addEntity(stats);
 
         SentenceEntity sentence = new SentenceEntity(
-                WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
+                CANVAS_WIDTH / 2f, (CANVAS_HEIGHT + 300) / 2f);
         addEntity(sentence);
         sentence.setText(sentenceText);
 
-        rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
+        rope = new RopeEntity(64, CANVAS_HEIGHT);
         for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
         for (var p: team2) rope.addPlayer(p, RopeEntity.Team.RIGHT);
         rope.setMultiplier(multiplier);
@@ -61,7 +61,7 @@ public class TypeOfWarScene extends GameScene {
     protected void render(GraphicsContext g) {
         // background
         g.setFill(isWinning ? BG_WINNING : BG_LOSING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all other entities
         super.render(g);

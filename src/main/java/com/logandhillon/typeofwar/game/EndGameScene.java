@@ -10,8 +10,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.util.List;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
 import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
 
@@ -41,7 +41,7 @@ public class EndGameScene extends UIScene {
         for (EndResultEntity p: leftTeamResults) {
             // displace entities on left away from center, displacement increases per teammate
             p.setPosition(
-                    (TypeOfWar.WINDOW_WIDTH.floatValue() / 2) - (leftTeamResults.size() * ENTITY_GAP) + dx - BUFFER_GAP,
+                    (TypeOfWar.CANVAS_WIDTH / 2) - (leftTeamResults.size() * ENTITY_GAP) + dx - BUFFER_GAP,
                     250);
             dx += ENTITY_GAP;
             addEntity(p);
@@ -50,7 +50,7 @@ public class EndGameScene extends UIScene {
         dx = 25f; // initial offset to account of entity width
         for (EndResultEntity p: rightTeamResults) {
             // displace entities on right from center
-            p.setPosition((TypeOfWar.WINDOW_WIDTH.floatValue() / 2) + dx + BUFFER_GAP, 250);
+            p.setPosition((TypeOfWar.CANVAS_WIDTH / 2) + dx + BUFFER_GAP, 250);
             dx += ENTITY_GAP;
             addEntity(p);
         }
@@ -63,7 +63,7 @@ public class EndGameScene extends UIScene {
 
         // fill background
         g.setFill(this.win ? BG_WINNING : BG_LOSING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all end screen entities
         super.render(g);

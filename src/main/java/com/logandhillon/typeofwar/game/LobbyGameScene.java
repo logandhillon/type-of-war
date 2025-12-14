@@ -16,8 +16,8 @@ import javafx.scene.text.TextAlignment;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 
 /**
  * The lobby game menu shows all users in a lobby and allots the host with special permissions to start the
@@ -112,7 +112,7 @@ public class LobbyGameScene extends UIScene {
     protected void render(GraphicsContext g) {
         // background
         g.setFill(Colors.BG_WINNING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all other entities
         super.render(g);

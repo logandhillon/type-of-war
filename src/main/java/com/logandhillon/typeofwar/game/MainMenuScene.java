@@ -9,8 +9,8 @@ import com.logandhillon.typeofwar.entity.ui.ModalEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 
 /**
  * The main menu allows the user to navigate to other submenus, play or quit the game, and view game branding.
@@ -24,7 +24,7 @@ public class MainMenuScene extends UIScene {
      * @param game the main class that can switch scenes, manage connections, etc.
      */
     public MainMenuScene(TypeOfWar game) {
-        float x = 314;
+        float x = (CANVAS_WIDTH - 652) / 2f;
         int y = 176;
         int dy = 48 + 16; // ∆y per button height
 
@@ -48,7 +48,7 @@ public class MainMenuScene extends UIScene {
     protected void render(GraphicsContext g) {
         // background
         g.setFill(Colors.BG_WINNING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all other entities
         super.render(g);

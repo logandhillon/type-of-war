@@ -12,8 +12,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import java.io.IOException;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 
 public class PracticeSettingScene extends UIScene {
     private static final Logger          LOG = LoggerContext.getContext().getLogger(PracticeSettingScene.class);
@@ -41,7 +41,7 @@ public class PracticeSettingScene extends UIScene {
     protected void render(GraphicsContext g) {
         // background
         g.setFill(Colors.BG_WINNING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all other entities
         super.render(g);
