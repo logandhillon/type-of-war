@@ -4,6 +4,7 @@ import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
+import com.logandhillon.typeofwar.networking.proto.GameInitProto;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
@@ -153,7 +154,10 @@ public class GameClient {
                         "Could not " + host + ": " + packet.type().name()));
                 this.close();
             }
-            case SRV_GAME_STARTING -> game.startGame();
+            case SRV_GAME_STARTING -> {
+                GameInitProto.GameData gd = GameInitProto.GameData.parseFrom(packet.payload());
+                game.startGame(gd.getSentence(), gd.getMultiplier());
+            }
             case SRV_KEY_PRESS -> {
                 TypeOfWarScene scene = game.getActiveScene(TypeOfWarScene.class);
                 if (scene == null) {

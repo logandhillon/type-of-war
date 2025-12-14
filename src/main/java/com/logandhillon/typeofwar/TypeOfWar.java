@@ -9,6 +9,7 @@ import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.game.*;
 import com.logandhillon.typeofwar.networking.*;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
+import com.logandhillon.typeofwar.networking.proto.GameInitProto;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -48,6 +49,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     public static ReadOnlyDoubleProperty WINDOW_WIDTH;
     public static ReadOnlyDoubleProperty WINDOW_HEIGHT;
+    private       float                  baseMultiplier;
+    private       String                 customSentence;
 
     /**
      * Handles communication with JavaFX when this program is signalled to start.
@@ -113,11 +116,15 @@ public class TypeOfWar extends Application implements GameSceneManager {
     /**
      * Shows the lobby screen and starts a server.
      *
-     * @param roomName the name of the lobby
+     * @param roomName       the name of the lobby
+     * @param baseMultiplier the base multiplier of the game
+     * @param customSentence a custom sentence for the game, can be null
      */
-    public void createLobby(String roomName) {
+    public void createLobby(String roomName, float baseMultiplier, String customSentence) {
         LOG.info("Creating lobby named {}", roomName);
 
+        this.baseMultiplier = baseMultiplier;
+        this.customSentence = customSentence;
         this.team = 1;
         LOG.info("Setting team number to 1 (host default)");
 
@@ -140,9 +147,12 @@ public class TypeOfWar extends Application implements GameSceneManager {
     /**
      * Handles a game start
      *
+     * @param sentence   the custom sentence, this is ignored server-side
+     * @param multiplier the base multiplier, this is ignored server-side
+     *
      * @throws IllegalStateException if there is no active server or client
      */
-    public void startGame() {
+    public void startGame(String sentence, float multiplier) {
         List<PlayerObject> t1;
         List<PlayerObject> t2;
 
@@ -153,7 +163,13 @@ public class TypeOfWar extends Application implements GameSceneManager {
             t2 = server.getTeam(2)
                        .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
                        .toList();
-            server.broadcast(new GamePacket(GamePacket.Type.SRV_GAME_STARTING));
+
+            sentence = customSentence == null ? "Hello world" : customSentence;
+            multiplier = baseMultiplier;
+
+            server.broadcast(new GamePacket(
+                    GamePacket.Type.SRV_GAME_STARTING,
+                    GameInitProto.GameData.newBuilder().setSentence(sentence).setMultiplier(multiplier).build()));
         } else if (client != null) {
             t1 = client.getTeam(1).stream().map(
                     p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
@@ -165,7 +181,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
         isGameEndSignalled = false;
         isInMenu = false;
-        Platform.runLater(() -> setScene(new TypeOfWarScene(this, t1, t2)));
+
+        String finalSentence = sentence;
+        float finalMultiplier = multiplier;
+        Platform.runLater(() -> setScene(new TypeOfWarScene(this, t1, t2, finalSentence, finalMultiplier)));
     }
 
     /**

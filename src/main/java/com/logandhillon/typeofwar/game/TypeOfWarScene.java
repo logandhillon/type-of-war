@@ -29,7 +29,7 @@ public class TypeOfWarScene extends GameScene {
 
     private boolean isWinning = true;
 
-    public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2) {
+    public TypeOfWarScene(TypeOfWar game, List<PlayerObject> team1, List<PlayerObject> team2, String sentenceText, float multiplier) {
         this.game = game;
         stats = new GameStatisticsEntity(64, 144, WINDOW_WIDTH.floatValue() - 128);
         addEntity(stats);
@@ -37,11 +37,12 @@ public class TypeOfWarScene extends GameScene {
         SentenceEntity sentence = new SentenceEntity(
                 WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
         addEntity(sentence);
-        sentence.setText("pls pls pls pls pls pls pls pls pls pls pls");
+        sentence.setText(sentenceText);
 
         rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
         for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
         for (var p: team2) rope.addPlayer(p, RopeEntity.Team.RIGHT);
+        rope.setMultiplier(multiplier);
         addEntity(rope);
     }
 
@@ -103,8 +104,8 @@ public class TypeOfWarScene extends GameScene {
     }
 
     public void moveRope(boolean team1) {
-        if (team1) rope.moveRopeL(1);
-        else rope.moveRopeR(1);
+        if (team1) rope.moveRopeL();
+        else rope.moveRopeR();
     }
 
     /**

@@ -57,7 +57,7 @@ public class LobbyGameScene extends UIScene {
         // shows different buttons at bottom depending on if the user is hosting
         DarkMenuButton startButton = new DarkMenuButton(isHosting ? "START GAME" : "WAITING FOR HOST TO START...",
                                                         16, 269, 530, 48, () -> {
-            if (isHosting) mgr.startGame();
+            if (isHosting) mgr.startGame(null, 0);
             // don't do anything if not hosting (button is disabled)
         });
 

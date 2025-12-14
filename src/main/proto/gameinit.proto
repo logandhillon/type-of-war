@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.logandhillon.typeofwar.networking.proto";
+option java_outer_classname = "GameInitProto";
+
+message GameData {
+  string sentence = 1;
+  float multiplier = 2;
+}

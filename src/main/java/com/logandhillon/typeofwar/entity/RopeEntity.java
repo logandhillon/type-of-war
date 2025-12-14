@@ -26,6 +26,7 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
 
     private final ArrayList<PlayerObject> leftTeam;
     private final ArrayList<PlayerObject> rightTeam;
+    private float multiplier;
 
     public RopeEntity(float x, float y) {
         super(x, y);
@@ -134,12 +135,16 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
      * The player on this client should always be on the left, and the relative enemy team should appear on the right.
      */
 
-    public void moveRopeL(int multiplier) {
+    public void moveRopeL() {
         goalpostLeftX -= X_CONSTANT * multiplier;
     }
 
-    public void moveRopeR(int multiplier) {
+    public void moveRopeR() {
         goalpostLeftX += X_CONSTANT * multiplier;
+    }
+
+    public void setMultiplier(float multiplier) {
+        this.multiplier = multiplier;
     }
 
     public enum Team {
