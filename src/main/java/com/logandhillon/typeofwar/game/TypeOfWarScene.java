@@ -37,7 +37,7 @@ public class TypeOfWarScene extends GameScene {
         SentenceEntity sentence = new SentenceEntity(
                 WINDOW_WIDTH.floatValue() / 2f, (WINDOW_HEIGHT.floatValue() + 300) / 2f);
         addEntity(sentence);
-        sentence.setText("The quick brown fox jumps over the lazy dog.");
+        sentence.setText("pls pls pls pls pls pls pls pls pls pls pls");
 
         rope = new RopeEntity(64, WINDOW_HEIGHT.floatValue());
         for (var p: team1) rope.addPlayer(p, RopeEntity.Team.LEFT);
@@ -113,8 +113,8 @@ public class TypeOfWarScene extends GameScene {
      * @param winningTeam the team# of the winner
      */
     public void signalGameEnd(int winningTeam) {
-        game.signalGameEnd(winningTeam);
         game.setEndGameStats(stats);
+        game.signalGameEnd(winningTeam);
     }
 
     public GameStatisticsEntity getStats() {

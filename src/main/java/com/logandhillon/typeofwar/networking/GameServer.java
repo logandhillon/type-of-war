@@ -14,10 +14,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -44,8 +41,9 @@ public class GameServer implements Runnable {
     /** list of all REGISTERED client connections; maps socket to name */
     private final HashMap<Socket, ConnectionDetails> registeredClients = new HashMap<>();
 
-    /** used to retrieve all stats in end game and display them on
-     *  {@link com.logandhillon.typeofwar.game.EndGameScene} */
+    /**
+     * used to retrieve all stats in end game and display them on {@link com.logandhillon.typeofwar.game.EndGameScene}
+     */
     private final HashMap<Socket, EndGameProto.PlayerStats> endGameStats = new HashMap<>();
 
     private record ConnectionDetails(String name, Color color, int team, PacketWriter out) {}
@@ -196,13 +194,17 @@ public class GameServer implements Runnable {
 
                     // check if all stats are collected, if they are, show the end screen
                     if (endGameStats.size() == registeredClients.size()) {
+                        // collect all stats from list and add host's
+                        var collected = new ArrayList<>(endGameStats.values());
+                        collected.add(game.getEndGameStats());
+
+                        // build stats to buf, broadcast it, and show the end game screen
                         var stats = EndGameProto.AllStats.newBuilder()
-                                                         .addAllStats(endGameStats.values())
-                                                         .addStats(game.getEndGameStats())
+                                                         .addAllStats(collected)
+                                                         .setWinningTeam(game.getWinningTeam())
                                                          .build();
 
-                        out.send(new GamePacket(GamePacket.Type.SRV_END_GAME, stats));
-
+                        broadcast(new GamePacket(GamePacket.Type.SRV_END_GAME, stats));
                         Platform.runLater(() -> game.showEndGameScreen(stats));
                     }
                 }
@@ -257,7 +259,9 @@ public class GameServer implements Runnable {
                                      .addAllTeam2(getTeam(2).toList())
                                      .build()));
 
-            LOG.info("Registered new client '{}' on team {} at {}!", pkt.getName(), pkt.getTeam(), client.getInetAddress());
+            LOG.info(
+                    "Registered new client '{}' on team {} at {}!", pkt.getName(), pkt.getTeam(),
+                    client.getInetAddress());
         }
 
         // check if srv is full
@@ -294,7 +298,8 @@ public class GameServer implements Runnable {
         // add the host to team 1
         if (team == 1) {
             list = Stream.concat(
-                    Stream.of(PlayerProto.PlayerData.newBuilder().setName("Host").setR(255).setG(0).setB(0).build()), list);
+                    Stream.of(PlayerProto.PlayerData.newBuilder().setName("Host").setR(255).setG(0).setB(0).build()),
+                    list);
         }
 
         return list;

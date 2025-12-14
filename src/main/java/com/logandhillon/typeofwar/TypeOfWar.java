@@ -2,7 +2,6 @@ package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
-import com.logandhillon.typeofwar.engine.GameSceneMismatchException;
 import com.logandhillon.typeofwar.entity.EndHeaderEntity;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
@@ -41,9 +40,9 @@ public class TypeOfWar extends Application implements GameSceneManager {
     private volatile int team;
 
     // used only for end game
-    private EndGameProto.PlayerStats endGameStats;
-    private boolean                  isGameEndSignalled;
-    private int                      winningTeam;
+    private volatile EndGameProto.PlayerStats endGameStats;
+    private volatile boolean                  isGameEndSignalled;
+    private volatile int                      winningTeam;
 
     private static GameServer server;
     private static GameClient client;
@@ -116,6 +115,9 @@ public class TypeOfWar extends Application implements GameSceneManager {
      */
     public void createLobby(String roomName) {
         LOG.info("Creating lobby named {}", roomName);
+
+        this.team = 1;
+        LOG.info("Setting team number to 1 (host default)");
 
         var lobby = new LobbyGameScene(this, roomName, true);
         lobby.addPlayer("Host", Color.DEEPSKYBLUE, 1);
@@ -200,6 +202,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     private void joinGameWithTeam(String serverAddress, int team) {
         this.team = team;
+        LOG.info("Setting team number to {}", team);
         try {
             client = new GameClient(serverAddress, 20670, this, team);
             client.connect();
@@ -216,14 +219,11 @@ public class TypeOfWar extends Application implements GameSceneManager {
      * Checks the active {@link TypeOfWar.NetworkRole} and, if it is a SERVER, signals a game end to connected clients.
      */
     public void signalGameEnd(int winningTeam) {
+        // only the sever can end the game ;)
+        if (isGameEndSignalled || getNetworkRole() != TypeOfWar.NetworkRole.SERVER) return;
+
         LOG.info("Signalling game end now");
         this.winningTeam = winningTeam;
-        if (isGameEndSignalled) return;
-
-        if (getNetworkRole() != TypeOfWar.NetworkRole.SERVER) {
-            LOG.warn("Tried to end the game as client, but only the server can end the game");
-            return;
-        }
 
         // ask everyone for game stats
         server.broadcast(new GamePacket(GamePacket.Type.SRV_REQ_END_GAME_STATS));
@@ -234,7 +234,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
      * Immediately shows the end game screen without any additional checks
      */
     public void showEndGameScreen(EndGameProto.AllStats stats) {
-        LOG.info("Showing end screen; winning team = {}", winningTeam);
+        LOG.info("Showing end screen; winning team = {}", stats.getWinningTeam());
 
         List<EndResultEntity> t1 = stats.getStatsList()
                                         .stream()
@@ -248,7 +248,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
                                         .map(NetUtils::endStatProtoToEntity)
                                         .toList();
 
-        this.setScene(new EndGameScene(this, t1, t2, new EndHeaderEntity(winningTeam == team)));
+        System.out.println("t1 = " + t1);
+        System.out.println("t2 = " + t2);
+
+        this.setScene(new EndGameScene(this, t1, t2, new EndHeaderEntity(stats.getWinningTeam() == team)));
     }
 
     /**
@@ -302,7 +305,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
      */
     public <T extends GameScene> T getActiveScene(Class<T> type) {
         if (!type.isInstance(activeScene))
-            throw new GameSceneMismatchException(activeScene.getClass(), type);
+            return null;
 
         return type.cast(activeScene);
     }
@@ -330,8 +333,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
     }
 
     public void setEndGameStats(GameStatisticsEntity stats) {
+        if (getNetworkRole() != NetworkRole.SERVER) return; // this is only for the sever
+
         this.endGameStats = EndGameProto.PlayerStats.newBuilder()
-                                                    .setPlayerName("PLACEHOLDER") // TODO: populate w/ real values
+                                                    .setPlayerName("Host") // TODO: populate w/ real values
                                                     .setTeam(team) // TODO: populate w/ real values
                                                     .setR(255).setG(255).setB(255) // TODO: populate w/ real values
                                                     .setWpm(stats.getWpm())
@@ -342,5 +347,9 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     public int getTeam() {
         return team;
+    }
+
+    public int getWinningTeam() {
+        return winningTeam;
     }
 }

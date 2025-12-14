@@ -19,6 +19,6 @@ message PlayerStats {
 }
 
 message AllStats {
-  bool winningTeam = 1;
+  uint32 winningTeam = 1;
   repeated PlayerStats stats = 2;
 }

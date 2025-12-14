@@ -170,8 +170,8 @@ public class GameClient {
                 sendServer(new GamePacket(
                         GamePacket.Type.CLT_END_GAME_STATS,
                         EndGameProto.PlayerStats.newBuilder()
-                                                .setPlayerName("PLACEHOLDER") // TODO: populate w/ real values
-                                                .setTeam(1) // TODO: populate w/ real values
+                                                .setPlayerName(System.getProperty("user.name")) // TODO: populate w/ real values
+                                                .setTeam(team) // TODO: populate w/ real values
                                                 .setR(255).setG(255).setB(255) // TODO: populate w/ real values
                                                 .setWpm(stats.getWpm())
                                                 .setAccuracy(stats.getAccuracy())
