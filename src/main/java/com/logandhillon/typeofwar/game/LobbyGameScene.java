@@ -1,6 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
-import com.logandhillon.typeofwar.engine.GameSceneManager;
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
@@ -13,6 +13,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -25,20 +27,23 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @see LobbyPlayerEntity
  */
 public class LobbyGameScene extends UIScene {
+    private static final Logger LOG = LoggerContext.getContext().getLogger(LobbyGameScene.class);
+    private static final Font   LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
+    private static final float  ENTITY_GAP = 48;
 
+    private final LabeledModalEntity lobbyModal;
+    private final String             roomName;
 
-    private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
-    private static final float ENTITY_GAP = 48;
+    private float dyTeam1;
+    private float dyTeam2;
 
     /**
-     *
-     * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
-     * @param roomName the name of the lobby stated in {@link HostGameScene}
+     * @param mgr       the game manager responsible for switching active scenes.
+     * @param roomName  the name of the lobby stated in {@link HostGameScene}
      * @param isHosting determines if the user is the host of the given lobby or not
-     * @param team1 the list of the players on team 1
-     * @param team2 the list of the players on team 2
      */
-    public LobbyGameScene(GameSceneManager mgr, String roomName, boolean isHosting, LobbyPlayerEntity[] team1, LobbyPlayerEntity[] team2){
+    public LobbyGameScene(TypeOfWar mgr, String roomName, boolean isHosting) {
+        this.roomName = roomName;
 
         // containers for each team
         PlayerContainer leftContainer = new PlayerContainer(16, 47, 257, 206);
@@ -48,36 +53,59 @@ public class LobbyGameScene extends UIScene {
         ContainerLabel leftLabel = new ContainerLabel(16, 16, 1);
         ContainerLabel rightLabel = new ContainerLabel(289, 16, 2);
 
-
         // shows different buttons at bottom depending on if the user is hosting
-        DarkMenuButton startButton = new DarkMenuButton(isHosting? "START GAME" : "WAITING FOR HOST TO START...", 16, 269, 530, 48, ()-> {
-                //TODO #6: Start the game for everyone
-            });
+        DarkMenuButton startButton = new DarkMenuButton(isHosting ? "START GAME" : "WAITING FOR HOST TO START...",
+                                                        16, 269, 530, 48, () -> {
+            if (isHosting) mgr.startGame(null, 0);
+            // don't do anything if not hosting (button is disabled)
+        });
 
-        if(!isHosting){
+        if (!isHosting) {
             startButton.setActive(false, true);
         }
 
-        LabeledModalEntity lobbyModal = new LabeledModalEntity(359, 162, 562, 396, roomName, mgr, leftContainer, rightContainer, leftLabel, rightLabel, startButton);
+        lobbyModal = new LabeledModalEntity(
+                359, 162, 562, 396, roomName, mgr,
+                leftContainer, rightContainer, leftLabel, rightLabel, startButton);
 
         addEntity(lobbyModal);
+    }
 
-        // iterate through each team's list of players
+    /**
+     * Adds a player to the list of players on the corresponding team.
+     *
+     * @param name  player name
+     * @param color player skin's color
+     * @param team  player team (1 or 2)
+     */
+    public void addPlayer(String name, Color color, int team) {
+        LOG.info("Adding player \"{}\" to team {}", name, team);
 
-        float dy = 0;
-
-        for(LobbyPlayerEntity p : team1){
-            p.setPosition(32, p.getY() + dy + 128);
-            dy += ENTITY_GAP;
+        if (team == 1) {
+            var p = new LobbyPlayerEntity(color, name, 0); // TODO: impl. ping
+            p.setPosition(32, p.getY() + dyTeam1 + 128);
+            dyTeam1 += ENTITY_GAP;
             lobbyModal.addEntity(p);
-        }
-        dy = 0;
-        for(LobbyPlayerEntity p : team2){
-            p.setPosition(305, p.getY() + dy + 128);
-            dy += ENTITY_GAP;
-            lobbyModal.addEntity(p);
+            return;
         }
 
+        if (team == 2) {
+            var p = new LobbyPlayerEntity(color, name, 0); // TODO: impl. ping
+            p.setPosition(305, p.getY() + dyTeam2 + 128);
+            dyTeam2 += ENTITY_GAP;
+            lobbyModal.addEntity(p);
+            return;
+        }
+
+        // if neither of the if-branches were handled, throw error
+        throw new IllegalArgumentException("Team must be either 1 or 2!");
+    }
+
+    public void clearPlayers() {
+        LOG.info("Clearing player list");
+        clearEntities(true, LobbyPlayerEntity.class::isInstance);
+        dyTeam1 = 0;
+        dyTeam2 = 0;
     }
 
     @Override
@@ -94,6 +122,7 @@ public class LobbyGameScene extends UIScene {
 
         private final float w;
         private final float h;
+
         /**
          * Creates an entity at the specified position.
          *
@@ -123,6 +152,7 @@ public class LobbyGameScene extends UIScene {
 
         }
     }
+
     private static final class ContainerLabel extends Entity {
 
         private final int teamNumber;
@@ -159,6 +189,10 @@ public class LobbyGameScene extends UIScene {
         public void onDestroy() {
 
         }
+    }
+
+    public String getRoomName() {
+        return roomName;
     }
 }
 

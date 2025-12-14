@@ -8,7 +8,7 @@
 <Configuration status="warn">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout disableAnsi="false" pattern="%style{[%d{HH:mm:ss}]}{bright_blue} %highlight{[%t/%level]}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=green, TRACE=blue} %style{(%c{0})}{cyan} %highlight{%msg}{FATAL=red, ERROR=red, WARN=default, INFO=default, DEBUG=default, TRACE=default}%n"/>
+            <PatternLayout disableAnsi="false" pattern="%style{[%d{HH:mm:ss}]}{bright_blue} %highlight{[%t/%level]}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=magenta, TRACE=blue} %style{(%c{0})}{cyan} %highlight{%msg}{FATAL=red, ERROR=red, WARN=default, INFO=default, DEBUG=bright white, TRACE=bright white}%n"/>
             <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
         </Console>
         <File name="LatestLog" fileName="logs/latest.log" append="false">

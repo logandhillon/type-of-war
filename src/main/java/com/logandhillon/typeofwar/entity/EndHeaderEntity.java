@@ -3,6 +3,7 @@ package com.logandhillon.typeofwar.entity;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -18,7 +19,8 @@ public class EndHeaderEntity extends Entity{
     private static final Font FONT_HEADER = Font.font(Fonts.DM_MONO_MEDIUM, 64);
     private boolean win;
     private String text;
-    private final float midScreen = TypeOfWar.WINDOW_WIDTH.floatValue() / 2 - (float)FONT_HEADER.getSize() / 2;
+    private final float midScreen = TypeOfWar.WINDOW_WIDTH.floatValue() / 2;
+
     /**
      *
      * @param win changes display if player's team won or lost game
@@ -49,7 +51,7 @@ public class EndHeaderEntity extends Entity{
         // render divider
         g.setStroke(Color.GREY);
         g.setLineWidth(1d);
-        g.strokeLine(midScreen, 280, midScreen, 615);
+        g.strokeLine(midScreen, 198, midScreen, 565);
 
         if(win) {
             // set win settings
@@ -64,11 +66,12 @@ public class EndHeaderEntity extends Entity{
         }
 
         // render text
-        g.fillText(text, midScreen, 150);
+        g.setTextBaseline(VPos.TOP);
+        g.fillText(text, midScreen, 80);
 
         // render line under header
         g.setLineWidth(2d);
-        g.strokeLine(midScreen - FONT_HEADER.getSize() * (text.length() / 2f), 165, midScreen + FONT_HEADER.getSize() * (text.length() / 2f), 165);
+        g.strokeLine(midScreen - 200, 165, midScreen + 200, 165);
     }
 
     @Override

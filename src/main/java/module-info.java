@@ -7,6 +7,7 @@ module com.logandhillon.typeofwar {
     requires javafx.graphics;
     requires org.apache.logging.log4j.core;
     requires jdk.compiler;
+    requires com.google.protobuf;
     requires java.desktop;
     requires javafx.media;
 
@@ -17,4 +18,5 @@ module com.logandhillon.typeofwar {
     exports com.logandhillon.typeofwar.entity;
     exports com.logandhillon.typeofwar.entity.ui;
     exports com.logandhillon.typeofwar.game;
+    exports com.logandhillon.typeofwar.networking.proto;
 }

@@ -1,7 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
-import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.Entity;
 import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
@@ -26,9 +25,10 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
  * @author Jack Ross
  */
 public class HostGameScene extends UIScene {
-    private static final Font  LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
-    // TODO: add scaling multiplier to game (starting from this set point) and default it to 1
-    private              float startingMultiplier;
+    private static final Font   LABEL_FONT        = Font.font(Fonts.DM_MONO_MEDIUM, 18);
+    private static final String DEFAULT_ROOM_NAME = "My new room";
+    // TODO: add scaling multiplier to game (starting from this set point)
+    private              float  startingMultiplier;
 
     private static final int AJITESH_CONSTANT = 25;
 
@@ -39,7 +39,7 @@ public class HostGameScene extends UIScene {
     /**
      * Creates a new main menu
      *
-     * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
+     * @param mgr the game manager responsible for switching active scenes.
      */
     public HostGameScene(TypeOfWar mgr) {
 
@@ -93,18 +93,20 @@ public class HostGameScene extends UIScene {
             });
         }
 
-        nameInput = new InputBoxEntity(16, 47, 530, "Player1's Room", "ROOM NAME", AJITESH_CONSTANT);
+        nameInput = new InputBoxEntity(16, 47, 530, DEFAULT_ROOM_NAME, "ROOM NAME", AJITESH_CONSTANT);
 
         sentenceInput = new InputBoxEntity(16, 255, 530, "Leave blank to randomly generate", "CUSTOM SENTENCE", 500);
 
-        DarkMenuButton startButton = new DarkMenuButton("START GAME", 16, 337, 530, 50, () -> {
-            // sets new scene when clicked
-//            mgr.setScene(new LobbyGameScene(mgr)); // TODO #6: Make this go to server on click (not game)
-        });
+        DarkMenuButton startButton = new DarkMenuButton("START GAME", 16, 337, 530, 50,
+                                                        () -> mgr.createLobby(
+                                                                getRoomName(),
+                                                                getStartingMultiplier(),
+                                                                getCustomSentence()));
 
         // create background modal
-        addEntity(new LabeledModalEntity(359, 128, 562, 464, "HOST NEW GAME", mgr, nameInput, sentenceInput, buttons[0],
-                                         buttons[1], buttons[2], buttons[3], buttons[4], ButtonsLabel, startButton));
+        addEntity(new LabeledModalEntity(
+                359, 128, 562, 464, "HOST NEW GAME", mgr, nameInput, sentenceInput, buttons[0],
+                buttons[1], buttons[2], buttons[3], buttons[4], ButtonsLabel, startButton));
     }
 
     @Override
@@ -117,11 +119,14 @@ public class HostGameScene extends UIScene {
     }
 
     public float getStartingMultiplier() {
-        return startingMultiplier;
+        return startingMultiplier == 0 ? 1 : startingMultiplier; // default to 1
     }
 
+    /**
+     * @return the content of the room name input field, or the default room name if it is blank.
+     */
     public String getRoomName() {
-        return nameInput.getInput();
+        return nameInput.getInput().isBlank() ? DEFAULT_ROOM_NAME : nameInput.getInput();
     }
 
     public String getCustomSentence() {

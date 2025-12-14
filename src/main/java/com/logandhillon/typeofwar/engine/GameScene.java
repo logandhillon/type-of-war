@@ -15,7 +15,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
@@ -52,7 +54,7 @@ public abstract class GameScene {
      * Called every tick for non-graphics-related updates (Entity lifecycle, etc.) This implementation updates all
      * entities.
      */
-    protected void onUpdate(float dt) { //FIXME(Logan Dhillon): Please fix this!
+    protected void onUpdate(float dt) {
         for (Entity e: entities)
             e.onUpdate(dt);
     }
@@ -151,6 +153,25 @@ public abstract class GameScene {
     public void addEntity(Entity e) {
         entities.add(e);
         e.onAttach(this);
+    }
+
+    /**
+     * Removes all entities from this modal that match the predicate
+     *
+     * @param discard   if the entities should also be discarded (and trigger {@link Entity#onDestroy()}
+     * @param predicate the predicate to only remove entities that match it.
+     */
+    public void clearEntities(boolean discard, Predicate<Entity> predicate) {
+        int removed = 0;
+        for (Iterator<Entity> it = entities.iterator(); it.hasNext(); ) {
+            Entity e = it.next();
+            if (predicate.test(e)) {
+                it.remove(); // safe removal
+                if (discard) e.onDestroy();
+                removed++;
+            }
+        }
+        LOG.info("Successfully removed {} entities from this modal", removed);
     }
 
     /**

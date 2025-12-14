@@ -16,8 +16,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
@@ -25,49 +28,39 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 /**
  * The join game menu allows users to join existing servers through manual IP Address searching or local server
- * discovery.
- * When the user has joined a game, they will be transported to the {@link LobbyGameScene}
+ * discovery. When the user has joined a game, they will be transported to the {@link LobbyGameScene}
  *
  * @author Jack Ross
  */
 public class JoinGameScene extends UIScene {
+    private static final Logger LOG = LoggerContext.getContext().getLogger(JoinGameScene.class);
+
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 18);
-    private String serverAddress;
-    private static final int ENTITY_GAP = 53;
+    private static final int  ENTITY_GAP = 53;
 
+    private final ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
+    private final LabeledModalEntity  joinModal;
 
-    private ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
     private int scrollServerIndex;
     private int currentServerIndex;
     private int rawCurrentServerIndex;
+    private String selectedServerAddr; // the addr of the selected server in Discovery
 
     // TODO: temp code, this will be filled in with the actual server list later.
-    private final ArrayList<ServerEntry> serverList = new ArrayList<>();
+    private List<ServerEntry> serverList = new ArrayList<>();
 
     /**
-     *
      * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
      */
-    public JoinGameScene(GameSceneManager mgr) {
-        // TODO: temp code, this just adds in placeholder servers to render.
-        //       this will be filled in by the networking engine LATER.
-        serverList.add(new ServerEntry("Room 100", "127.0.0.1", 0));
-        serverList.add(new ServerEntry("Room 101", "127.0.0.1", 0));
-        serverList.add(new ServerEntry("Room 102", "127.0.0.1", 0));
-        serverList.add(new ServerEntry("Room 103", "127.0.0.1", 0));
-        serverList.add(new ServerEntry("Room 104", "127.0.0.1", 0));
-        serverList.add(new ServerEntry("Room 105", "127.0.0.1", 0));
-        serverList.add(new ServerEntry("Room 106", "127.0.0.1", 0));
-        serverList.add(new ServerEntry("Room 107", "127.0.0.1", 0));
-
-
+    public JoinGameScene(GameSceneManager mgr, JoinGameHandler onJoin) {
         // rect in background for server list
-        Entity serverListRect = new Entity(16, 152){
+        Entity serverListRect = new Entity(16, 152) {
             @Override
             protected void onRender(GraphicsContext g, float x, float y) {
                 g.setFill(Colors.DEFAULT_DARKER);
                 g.fillRect(x, y, 530, 228);
             }
+
             @Override
             public void onUpdate(float dt) {}
 
@@ -103,45 +96,37 @@ public class JoinGameScene extends UIScene {
         InputBoxEntity joinServer = new InputBoxEntity(16, 47, 379, "ex. 192.168.0.1", "JOIN A SERVER DIRECTLY", 39);
 
         // join button (direct)
-        DarkMenuButton joinDirectButton = new DarkMenuButton("JOIN",407, 47,139, 50, ()->{
-            //TODO #6: Make this join server
+        DarkMenuButton joinDirectButton = new DarkMenuButton("JOIN", 407, 47, 139, 50, () -> {
+            LOG.info("Attempting to join {} via manual input", joinServer.getInput());
+            onJoin.handleJoin(joinServer.getInput());
         });
 
         // join button (discovery)
-        DarkMenuButton joinDiscoverButton = new DarkMenuButton("JOIN", 16, 396, 530, 48, ()-> {
-           // TODO #6: Make this join server
+        DarkMenuButton joinDiscoverButton = new DarkMenuButton("JOIN", 16, 396, 530, 48, () -> {
+            if (selectedServerAddr == null) {
+                LOG.warn("Tried to join discovered server, but no server was selected. Ignoring");
+                return;
+            }
+            LOG.info("Attempting to join {} via discovery", joinServer.getInput());
+            onJoin.handleJoin(selectedServerAddr);
         });
 
-        LabeledModalEntity joinModal = new LabeledModalEntity(359, 99, 562, 523, "JOIN A GAME", mgr, serverListRect, serverListLabel, joinServer, joinDirectButton, joinDiscoverButton);
+        joinModal = new LabeledModalEntity(
+                359, 99, 562, 523, "JOIN A GAME", mgr, serverListRect, serverListLabel, joinServer, joinDirectButton,
+                joinDiscoverButton);
         addEntity(joinModal);
 
-        AtomicInteger currentServer = new AtomicInteger();
-
-        for(int i = 0; i < serverButtons.length; i++) {
-            int finalI = i;
-            // set new server button with available information
-            serverButtons[i] = new ServerEntryEntity(32, 231 + (ENTITY_GAP * i), 498, 37, serverList.get(i).name, serverList.get(i).address,serverList.get(i).ping, ()-> {
-                // runnable (runs on click)
-
-                // highlight button
-                serverButtons[finalI].setActive(true, true);
-                currentServer.set(finalI);
-
-                currentServerIndex = finalI;
-                rawCurrentServerIndex = finalI;
-
-                // reset button highlight for non-clicked buttons
-                for (int j = 0; j < serverButtons.length; j++) {
-                    if (currentServer.get() != j) {
-                        serverButtons[j].setActive(false, false);
-                    }
-                }
-            });
+        for (int i = 0; i < serverButtons.length; i++) {
+            // populate with dummy values and hide them
+            serverButtons[i] = new ServerEntryEntity(32, 231 + (ENTITY_GAP * i), 498, 37,
+                                                     "...", "...", 0, () -> {});
+            serverButtons[i].hidden = true;
+            LOG.debug("Creating (hidden) server button for this modal. {}/{}", i + 1, serverButtons.length);
             joinModal.addEntity(serverButtons[i]);
         }
 
         // create event handler that uses the event and the array of buttons
-        this.addHandler(KeyEvent.KEY_PRESSED, e->onKeyPressed(e, serverButtons));
+        this.addHandler(KeyEvent.KEY_PRESSED, e -> onKeyPressed(e, serverButtons));
     }
 
     @Override
@@ -155,38 +140,81 @@ public class JoinGameScene extends UIScene {
     }
 
     /**
-     * Gets the server address in the "direct connection" input box as a string
+     * Clears the UI discovered server list and repopulates it with the values of {@link JoinGameScene#serverList}
      */
-    public String getServerAddress() {
-        return serverAddress;
+    private void updateServerList() {
+        // repopulate items and add to list
+        AtomicInteger currentServer = new AtomicInteger();
+
+        for (int i = 0; i < serverButtons.length; i++) {
+            if (i >= serverList.size()) {
+                serverButtons[i].hidden = true;
+                continue;
+            }
+
+            // get it immediately so it doesn't change
+            var entry = serverList.get(i);
+            int finalI = i;
+
+            // set new server button with available information
+            LOG.debug("Preparing server button with data: {{}, {}}", entry.name, entry.address);
+            serverButtons[i].setData(entry);
+            serverButtons[i].setOnClick(() -> {
+                // runnable (runs on click)
+
+                // highlight button
+                serverButtons[finalI].setActive(true, true);
+                currentServer.set(finalI);
+
+                currentServerIndex = finalI;
+                rawCurrentServerIndex = finalI;
+                selectedServerAddr = entry.address;
+
+                // reset button highlight for non-clicked buttons
+                for (int j = 0; j < serverButtons.length; j++) {
+                    if (currentServer.get() != j) {
+                        serverButtons[j].setActive(false, false);
+                    }
+                }
+            });
+            serverButtons[i].hidden = false;
+        }
+    }
+
+    /**
+     * Replaces the current server list with a new set of them
+     *
+     * @param newList list of all discovered servers
+     */
+    public void setDiscoveredServers(List<ServerEntry> newList) {
+        serverList = newList;
+        updateServerList();
     }
 
     /**
      * An entry in the server list of the join game screen.
      *
-     * @param name name of the server/room
+     * @param name    name of the server/room
      * @param address FQDN or IP address of server
-     * @param ping how many milliseconds of latency to the server
+     * @param ping    how many milliseconds of latency to the server
      */
     public record ServerEntry(String name, String address, int ping) {}
 
-
     /**
-     *
-     * @param e any key event registered by javafx
+     * @param e     any key event registered by javafx
      * @param array list of buttons on screen
      */
-    private void onKeyPressed(KeyEvent e, ServerEntryEntity[] array){
+    private void onKeyPressed(KeyEvent e, ServerEntryEntity[] array) {
 
-        if(e.getCode() != KeyCode.UP && e.getCode() != KeyCode.DOWN) return;
+        if (e.getCode() != KeyCode.UP && e.getCode() != KeyCode.DOWN) return;
 
         // increment/decrement the 4 shown servers
 
-        if(e.getCode() == KeyCode.UP) {
-            if(scrollServerIndex > 0) {
+        if (e.getCode() == KeyCode.UP) {
+            if (scrollServerIndex > 0) {
                 rawCurrentServerIndex++;
                 // un-highlight all buttons
-                for(int i = 0; i < array.length; i++) {
+                for (int i = 0; i < array.length; i++) {
                     array[i].setActive(false, false);
                 }
                 if (currentServerIndex < array.length - 1 && rawCurrentServerIndex > 0) {
@@ -195,16 +223,15 @@ public class JoinGameScene extends UIScene {
                     array[currentServerIndex].setActive(true, true);
                 }
 
-
                 if (currentServerIndex == 0) {
-                    if(rawCurrentServerIndex < -1) {
+                    if (rawCurrentServerIndex < -1) {
                         // un-highlight all buttons if the selected button is not in the array
                         for (int i = 0; i < array.length; i++) {
                             array[i].setActive(false, false);
                         }
                     }
                     // if the button was put back in the array by moving up, put it at the start
-                    if (rawCurrentServerIndex > -1){
+                    if (rawCurrentServerIndex > -1) {
                         currentServerIndex = 0;
                         array[0].setActive(true, true);
                     }
@@ -213,11 +240,11 @@ public class JoinGameScene extends UIScene {
                 scrollServerIndex--;
             }
         }
-        if(e.getCode() == KeyCode.DOWN){
-            if(scrollServerIndex < serverList.toArray().length - array.length) {
+        if (e.getCode() == KeyCode.DOWN) {
+            if (scrollServerIndex < serverList.toArray().length - array.length) {
                 // opposite to KeyCode.UP, the index of the current button must decrease when down arrow is pressed
                 rawCurrentServerIndex--;
-                for(int i = 0; i < array.length; i++) {
+                for (int i = 0; i < array.length; i++) {
                     array[i].setActive(false, false);
                 }
 
@@ -239,13 +266,16 @@ public class JoinGameScene extends UIScene {
                 }
                 // decrements entire list of shown servers
                 scrollServerIndex++;
-
             }
         }
 
         // now that index has changed, re-populate the server list
-        for(int i = 0; i < array.length; i++){
+        for (int i = 0; i < array.length; i++) {
             array[i].setData(serverList.get(i + scrollServerIndex));
         }
+    }
+
+    public interface JoinGameHandler {
+        void handleJoin(String serverAddress);
     }
 }

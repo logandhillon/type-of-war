@@ -40,13 +40,14 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private int             currentWordInLine = 1;
     private int             wordsInLine;
     private int             ignoredWords;
-    private boolean         countWords = true;
-
+    private boolean         countWords        = true;
 
     private int typedChars;
     private int correctChars;
     private int correctWords;
     private int backspaces;
+
+    private final float cursorY = y - (LINE_HEIGHT * 0.8f);
 
     private boolean isFirstKeyPress;
     private boolean isComplete;
@@ -56,7 +57,6 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
     private static final AudioClip SFX_INCORRECT = new AudioClip(
             Objects.requireNonNull(SentenceEntity.class.getResource("/sound/error_1.wav")).toExternalForm());
 
-    private float cursorY = y - (LINE_HEIGHT * 0.8f);
     /**
      * Creates a new SentenceEntity at the provided coordinates.
      *
@@ -94,18 +94,17 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
         g.setTextAlign(TextAlignment.LEFT);
 
         float dx = 64; // left-margin of text
-        float dy = (WINDOW_HEIGHT.floatValue() + 300) / 2f;
+        float dy = (WINDOW_HEIGHT.floatValue() + 310) / 2f;
         float cursorX = dx - 2 * CHAR_WIDTH;
 
         // for each word
         for (int i = 0; i < text.length; i++) {
             if (i < ignoredWords) continue;
-            if(dx > TypeOfWar.WINDOW_WIDTH.floatValue() - 128) {
+            if (dx > TypeOfWar.WINDOW_WIDTH.floatValue() - 128) {
                 dx = 64;
-                dy += 2 * CHAR_WIDTH;
+                dy += 4 * CHAR_WIDTH;
                 countWords = false;
-
-            } else if (countWords){
+            } else if (countWords) {
                 wordsInLine++;
             }
 
@@ -142,7 +141,6 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
             if (currentWord == 0) cursorX += CHAR_WIDTH;
             else cursorX += (text[currentWord - 1].length() - input[currentWord - 1].length() + 1) * CHAR_WIDTH;
         }
-
 
         g.setFill(Color.WHITE);
         g.fillRect(cursorX + CHAR_WIDTH, cursorY, 1, LINE_HEIGHT);
@@ -231,7 +229,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 currentWordInLine = 0;
                 countWords = true;
             }
-            if(input[currentWord].length() == text[currentWord].length()){
+            if (input[currentWord].length() == text[currentWord].length()) {
                 SFX_CORRECT.setVolume(0.1);
                 SFX_CORRECT.play();
 
@@ -239,7 +237,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                     backspaces--;
                 } else {
                     correctChars++;
-                    parent.moveRope(true);
+                    parent.sendCorrectKeyPress(); // TODO: fix in practice mode
                 }
             }
             if (!input[currentWord].isEmpty() && currentWord + 1 < input.length) {
@@ -260,7 +258,7 @@ public class SentenceEntity extends BoundEntity<TypeOfWarScene> {
                 backspaces--;
             } else {
                 correctChars++;
-                parent.moveRope(true);
+                parent.sendCorrectKeyPress(); // TODO: fix in practice mode
             }
         } else if (!c.equals(" ")) /* don't play err sfx if it's a space */ {
             SFX_INCORRECT.setVolume(0.2);

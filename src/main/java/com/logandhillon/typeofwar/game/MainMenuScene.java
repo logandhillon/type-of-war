@@ -1,7 +1,6 @@
 package com.logandhillon.typeofwar.game;
 
 import com.logandhillon.typeofwar.TypeOfWar;
-import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
@@ -22,17 +21,19 @@ public class MainMenuScene extends UIScene {
     /**
      * Creates a new main menu
      *
-     * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
+     * @param game the main class that can switch scenes, manage connections, etc.
      */
-    public MainMenuScene(TypeOfWar mgr) {
+    public MainMenuScene(TypeOfWar game) {
         float x = 314;
         int y = 176;
         int dy = 48 + 16; // ∆y per button height
 
+        game.setInMenu(true);
+
         MenuController controller = new MenuController(
-                new MenuButton("Practice", x, y, 256, 48, ()-> mgr.setScene(new PracticeSettingScene(mgr))),
-                new MenuButton("Host Game", x, y + dy, 256, 48, () -> mgr.setScene(new HostGameScene(mgr))),
-                new MenuButton("Join Game", x, y + 2 * dy, 256, 48, () -> mgr.setScene(new JoinGameScene(mgr))),
+                new MenuButton("Practice", x, y, 256, 48, ()-> game.setScene(new PracticeSettingScene(game))),
+                new MenuButton("Host Game", x, y + dy, 256, 48, () -> game.setScene(new HostGameScene(game))),
+                new MenuButton("Join Game", x, y + 2 * dy, 256, 48, game::showJoinGameMenu),
                 new MenuButton("Settings", x, y + 3 * dy, 256, 48, () -> {}),
                 new MenuButton("Credits", x, y + 4 * dy, 256, 48, () -> {}),
                 new MenuButton("Quit", x, y + 5 * dy, 256, 48, () -> System.exit(0))
@@ -40,9 +41,7 @@ public class MainMenuScene extends UIScene {
         addEntity(controller);
 
         InputBoxEntity userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
-        addEntity(new ModalEntity(618, y, 348, 368,
-                                  userInput
-        ));
+        addEntity(new ModalEntity(618, y, 348, 368, userInput));
     }
 
     @Override

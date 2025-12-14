@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option java_package = "com.logandhillon.typeofwar.networking.proto";
+option java_outer_classname = "EndGameProto";
+
+message PlayerStats {
+  string playerName = 1;
+  int32 team = 2;
+
+  // player color
+  uint32 r = 3;
+  uint32 g = 4;
+  uint32 b = 5;
+
+  // actual stats
+  uint32 wpm = 6;
+  uint32 accuracy = 7;
+  uint32 words = 8;
+}
+
+message AllStats {
+  uint32 winningTeam = 1;
+  repeated PlayerStats stats = 2;
+}

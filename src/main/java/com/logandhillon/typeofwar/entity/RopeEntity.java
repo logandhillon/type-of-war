@@ -1,12 +1,11 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 /**
  * The rope is the part of the main game loop that visualizes who's winning, the players, etc.
@@ -17,15 +16,17 @@ import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 public class RopeEntity extends BoundEntity<TypeOfWarScene> {
     private static final float X_CONSTANT     = 5f;
     private static final int   THICKNESS      = 3;
-    private static final int   WIDTH          = WINDOW_WIDTH.intValue() - 128;
+    private static final int   WIDTH          = 1280 - 128;
     private static final int   PLAYER_MARGIN  = 16;
     private static final int   DIVIDER_HEIGHT = 144;
     private static final int   FLAG_HEIGHT    = 68;
-    private static final float FLAG_X         = WINDOW_WIDTH.floatValue() / 2;
+    private static final float FLAG_X         = 640;
 
-    private static float                   goalpostLeftX = 478;
-    private final  ArrayList<PlayerObject> leftTeam;
-    private final  ArrayList<PlayerObject> rightTeam;
+    private float goalpostLeftX = 478;
+
+    private final ArrayList<PlayerObject> leftTeam;
+    private final ArrayList<PlayerObject> rightTeam;
+    private float multiplier;
 
     public RopeEntity(float x, float y) {
         super(x, y);
@@ -35,10 +36,10 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
 
     @Override
     public void onUpdate(float dt) {
-        if (goalpostLeftX + 324 < WINDOW_WIDTH.floatValue() / 2) {
-            parent.endGame(true);
-        } else if (goalpostLeftX > WINDOW_WIDTH.floatValue() / 2) {
-            parent.endGame(false);
+        if (goalpostLeftX + 324 < FLAG_X) {
+            parent.signalGameEnd(1);
+        } else if (goalpostLeftX > FLAG_X) {
+            parent.signalGameEnd(2);
         }
     }
 
@@ -134,12 +135,16 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
      * The player on this client should always be on the left, and the relative enemy team should appear on the right.
      */
 
-    public void moveRopeL(int multiplier) {
+    public void moveRopeL() {
         goalpostLeftX -= X_CONSTANT * multiplier;
     }
 
-    public void moveRopeR(int multiplier) {
+    public void moveRopeR() {
         goalpostLeftX += X_CONSTANT * multiplier;
+    }
+
+    public void setMultiplier(float multiplier) {
+        this.multiplier = multiplier;
     }
 
     public enum Team {

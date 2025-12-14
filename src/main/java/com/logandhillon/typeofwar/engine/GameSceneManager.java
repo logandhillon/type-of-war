@@ -5,7 +5,9 @@ package com.logandhillon.typeofwar.engine;
  *
  * @author Logan Dhillon
  * @apiNote Your "main" class should usually implement this.
+ * @deprecated Do not use this instance, instead, refer to {@link com.logandhillon.typeofwar.TypeOfWar} directly.
  */
+@Deprecated
 public interface GameSceneManager {
     /**
      * Builds and stage a new scene, setting it as the active one and discarding the previously active one.

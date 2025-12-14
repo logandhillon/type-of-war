@@ -7,19 +7,29 @@ import com.logandhillon.typeofwar.entity.ui.LabeledModalEntity;
 import com.logandhillon.typeofwar.entity.ui.NumberBoxEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+
+import java.io.IOException;
 
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
 import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
 
 public class PracticeSettingScene extends UIScene {
-    private final NumberBoxEntity wpmInput;
+    private static final Logger          LOG = LoggerContext.getContext().getLogger(PracticeSettingScene.class);
+
+    private final        NumberBoxEntity wpmInput;
 
     PracticeSettingScene(TypeOfWar mgr) {
 
         wpmInput = new NumberBoxEntity(16, 47, 530, "80", "COMPUTER WPM", 3);
 
         DarkMenuButton startPracticeButton = new DarkMenuButton("START PRACTICE", 16, 129, 530, 48, () -> {
-            mgr.setScene(new TypeOfWarPracticeScene(mgr, getWPM()));
+            try {
+                mgr.setScene(new TypeOfWarPracticeScene(mgr, getWPM()));
+            } catch (IOException e) {
+                LOG.fatal("Failed to instantiate TypeOfWarPracticeScene", e);
+            }
         });
 
         LabeledModalEntity practiceModal = new LabeledModalEntity(
