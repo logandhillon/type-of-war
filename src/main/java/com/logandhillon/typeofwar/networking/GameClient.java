@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
@@ -73,13 +74,19 @@ public class GameClient {
         in = new DataInputStream(socket.getInputStream());
         out = new PacketWriter(socket.getOutputStream());
 
+        String name = TypeOfWar.getUserConfig().getName();
+        Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
+
         // ask to connect
+        LOG.info("Asking to connect as '{}' with color {}", name, color);
         out.send(new GamePacket(
                 GamePacket.Type.CLT_REQ_CONN,
                 PlayerProto.PlayerData.newBuilder()
-                                      .setName(System.getProperty("user.name"))
+                                      .setName(name)
                                       .setTeam(team)
-                                      .setR(255).setG(255).setB(255)
+                                      .setR((float)color.getRed())
+                                      .setG((float)color.getGreen())
+                                      .setB((float)color.getBlue())
                                       .build()));
 
         new Thread(this::readLoop, "Client-ReadLoop").start();
@@ -138,9 +145,9 @@ public class GameClient {
                 lobby.clearPlayers();
 
                 for (var p: data.getTeam1List())
-                    lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 1);
+                    lobby.addPlayer(p.getName(), Color.color(p.getR(), p.getG(), p.getB()), 1);
                 for (var p: data.getTeam2List())
-                    lobby.addPlayer(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()), 2);
+                    lobby.addPlayer(p.getName(), Color.color(p.getR(), p.getG(), p.getB()), 2);
 
                 game.setInMenu(true);
 
@@ -175,15 +182,17 @@ public class GameClient {
                     return;
                 }
                 var stats = scene.getStats();
+                Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
 
                 // send the stats as a protobuf :)
                 sendServer(new GamePacket(
                         GamePacket.Type.CLT_END_GAME_STATS,
                         EndGameProto.PlayerStats.newBuilder()
-                                                .setPlayerName(System.getProperty(
-                                                        "user.name")) // TODO: populate w/ real values
-                                                .setTeam(team) // TODO: populate w/ real values
-                                                .setR(255).setG(255).setB(255) // TODO: populate w/ real values
+                                                .setPlayerName(TypeOfWar.getUserConfig().getName())
+                                                .setTeam(team)
+                                                .setR((float)color.getRed())
+                                                .setG((float)color.getGreen())
+                                                .setB((float)color.getBlue())
                                                 .setWpm(stats.getWpm())
                                                 .setAccuracy(stats.getAccuracy())
                                                 .setWords(stats.getCorrectWords())

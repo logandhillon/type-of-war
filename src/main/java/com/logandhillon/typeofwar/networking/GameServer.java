@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.game.LobbyGameScene;
 import com.logandhillon.typeofwar.game.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
@@ -235,7 +236,9 @@ public class GameServer implements Runnable {
             PlayerProto.PlayerData data = PlayerProto.PlayerData.parseFrom(packet.payload());
 
             // check if name is already used
-            if (registeredClients.values().stream().anyMatch(p -> p.name.equals(data.getName()))) {
+            if (data.getName().equals(TypeOfWar.getUserConfig().getName()) || // remote client matches host
+                registeredClients.values().stream().anyMatch(
+                        p -> p.name.equals(data.getName()))) { // or remote client matches another client
                 LOG.info(
                         "Denying connection from {} (name '{}' in use)", client.getInetAddress(),
                         packet.payload());
@@ -258,10 +261,10 @@ public class GameServer implements Runnable {
             }
 
             // all good now! register the client
-            Color color = Color.rgb(data.getR(), data.getG(), data.getB());
+            Color color = Color.color(data.getR(), data.getG(), data.getB());
             registeredClients.put(client, new ConnectionDetails(data.getName(), color, data.getTeam(), out));
-            LOG.info("Registered new client '{}' on team {} at {}!",
-                     data.getName(), data.getTeam(), client.getInetAddress());
+            LOG.info("Registered new client '{}' on team {} with color {} at {}!",
+                     data.getName(), data.getTeam(), color, client.getInetAddress());
 
             // update everyone's player list
             propagateLobbyUpdate(lobby);
@@ -282,7 +285,10 @@ public class GameServer implements Runnable {
         LOG.info("Propagating update for lobby player list");
         lobby.clearPlayers();
 
-        lobby.addPlayer("Host", Color.RED, 1); // hardcode the host
+        lobby.addPlayer(
+                TypeOfWar.getUserConfig().getName(),
+                UserConfigManager.parseColor(TypeOfWar.getUserConfig()),
+                1); // hardcode the host's team
         for (ConnectionDetails player: registeredClients.values())
             lobby.addPlayer(player.name, player.color, player.team);
 
@@ -313,17 +319,21 @@ public class GameServer implements Runnable {
                                     .filter(d -> d.team == team)
                                     .map(d -> PlayerProto.PlayerData.newBuilder()
                                                                     .setName(d.name)
-                                                                    .setR((int)d.color.getRed() * 255)
-                                                                    .setG((int)d.color.getRed() * 255)
-                                                                    .setB((int)d.color.getRed() * 255)
+                                                                    .setR((float)d.color.getRed())
+                                                                    .setG((float)d.color.getGreen())
+                                                                    .setB((float)d.color.getBlue())
                                                                     .build()
                                     );
+
+        Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
 
         // add the host to team 1
         if (team == 1) {
             list = Stream.concat(
-                    Stream.of(PlayerProto.PlayerData.newBuilder().setName("Host").setR(255).setG(0).setB(0).build()),
-                    list);
+                    Stream.of(PlayerProto.PlayerData.newBuilder().setName(TypeOfWar.getUserConfig().getName())
+                                                    .setR((float)color.getRed())
+                                                    .setG((float)color.getGreen())
+                                                    .setB((float)color.getBlue()).build()), list);
         }
 
         return list;

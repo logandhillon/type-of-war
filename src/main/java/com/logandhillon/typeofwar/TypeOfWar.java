@@ -3,11 +3,13 @@ package com.logandhillon.typeofwar;
 import com.logandhillon.typeofwar.engine.GameEngine;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
+import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
 import com.logandhillon.typeofwar.game.*;
 import com.logandhillon.typeofwar.networking.*;
+import com.logandhillon.typeofwar.networking.proto.ConfigProto;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.GameInitProto;
 import com.logandhillon.typeofwar.resource.WordGen;
@@ -56,6 +58,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
     private static GameClient       client;
     private static ServerDiscoverer discoverer;
 
+    private static ConfigProto.UserConfig userConfig;
+
     /**
      * Handles communication with JavaFX when this program is signalled to start.
      *
@@ -87,6 +91,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
      * @see TypeOfWar#start(Stage)
      */
     public static void main(String[] args) throws IOException {
+        // load user config first
+        userConfig = UserConfigManager.load();
+
+        // then start the javafx program
         launch();
 
         // this runs AFTER the javafx window closes
@@ -129,7 +137,8 @@ public class TypeOfWar extends Application implements GameSceneManager {
         LOG.info("Setting team number to 1 (host default)");
 
         var lobby = new LobbyGameScene(this, roomName, true);
-        lobby.addPlayer("Host", Color.RED, 1);
+        lobby.addPlayer(
+                TypeOfWar.getUserConfig().getName(), UserConfigManager.parseColor(TypeOfWar.getUserConfig()), 1);
         setScene(lobby);
 
         if (server != null) throw new IllegalStateException("Server already exists, cannot establish connection");
@@ -158,10 +167,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
         if (server != null) {
             t1 = server.getTeam(1)
-                       .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
+                       .map(p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB())))
                        .toList();
             t2 = server.getTeam(2)
-                       .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
+                       .map(p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB())))
                        .toList();
 
             try {
@@ -176,9 +185,9 @@ public class TypeOfWar extends Application implements GameSceneManager {
                     GameInitProto.GameData.newBuilder().setSentence(sentence).setMultiplier(multiplier).build()));
         } else if (client != null) {
             t1 = client.getTeam(1).stream().map(
-                    p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+                    p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB()))).toList();
             t2 = client.getTeam(2).stream().map(
-                    p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+                    p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB()))).toList();
         } else {
             throw new IllegalStateException("You cannot start the game without an active server or client!");
         }
@@ -394,10 +403,14 @@ public class TypeOfWar extends Application implements GameSceneManager {
     public void setEndGameStats(GameStatisticsEntity stats) {
         if (getNetworkRole() != NetworkRole.SERVER) return; // this is only for the sever
 
+        Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
+
         this.endGameStats = EndGameProto.PlayerStats.newBuilder()
-                                                    .setPlayerName("Host") // TODO: populate w/ real values
-                                                    .setTeam(team) // TODO: populate w/ real values
-                                                    .setR(255).setG(255).setB(255) // TODO: populate w/ real values
+                                                    .setPlayerName(getUserConfig().getName())
+                                                    .setTeam(team)
+                                                    .setR((float)color.getRed())
+                                                    .setG((float)color.getGreen())
+                                                    .setB((float)color.getBlue())
                                                     .setWpm(stats.getWpm())
                                                     .setAccuracy(stats.getAccuracy())
                                                     .setWords(stats.getCorrectWords())
@@ -421,5 +434,26 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
     public void setInMenu(boolean inMenu) {
         isInMenu = inMenu;
+    }
+
+    /**
+     * Gets the user config that is actively loaded in memory, NOT from disk.
+     *
+     * @return stored user confirm
+     *
+     * @throws NullPointerException if there is no stored user config (this shouldn't happen)
+     */
+    public static ConfigProto.UserConfig getUserConfig() {
+        if (userConfig == null) throw new NullPointerException("User config is null!");
+        return userConfig;
+    }
+
+    /**
+     * Updates only the fields specified and saves the resulting config.
+     *
+     * @param partial the partial values, whatever is set here will be updated, otherwise it will remain the same.
+     */
+    public static void updateUserConfig(ConfigProto.UserConfig partial) {
+        userConfig = UserConfigManager.update(userConfig, partial);
     }
 }

@@ -5,6 +5,8 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
+import java.util.List;
+
 /**
  * Contains constants for all {@link javafx.scene.paint.Paint} items (colors, gradients, etc.) that are to be used
  * throughout the game but require continuity.
@@ -32,4 +34,12 @@ public final class Colors {
             0, 1, 0, 0, true, CycleMethod.NO_CYCLE,
             new Stop(0, Color.rgb(39, 3, 3)),
             new Stop(0.33, Color.BLACK));
+
+    /**
+     * The color of the player skin, indexed by the order they appear on the main menu.
+     */
+    public static final List<Color> PLAYER_SKINS = List.of(
+            // red, blue, turquoise, yellow
+            Color.valueOf("#E92727"), Color.valueOf("424CDF"), Color.valueOf("#27E9A8"), Color.valueOf("#E5E927")
+    );
 }

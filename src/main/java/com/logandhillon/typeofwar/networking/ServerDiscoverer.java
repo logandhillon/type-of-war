@@ -20,6 +20,8 @@ public class ServerDiscoverer {
 
     private final List<JoinGameScene.ServerEntry> discoveredServers = new ArrayList<>();
     private final TypeOfWar                       game;
+    private       Thread                          discoverer;
+    private       Thread                          purger;
 
     private volatile boolean listening        = false;
     private volatile long    lastUpdateMillis = System.currentTimeMillis();
@@ -35,7 +37,7 @@ public class ServerDiscoverer {
         LOG.info("Starting UDP server discovery thread");
         listening = true;
 
-        new Thread(() -> {
+        discoverer = new Thread(() -> {
             try (DatagramSocket socket = new DatagramSocket(GameServer.ADVERTISE_PORT)) {
                 byte[] buffer = new byte[256];
 
@@ -71,10 +73,11 @@ public class ServerDiscoverer {
             } catch (IOException e) {
                 LOG.error("Exception while receiving server discovery packet", e);
             }
-        }, "UDP-ServerDiscovery").start();
+        }, "UDP-ServerDiscovery");
+        discoverer.start();
 
         // updates the server list if it becomes stale
-        new Thread(() -> {
+        purger = new Thread(() -> {
             while (listening) {
                 // only update 4s after the last update
                 if (lastUpdateMillis + 4000 > System.currentTimeMillis()) continue;
@@ -84,18 +87,21 @@ public class ServerDiscoverer {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    LOG.warn("Thread interupted, this is normal");
+                    throw new RuntimeException(e);
                 }
             }
-        }, "Discoverer/ServerListUpdater").start();
+        }, "Discoverer/ServerListUpdater");
+        purger.start();
     }
 
     /**
      * Stops the server discoverer
      */
     public void stop() {
-        LOG.info("Asking discovery threads to stop");
+        LOG.info("Interrupting discovery threads");
         listening = false;
+        discoverer.interrupt();
+        purger.interrupt();
     }
 
     private void updateJoinGameScene() {

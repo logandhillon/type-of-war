@@ -95,7 +95,7 @@ public abstract class UIScene extends GameScene {
             }
             // if outside the hitbox and the clickable is "active"
             else if (flags.isActive) {
-                c.onBlur(e);
+                c.onBlur();
                 flags.isActive = false;
             }
         }

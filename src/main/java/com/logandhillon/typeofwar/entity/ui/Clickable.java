@@ -40,10 +40,8 @@ public abstract class Clickable extends BoundEntity<UIScene> {
 
     /**
      * Called when this element WAS active, but was clicked away from and thus is no longer active.
-     *
-     * @param e the mouse event from JavaFX
      */
-    public void onBlur(MouseEvent e) {}
+    public void onBlur() {}
 
     /**
      * Runs the mouse enter handler if it was set.
@@ -65,5 +63,10 @@ public abstract class Clickable extends BoundEntity<UIScene> {
 
     public float getHeight() {
         return h;
+    }
+
+    public void setSize(float w, float h){
+        this.w = w;
+        this.h = h;
     }
 }

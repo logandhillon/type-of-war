@@ -8,9 +8,9 @@ message PlayerStats {
   int32 team = 2;
 
   // player color
-  uint32 r = 3;
-  uint32 g = 4;
-  uint32 b = 5;
+  float r = 3;
+  float g = 4;
+  float b = 5;
 
   // actual stats
   uint32 wpm = 6;
