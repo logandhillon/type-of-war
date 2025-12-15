@@ -18,13 +18,6 @@ Players race to complete words and phrases faster than their opponents to gain p
   <img src="docs/screenshots/gameplay-demo.png" alt="Gameplay Screenshot" width="800">
 </p>
 
-
-Screenshot guidance (gameplay.png):
-•	Mid-round gameplay
-•	Words visible
-•	Progress bars / scores visible
-•	No debug overlays
-
 ## Game Modes
 
 ### Singleplayer (Practice)
@@ -49,20 +42,21 @@ Control every aspect of your matches.
   <img src="docs/screenshots/menu-host.png" alt="Screenshot of the host game menu" width="800">
 </p>
 
-
 ## Technology Stack
-•	Java 21
-•	Gradle 8
-•	JavaFX – rendering and UI
-•	Google Protocol Buffers – networking and serialization
-•	Log4j – logging
-•	Custom Game Engine – core architecture and systems
+
+- Java 21
+- Gradle 8
+- JavaFX – rendering and UI
+- Google Protocol Buffers – networking and serialization
+- Log4j – logging
+- Custom Game Engine – core architecture and systems
 
 The game is built on a heavily customized in-house engine rather than a standard framework.
 
 ## Requirements
-•	JDK 21
-•	Gradle 8 (or Gradle Wrapper)
+
+- JDK 21
+- Gradle 8 (or Gradle Wrapper)
 
 ## How to Use
 
@@ -74,18 +68,11 @@ $ ./gradlew run
 
 Ensure `JAVA_HOME` points to JDK 21.
 
-## Project Structure
-
-engine/     Custom game engine
-game/       Game logic and scenes
-network/    Multiplayer + protobuf
-ui/         JavaFX UI
-
-
 ## Multiplayer Notes
-•	Supports up to 8 concurrent players
-•	Uses Protocol Buffers for communication
-•	Requires a host/server instance
+
+• Supports up to 8 concurrent players
+• Uses Protocol Buffers for communication
+• Requires a host/server instance
 
 # License
 
