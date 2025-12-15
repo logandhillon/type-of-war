@@ -40,12 +40,10 @@ public class JoinGameScene extends UIScene {
 
     private final ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
 
-    private int scrollServerIndex;
-    private int currentServerIndex;
-    private int rawCurrentServerIndex;
-    private String selectedServerAddr; // the addr of the selected server in Discovery
-
-    // TODO: temp code, this will be filled in with the actual server list later.
+    private int               scrollServerIndex;
+    private int               currentServerIndex;
+    private int               rawCurrentServerIndex;
+    private String            selectedServerAddr; // the addr of the selected server in Discovery
     private List<ServerEntry> serverList = new ArrayList<>();
 
     /**
@@ -118,7 +116,7 @@ public class JoinGameScene extends UIScene {
         for (int i = 0; i < serverButtons.length; i++) {
             // populate with dummy values and hide them
             serverButtons[i] = new ServerEntryEntity(32, 231 + (ENTITY_GAP * i), 498, 37,
-                                                     "...", "...", 0, () -> {});
+                                                     "...", "...", () -> {});
             serverButtons[i].hidden = true;
             LOG.debug("Creating (hidden) server button for this modal. {}/{}", i + 1, serverButtons.length);
             joinModal.addEntity(serverButtons[i]);
@@ -195,44 +193,42 @@ public class JoinGameScene extends UIScene {
      *
      * @param name    name of the server/room
      * @param address FQDN or IP address of server
-     * @param ping    how many milliseconds of latency to the server
      */
-    public record ServerEntry(String name, String address, int ping) {}
+    public record ServerEntry(String name, String address) {}
 
     /**
-     * @param e     any key event registered by javafx
-     * @param array list of buttons on screen
+     * @param e       any key event registered by javafx
+     * @param entries list of buttons on screen
      */
-    private void onKeyPressed(KeyEvent e, ServerEntryEntity[] array) {
+    private void onKeyPressed(KeyEvent e, ServerEntryEntity[] entries) {
 
         if (e.getCode() != KeyCode.UP && e.getCode() != KeyCode.DOWN) return;
 
         // increment/decrement the 4 shown servers
-
         if (e.getCode() == KeyCode.UP) {
             if (scrollServerIndex > 0) {
                 rawCurrentServerIndex++;
                 // un-highlight all buttons
-                for (ServerEntryEntity serverEntryEntity: array) {
-                    serverEntryEntity.setActive(false, false);
+                for (ServerEntryEntity entry: entries) {
+                    entry.setActive(false, false);
                 }
-                if (currentServerIndex < array.length - 1 && rawCurrentServerIndex > 0) {
+                if (currentServerIndex < entries.length - 1 && rawCurrentServerIndex > 0) {
                     currentServerIndex++;
                     // re-highlight button if it isn't still off-screen
-                    array[currentServerIndex].setActive(true, true);
+                    entries[currentServerIndex].setActive(true, true);
                 }
 
                 if (currentServerIndex == 0) {
                     if (rawCurrentServerIndex < -1) {
                         // un-highlight all buttons if the selected button is not in the array
-                        for (ServerEntryEntity serverEntryEntity: array) {
-                            serverEntryEntity.setActive(false, false);
+                        for (ServerEntryEntity entry: entries) {
+                            entry.setActive(false, false);
                         }
                     }
                     // if the button was put back in the array by moving up, put it at the start
                     if (rawCurrentServerIndex > -1) {
                         currentServerIndex = 0;
-                        array[0].setActive(true, true);
+                        entries[0].setActive(true, true);
                     }
                 }
                 // increments entire list of shown servers
@@ -240,27 +236,27 @@ public class JoinGameScene extends UIScene {
             }
         }
         if (e.getCode() == KeyCode.DOWN) {
-            if (scrollServerIndex < serverList.toArray().length - array.length) {
+            if (scrollServerIndex < serverList.toArray().length - entries.length) {
                 // opposite to KeyCode.UP, the index of the current button must decrease when down arrow is pressed
                 rawCurrentServerIndex--;
-                for (ServerEntryEntity serverEntryEntity: array) {
-                    serverEntryEntity.setActive(false, false);
+                for (ServerEntryEntity entry: entries) {
+                    entry.setActive(false, false);
                 }
 
-                if (currentServerIndex > 0 && rawCurrentServerIndex < array.length - 1) {
+                if (currentServerIndex > 0 && rawCurrentServerIndex < entries.length - 1) {
                     currentServerIndex--;
 
-                    array[currentServerIndex].setActive(true, true);
+                    entries[currentServerIndex].setActive(true, true);
                 }
-                if (currentServerIndex == array.length - 1) {
-                    if (rawCurrentServerIndex > array.length) {
-                        for (ServerEntryEntity serverEntryEntity: array) {
-                            serverEntryEntity.setActive(false, false);
+                if (currentServerIndex == entries.length - 1) {
+                    if (rawCurrentServerIndex > entries.length) {
+                        for (ServerEntryEntity entry: entries) {
+                            entry.setActive(false, false);
                         }
                     }
-                    if (rawCurrentServerIndex < array.length) {
-                        currentServerIndex = array.length - 1;
-                        array[array.length - 1].setActive(true, true);
+                    if (rawCurrentServerIndex < entries.length) {
+                        currentServerIndex = entries.length - 1;
+                        entries[entries.length - 1].setActive(true, true);
                     }
                 }
                 // decrements entire list of shown servers
@@ -269,8 +265,8 @@ public class JoinGameScene extends UIScene {
         }
 
         // now that index has changed, re-populate the server list
-        for (int i = 0; i < array.length; i++) {
-            array[i].setData(serverList.get(i + scrollServerIndex));
+        for (int i = 0; i < entries.length; i++) {
+            entries[i].setData(serverList.get(i + scrollServerIndex));
         }
     }
 

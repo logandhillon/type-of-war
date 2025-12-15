@@ -62,7 +62,7 @@ public class ServerDiscoverer {
                     }
 
                     String ip = packet.getAddress().getHostAddress();
-                    discoveredServers.add(new JoinGameScene.ServerEntry(parts[1], ip, 0));
+                    discoveredServers.add(new JoinGameScene.ServerEntry(parts[1], ip));
                     LOG.info("Discovered server at {}:{}", ip, pkt);
 
                     updateJoinGameScene();

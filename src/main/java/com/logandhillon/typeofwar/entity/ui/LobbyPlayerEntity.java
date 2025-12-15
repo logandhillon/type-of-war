@@ -20,20 +20,16 @@ public class LobbyPlayerEntity extends BoundEntity<UIScene> {
     private static final Font LABEL_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 16);
     private final Color color;
     private final String playerName;
-    private final int ping;
-    private static final int WIDTH = 225;
 
     /**
      *
      * @param color the color of the given player's skin
      * @param playerName the given player's chosen name
-     * @param ping the given player's latency
      */
-    public LobbyPlayerEntity(Color color, String playerName, int ping){
+    public LobbyPlayerEntity(Color color, String playerName){
         super(0, 0);
         this.color = color;
         this.playerName = playerName;
-        this.ping = ping;
     }
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
@@ -52,9 +48,6 @@ public class LobbyPlayerEntity extends BoundEntity<UIScene> {
 
         g.setTextAlign(TextAlignment.RIGHT);
         g.setFill(Color.GREY);
-
-        // render player latency
-        g.fillText(this.ping + "ms", x + WIDTH, y + 16);
     }
 
     @Override

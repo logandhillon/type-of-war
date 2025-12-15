@@ -83,7 +83,7 @@ public class LobbyGameScene extends UIScene {
         LOG.info("Adding player \"{}\" with color {} to team {}", name, color.toString(), team);
 
         if (team == 1) {
-            var p = new LobbyPlayerEntity(color, name, 0); // TODO: impl. ping
+            var p = new LobbyPlayerEntity(color, name);
             p.setPosition(32, p.getY() + dyTeam1 + 128);
             dyTeam1 += ENTITY_GAP;
             lobbyModal.addEntity(p);
@@ -91,7 +91,7 @@ public class LobbyGameScene extends UIScene {
         }
 
         if (team == 2) {
-            var p = new LobbyPlayerEntity(color, name, 0); // TODO: impl. ping
+            var p = new LobbyPlayerEntity(color, name);
             p.setPosition(305, p.getY() + dyTeam2 + 128);
             dyTeam2 += ENTITY_GAP;
             lobbyModal.addEntity(p);
