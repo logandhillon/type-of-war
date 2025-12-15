@@ -1,6 +1,6 @@
 package com.logandhillon.typeofwar.engine;
 
-import com.logandhillon.typeofwar.entity.Entity;
+import com.logandhillon.typeofwar.entity.core.Entity;
 import javafx.animation.AnimationTimer;
 import javafx.event.Event;
 import javafx.event.EventHandler;

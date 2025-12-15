@@ -1,8 +1,9 @@
-package com.logandhillon.typeofwar.entity.ui;
+package com.logandhillon.typeofwar.entity.ui.component;
 
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
-import com.logandhillon.typeofwar.entity.Entity;
+import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.entity.core.Clickable;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;

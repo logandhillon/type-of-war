@@ -1,7 +1,7 @@
 package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
-import com.logandhillon.typeofwar.game.JoinGameScene;
+import com.logandhillon.typeofwar.scene.menu.JoinGameScene;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 

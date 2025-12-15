@@ -1,5 +1,7 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.entity.core.GameObject;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

@@ -1,6 +1,6 @@
-package com.logandhillon.typeofwar.entity.ui;
+package com.logandhillon.typeofwar.entity.ui.component;
 
-import com.logandhillon.typeofwar.entity.Entity;
+import com.logandhillon.typeofwar.entity.core.Entity;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;

@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.entity;
 
 import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.entity.core.Entity;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
@@ -10,12 +11,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
- * Header entity that is displayed at the top of the screen during {@link com.logandhillon.typeofwar.game.EndGameScene}
+ * Header entity that is displayed at the top of the screen during {@link com.logandhillon.typeofwar.scene.EndGameScene}
  *
  * @author Jack Ross
  * @see  EndResultEntity
  */
-public class EndHeaderEntity extends Entity{
+public class EndHeaderEntity extends Entity {
     private static final Font FONT_HEADER = Font.font(Fonts.DM_MONO_MEDIUM, 64);
     private boolean win;
     private String text;

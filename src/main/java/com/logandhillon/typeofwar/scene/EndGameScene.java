@@ -1,11 +1,11 @@
-package com.logandhillon.typeofwar.game;
+package com.logandhillon.typeofwar.scene;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.EndHeaderEntity;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
-import com.logandhillon.typeofwar.entity.ui.GameButton;
+import com.logandhillon.typeofwar.entity.ui.component.GameButton;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.List;

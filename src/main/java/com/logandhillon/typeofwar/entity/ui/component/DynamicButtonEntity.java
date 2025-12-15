@@ -1,4 +1,4 @@
-package com.logandhillon.typeofwar.entity.ui;
+package com.logandhillon.typeofwar.entity.ui.component;
 
 import javafx.scene.input.MouseEvent;
 

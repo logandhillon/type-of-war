@@ -1,7 +1,7 @@
 package com.logandhillon.typeofwar.entity;
 
-import com.logandhillon.typeofwar.TypeOfWar;
-import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.entity.core.BoundEntity;
+import com.logandhillon.typeofwar.scene.TypeOfWarScene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * The rope is the part of the main game loop that visualizes who's winning, the players, etc.
  *
  * @author Logan Dhillon
- * @see com.logandhillon.typeofwar.game.TypeOfWarScene
+ * @see com.logandhillon.typeofwar.scene.TypeOfWarScene
  */
 public class RopeEntity extends BoundEntity<TypeOfWarScene> {
     private static final float X_CONSTANT     = 5f;

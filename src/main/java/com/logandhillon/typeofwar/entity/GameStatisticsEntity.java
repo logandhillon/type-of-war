@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.entity.core.Entity;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,7 +9,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
- * The game statistics entity is a UI layer for the {@link com.logandhillon.typeofwar.game.TypeOfWarScene} that shows
+ * The game statistics entity is a UI layer for the {@link com.logandhillon.typeofwar.scene.TypeOfWarScene} that shows
  * the current player's statistics.
  * <p>
  * The statistics are supplied by the parent scene, and are not retrieved automatically.

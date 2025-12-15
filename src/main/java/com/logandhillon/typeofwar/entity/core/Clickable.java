@@ -1,11 +1,10 @@
-package com.logandhillon.typeofwar.entity.ui;
+package com.logandhillon.typeofwar.entity.core;
 
 import com.logandhillon.typeofwar.engine.UIScene;
-import com.logandhillon.typeofwar.entity.BoundEntity;
 import javafx.scene.input.MouseEvent;
 
 /**
- * A Clickable is a special type of {@link com.logandhillon.typeofwar.entity.Entity} that can be clicked by the mouse.
+ * A Clickable is a special type of {@link Entity} that can be clicked by the mouse.
  * It can only be used within a {@link UIScene} (it <i>can</i> be used in all GameScenes, but it will not be
  * clickable).
  *

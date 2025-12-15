@@ -1,4 +1,4 @@
-package com.logandhillon.typeofwar.game;
+package com.logandhillon.typeofwar.scene;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;

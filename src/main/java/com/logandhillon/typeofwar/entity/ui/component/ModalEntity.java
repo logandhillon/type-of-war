@@ -1,13 +1,11 @@
-package com.logandhillon.typeofwar.entity.ui;
+package com.logandhillon.typeofwar.entity.ui.component;
 
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.entity.Entity;
+import com.logandhillon.typeofwar.entity.core.Entity;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
-
-import java.util.function.Predicate;
 
 /**
  * A modal is a group of other entities that is rendered inside it. This modal is made for generic menus, without any

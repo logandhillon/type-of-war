@@ -1,4 +1,4 @@
-package com.logandhillon.typeofwar.entity;
+package com.logandhillon.typeofwar.entity.core;
 
 import com.logandhillon.typeofwar.engine.GameScene;
 

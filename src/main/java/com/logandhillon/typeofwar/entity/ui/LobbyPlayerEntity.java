@@ -1,7 +1,8 @@
 package com.logandhillon.typeofwar.entity.ui;
 
 import com.logandhillon.typeofwar.engine.UIScene;
-import com.logandhillon.typeofwar.entity.BoundEntity;
+import com.logandhillon.typeofwar.entity.core.BoundEntity;
+import com.logandhillon.typeofwar.scene.menu.LobbyGameScene;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,7 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
- * An entity used in {@link com.logandhillon.typeofwar.game.LobbyGameScene} to show a graphical representation of a
+ * An entity used in {@link LobbyGameScene} to show a graphical representation of a
  * user in the lobby's name, colour, and latency
  *
  * @author Jack Ross

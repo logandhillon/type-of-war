@@ -1,11 +1,11 @@
-package com.logandhillon.typeofwar.game;
+package com.logandhillon.typeofwar.scene.menu;
 
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.UIScene;
-import com.logandhillon.typeofwar.entity.Entity;
-import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
-import com.logandhillon.typeofwar.entity.ui.InputBoxEntity;
-import com.logandhillon.typeofwar.entity.ui.LabeledModalEntity;
+import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.entity.ui.component.DarkMenuButton;
+import com.logandhillon.typeofwar.entity.ui.component.InputBoxEntity;
+import com.logandhillon.typeofwar.entity.ui.component.LabeledModalEntity;
 import com.logandhillon.typeofwar.entity.ui.ServerEntryEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;

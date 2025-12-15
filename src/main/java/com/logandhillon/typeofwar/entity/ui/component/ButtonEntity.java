@@ -1,6 +1,7 @@
-package com.logandhillon.typeofwar.entity.ui;
+package com.logandhillon.typeofwar.entity.ui.component;
 
 import com.logandhillon.typeofwar.entity.SentenceEntity;
+import com.logandhillon.typeofwar.entity.core.Clickable;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;

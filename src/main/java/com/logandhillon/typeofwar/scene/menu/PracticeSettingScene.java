@@ -1,10 +1,11 @@
-package com.logandhillon.typeofwar.game;
+package com.logandhillon.typeofwar.scene.menu;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.UIScene;
-import com.logandhillon.typeofwar.entity.ui.DarkMenuButton;
-import com.logandhillon.typeofwar.entity.ui.LabeledModalEntity;
-import com.logandhillon.typeofwar.entity.ui.NumberBoxEntity;
+import com.logandhillon.typeofwar.entity.ui.component.DarkMenuButton;
+import com.logandhillon.typeofwar.entity.ui.component.LabeledModalEntity;
+import com.logandhillon.typeofwar.entity.ui.component.NumberBoxEntity;
+import com.logandhillon.typeofwar.scene.TypeOfWarPracticeScene;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.canvas.GraphicsContext;
 import org.apache.logging.log4j.Logger;

@@ -1,7 +1,7 @@
 package com.logandhillon.typeofwar.engine;
 
-import com.logandhillon.typeofwar.entity.Entity;
-import com.logandhillon.typeofwar.entity.ui.Clickable;
+import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.entity.core.Clickable;
 import javafx.geometry.Point3D;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;

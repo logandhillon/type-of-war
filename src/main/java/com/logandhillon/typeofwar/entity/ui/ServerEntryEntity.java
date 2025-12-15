@@ -1,6 +1,8 @@
 package com.logandhillon.typeofwar.entity.ui;
 
-import com.logandhillon.typeofwar.game.JoinGameScene;
+import com.logandhillon.typeofwar.entity.ui.component.ButtonEntity;
+import com.logandhillon.typeofwar.entity.ui.component.DynamicButtonEntity;
+import com.logandhillon.typeofwar.scene.menu.JoinGameScene;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
@@ -12,10 +14,10 @@ import javafx.scene.text.TextAlignment;
 
 public class ServerEntryEntity extends DynamicButtonEntity {
     private static final Font               ADDRESS_FONT    = Font.font(Fonts.DM_MONO, 16);
-    private static final Font               LATENCY_FONT    = Font.font(Fonts.DM_MONO, 14);
-    private static final ButtonEntity.Style DEFAULT_STYLE   = new ButtonEntity.Style(
+    private static final Font               LATENCY_FONT  = Font.font(Fonts.DM_MONO, 14);
+    private static final ButtonEntity.Style DEFAULT_STYLE = new ButtonEntity.Style(
             Color.WHITE, Colors.DEFAULT, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 16));
-    private static final ButtonEntity.Style ACTIVE_STYLE    = new ButtonEntity.Style(
+    private static final ButtonEntity.Style ACTIVE_STYLE  = new ButtonEntity.Style(
             Color.WHITE, Colors.PRIMARY, ButtonEntity.Variant.SOLID, true, Font.font(Fonts.DM_MONO_MEDIUM, 16));
     private static final double             ROUNDING_RADIUS = 4;
 

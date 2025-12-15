@@ -1,10 +1,14 @@
-package com.logandhillon.typeofwar.game;
+package com.logandhillon.typeofwar.scene.menu;
 
 import com.google.protobuf.UInt32Value;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.*;
+import com.logandhillon.typeofwar.entity.ui.component.InputBoxEntity;
+import com.logandhillon.typeofwar.entity.ui.component.MenuButton;
+import com.logandhillon.typeofwar.entity.ui.component.ModalEntity;
+import com.logandhillon.typeofwar.entity.ui.component.TextEntity;
 import com.logandhillon.typeofwar.networking.proto.ConfigProto;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
@@ -23,7 +27,7 @@ import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    private final InputBoxEntity userInput;
+    private final InputBoxEntity      userInput;
     private final SkinOptionsEntity[] skins;
     private final int defaultColor;
 
