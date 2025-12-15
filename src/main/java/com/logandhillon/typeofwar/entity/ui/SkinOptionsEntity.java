@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity.ui;
 
+import com.logandhillon.typeofwar.entity.core.Clickable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;

@@ -3,7 +3,6 @@ package com.logandhillon.typeofwar.resource;
 import java.io.*;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Stream;
 
 /**
  * Word generation creates random sentences for users to type in their game

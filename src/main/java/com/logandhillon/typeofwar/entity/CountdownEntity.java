@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.entity.core.Entity;
 import com.logandhillon.typeofwar.resource.Audios;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;

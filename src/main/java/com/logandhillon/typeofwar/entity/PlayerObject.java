@@ -1,5 +1,7 @@
 package com.logandhillon.typeofwar.entity;
 
+import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.entity.core.GameObject;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -14,7 +16,8 @@ import javafx.scene.text.TextAlignment;
  */
 public class PlayerObject implements GameObject {
     protected static final int SIZE          = 64;
-    private static final   int NAME_OFFSET_Y = 20;
+    private static final   int HALF_SIZE     = SIZE / 2;
+    private static final   int NAME_OFFSET_Y = 24;
 
     private static final Font FONT = Font.font(Fonts.DM_MONO, 17);
 
@@ -44,13 +47,13 @@ public class PlayerObject implements GameObject {
     public void render(GraphicsContext g, float x, float y) {
         // render skin
         g.setFill(color);
-        g.fillRect(x, y - (SIZE / 2.0), SIZE, SIZE);
+        g.fillRect(x, y - HALF_SIZE, SIZE, SIZE);
 
         // render name
         g.setFill(Color.WHITE);
         g.setFont(FONT);
         g.setTextAlign(TextAlignment.CENTER);
-        g.fillText(name, x + (SIZE / 2.0), y - SIZE / 2.0 - NAME_OFFSET_Y);
+        g.fillText(name, x + HALF_SIZE, y - HALF_SIZE - NAME_OFFSET_Y);
     }
 
     @Override

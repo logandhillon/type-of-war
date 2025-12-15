@@ -1,0 +1,71 @@
+package com.logandhillon.typeofwar.scene;
+
+import com.logandhillon.typeofwar.TypeOfWar;
+import com.logandhillon.typeofwar.engine.GameScene;
+import com.logandhillon.typeofwar.engine.UIScene;
+import com.logandhillon.typeofwar.entity.EndHeaderEntity;
+import com.logandhillon.typeofwar.entity.EndResultEntity;
+import com.logandhillon.typeofwar.entity.ui.component.GameButton;
+import javafx.scene.canvas.GraphicsContext;
+
+import java.util.List;
+
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
+import static com.logandhillon.typeofwar.resource.Colors.BG_LOSING;
+import static com.logandhillon.typeofwar.resource.Colors.BG_WINNING;
+
+/**
+ * The game scene for {@link EndResultEntity}s and {@link EndHeaderEntity}s that show at the end of the game by
+ * communicating with parent class {@link GameScene}.
+ *
+ * @author Jack Ross
+ */
+public class EndGameScene extends UIScene {
+    private static final float ENTITY_GAP = 136;
+    private static final float BUFFER_GAP = 25;
+
+    private final boolean win;
+
+    /**
+     * @param leftTeamResults  is the sum of statistics for the team on the left of the rope
+     * @param rightTeamResults is the sum of statistics for the team on the right of the rope
+     */
+    public EndGameScene(TypeOfWar mgr, List<EndResultEntity> leftTeamResults, List<EndResultEntity> rightTeamResults,
+                        boolean won) {
+
+        this.win = won;
+        addEntity(new EndHeaderEntity(won));
+
+        float dx = 25f; // initial offset to account of entity width
+        for (EndResultEntity p: leftTeamResults) {
+            // displace entities on left away from center, displacement increases per teammate
+            p.setPosition(
+                    ((float)TypeOfWar.CANVAS_WIDTH / 2) - (leftTeamResults.size() * ENTITY_GAP) + dx - BUFFER_GAP,
+                    250);
+            dx += ENTITY_GAP;
+            addEntity(p);
+        }
+
+        dx = 25f; // initial offset to account of entity width
+        for (EndResultEntity p: rightTeamResults) {
+            // displace entities on right from center
+            p.setPosition(((float)TypeOfWar.CANVAS_WIDTH / 2) + dx + BUFFER_GAP, 250);
+            dx += ENTITY_GAP;
+            addEntity(p);
+        }
+
+        addEntity(new GameButton("BACK TO MENU", 481, 613, 318, 45, mgr::goToMainMenu));
+    }
+
+    @Override
+    protected void render(GraphicsContext g) {
+
+        // fill background
+        g.setFill(this.win ? BG_WINNING : BG_LOSING);
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        // render all end screen entities
+        super.render(g);
+    }
+}

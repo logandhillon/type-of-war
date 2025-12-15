@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.entity;
 
-import com.logandhillon.typeofwar.game.EndGameScene;
+import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.scene.EndGameScene;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Font;
@@ -11,7 +12,7 @@ import javafx.scene.text.TextAlignment;
  * Formatting of the end-game statistics that show on the {@link EndGameScene}
  * @author Jack Ross
  */
-public class EndResultEntity extends Entity{
+public class EndResultEntity extends Entity {
     private static final float WIDTH = 64f;
     private static final float GAP = 24f;
     private static final int STAT_LINE_HEIGHT = (int) (1.1 * 34);

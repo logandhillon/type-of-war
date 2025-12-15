@@ -1,7 +1,7 @@
 package com.logandhillon.typeofwar.engine;
 
-import com.logandhillon.typeofwar.entity.Entity;
-import com.logandhillon.typeofwar.entity.ui.MenuButton;
+import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.entity.ui.component.MenuButton;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

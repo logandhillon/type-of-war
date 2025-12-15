@@ -2,8 +2,8 @@ package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
-import com.logandhillon.typeofwar.game.LobbyGameScene;
-import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.scene.menu.LobbyGameScene;
+import com.logandhillon.typeofwar.scene.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
 import javafx.application.Platform;
@@ -44,7 +44,7 @@ public class GameServer implements Runnable {
     private final HashMap<Socket, ConnectionDetails> registeredClients = new HashMap<>();
 
     /**
-     * used to retrieve all stats in end game and display them on {@link com.logandhillon.typeofwar.game.EndGameScene}
+     * used to retrieve all stats in end game and display them on {@link com.logandhillon.typeofwar.scene.EndGameScene}
      */
     private final HashMap<Socket, EndGameProto.PlayerStats> endGameStats = new HashMap<>();
 
@@ -314,7 +314,7 @@ public class GameServer implements Runnable {
     }
 
     public Stream<PlayerProto.PlayerData> getTeam(int team) {
-        // stream registered clients into playerdata, filtering only those that match the team
+        // stream registered clients into player data, filtering only those that match the team
         var list = registeredClients.values().stream()
                                     .filter(d -> d.team == team)
                                     .map(d -> PlayerProto.PlayerData.newBuilder()

@@ -2,7 +2,8 @@ package com.logandhillon.typeofwar.entity;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.entity.core.BoundEntity;
+import com.logandhillon.typeofwar.scene.TypeOfWarScene;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;

@@ -2,8 +2,8 @@ package com.logandhillon.typeofwar.networking;
 
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
-import com.logandhillon.typeofwar.game.LobbyGameScene;
-import com.logandhillon.typeofwar.game.TypeOfWarScene;
+import com.logandhillon.typeofwar.scene.menu.LobbyGameScene;
+import com.logandhillon.typeofwar.scene.TypeOfWarScene;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.GameInitProto;
 import com.logandhillon.typeofwar.networking.proto.PlayerProto;
