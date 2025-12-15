@@ -33,7 +33,7 @@ public abstract class Entity implements GameObject {
      * @param g the graphical context to render to.
      *
      * @apiNote the X and Y parameters are ignored, and are only implemented because {@link GameObject} requires them.
-     * the entity will always render at it's own X and Y positions.
+     * the entity will always render at its own X and Y positions.
      * @implNote do not implement this method to change how the entity is rendered.
      * @see Entity#onRender
      */

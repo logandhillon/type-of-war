@@ -23,7 +23,7 @@ public class Fonts {
     /**
      * Loads a font into the runtime and returns the name of the font family.
      *
-     * @apiNote while this function will load ALL font files passed in, only the first one to load will return it's font family name.
+     * @apiNote while this function will load ALL font files passed in, only the first one to load will return its font family name.
      * @param parent the name of the parent folder containing all the font files
      * @param files the file names of the fonts to load. these fonts should be of the same family.
      * @return the name of the <b>FIRST-LOADED</b> font family.

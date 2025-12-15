@@ -314,7 +314,7 @@ public class GameServer implements Runnable {
     }
 
     public Stream<PlayerProto.PlayerData> getTeam(int team) {
-        // stream registered clients into playerdata, filtering only those that match the team
+        // stream registered clients into player data, filtering only those that match the team
         var list = registeredClients.values().stream()
                                     .filter(d -> d.team == team)
                                     .map(d -> PlayerProto.PlayerData.newBuilder()

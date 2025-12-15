@@ -1,6 +1,5 @@
 package com.logandhillon.typeofwar.scene.component;
 
-import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.ui.component.DarkMenuButton;
 import com.logandhillon.typeofwar.entity.ui.component.ModalEntity;
@@ -24,7 +23,7 @@ public class MenuQuestionScene extends UIScene {
     private static final Font TITLE_FONT = Font.font(Fonts.DM_MONO_MEDIUM, 20);
     private static final Font BODY_FONT  = Font.font(Fonts.DM_MONO, 16);
 
-    public MenuQuestionScene(TypeOfWar game, String title, String msg,
+    public MenuQuestionScene(String title, String msg,
                              String opt1Label, Runnable opt1, String opt2Label, Runnable opt2) {
         addEntity(
                 new ModalEntity(

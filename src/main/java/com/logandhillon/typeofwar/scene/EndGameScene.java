@@ -41,7 +41,7 @@ public class EndGameScene extends UIScene {
         for (EndResultEntity p: leftTeamResults) {
             // displace entities on left away from center, displacement increases per teammate
             p.setPosition(
-                    (TypeOfWar.CANVAS_WIDTH / 2) - (leftTeamResults.size() * ENTITY_GAP) + dx - BUFFER_GAP,
+                    ((float)TypeOfWar.CANVAS_WIDTH / 2) - (leftTeamResults.size() * ENTITY_GAP) + dx - BUFFER_GAP,
                     250);
             dx += ENTITY_GAP;
             addEntity(p);
@@ -50,7 +50,7 @@ public class EndGameScene extends UIScene {
         dx = 25f; // initial offset to account of entity width
         for (EndResultEntity p: rightTeamResults) {
             // displace entities on right from center
-            p.setPosition((TypeOfWar.CANVAS_WIDTH / 2) + dx + BUFFER_GAP, 250);
+            p.setPosition(((float)TypeOfWar.CANVAS_WIDTH / 2) + dx + BUFFER_GAP, 250);
             dx += ENTITY_GAP;
             addEntity(p);
         }

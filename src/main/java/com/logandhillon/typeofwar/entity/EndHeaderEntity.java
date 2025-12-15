@@ -11,19 +11,18 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
- * Header entity that is displayed at the top of the screen during {@link com.logandhillon.typeofwar.scene.EndGameScene}
+ * Header entity that is displayed at the top of the screen during
+ * {@link com.logandhillon.typeofwar.scene.EndGameScene}
  *
  * @author Jack Ross
- * @see  EndResultEntity
+ * @see EndResultEntity
  */
 public class EndHeaderEntity extends Entity {
     private static final Font FONT_HEADER = Font.font(Fonts.DM_MONO_MEDIUM, 64);
-    private boolean win;
-    private String text;
-    private final float midScreen = TypeOfWar.CANVAS_WIDTH / 2;
+
+    private final boolean win;
 
     /**
-     *
      * @param win changes display if player's team won or lost game
      */
     public EndHeaderEntity(boolean win) {
@@ -37,11 +36,9 @@ public class EndHeaderEntity extends Entity {
     }
 
     /**
-     *
      * @param g the graphical context to render to.
      * @param x the x position to render the entity at
      * @param y the y position to render the entity at
-     *
      */
     @Override
     protected void onRender(GraphicsContext g, float x, float y) {
@@ -52,9 +49,11 @@ public class EndHeaderEntity extends Entity {
         // render divider
         g.setStroke(Color.GREY);
         g.setLineWidth(1d);
+        float midScreen = (float)TypeOfWar.CANVAS_WIDTH / 2;
         g.strokeLine(midScreen, 198, midScreen, 565);
 
-        if(win) {
+        String text;
+        if (win) {
             // set win settings
             text = "VICTORY!";
             g.setFill(Colors.GOLD_GRADIENT);
@@ -78,10 +77,5 @@ public class EndHeaderEntity extends Entity {
     @Override
     public void onDestroy() {
 
-    }
-
-    public boolean getResult(){
-        // returns result of game
-        return this.win;
     }
 }

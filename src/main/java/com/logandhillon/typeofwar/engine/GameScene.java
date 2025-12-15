@@ -38,7 +38,6 @@ public abstract class GameScene {
     private final List<HandlerRef<?>> handlers = new ArrayList<>();
 
     private AnimationTimer lifecycle;
-    private Stage          stage;
 
     private record HandlerRef<T extends Event>(EventType<T> type, EventHandler<? super T> handler) {}
 
@@ -76,7 +75,6 @@ public abstract class GameScene {
      */
     public Scene build(Stage stage) {
         LOG.debug("Building game scene {} to stage", this);
-        this.stage = stage;
 
         Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
         GraphicsContext g = canvas.getGraphicsContext2D();

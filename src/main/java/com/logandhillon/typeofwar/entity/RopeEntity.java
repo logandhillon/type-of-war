@@ -73,7 +73,7 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
         // flag
         g.setStroke(Color.RED);
         g.setLineWidth(THICKNESS);
-        g.setLineDashes(null);
+        g.setLineDashes(0);
         g.strokeLine(
                 FLAG_X,
                 ((y + FLAG_HEIGHT) / 2),

@@ -90,19 +90,6 @@ public class MainMenuScene extends UIScene {
         super.render(g);
     }
 
-    public String getPlayerName() {
-        return userInput.getInput();
-    }
-
-    public Color getSkin() {
-        for (SkinOptionsEntity s: skins) {
-            if (s.isClicked()) {
-                return s.getColor();
-            }
-        }
-        return skins[defaultColor].getColor();
-    }
-
     /**
      * Handles the click event of the {@link SkinOptionsEntity} in the main menu player configuration modal.
      *

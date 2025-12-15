@@ -15,7 +15,6 @@ import org.apache.logging.log4j.core.LoggerContext;
  * @apiNote Do not attach entities inside this modal, just the modal itself.
  */
 public class ModalEntity extends Entity {
-    private static final Logger LOG           = LoggerContext.getContext().getLogger(ModalEntity.class);
     private static final int    CORNER_RADIUS = 16;
 
     protected final float w, h;

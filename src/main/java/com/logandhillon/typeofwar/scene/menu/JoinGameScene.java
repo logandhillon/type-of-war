@@ -39,7 +39,6 @@ public class JoinGameScene extends UIScene {
     private static final int  ENTITY_GAP = 53;
 
     private final ServerEntryEntity[] serverButtons = new ServerEntryEntity[4];
-    private final LabeledModalEntity  joinModal;
 
     private int scrollServerIndex;
     private int currentServerIndex;
@@ -111,7 +110,7 @@ public class JoinGameScene extends UIScene {
             onJoin.handleJoin(selectedServerAddr);
         });
 
-        joinModal = new LabeledModalEntity(
+        LabeledModalEntity joinModal = new LabeledModalEntity(
                 359, 99, 562, 523, "JOIN A GAME", mgr, serverListRect, serverListLabel, joinServer, joinDirectButton,
                 joinDiscoverButton);
         addEntity(joinModal);
@@ -214,8 +213,8 @@ public class JoinGameScene extends UIScene {
             if (scrollServerIndex > 0) {
                 rawCurrentServerIndex++;
                 // un-highlight all buttons
-                for (int i = 0; i < array.length; i++) {
-                    array[i].setActive(false, false);
+                for (ServerEntryEntity serverEntryEntity: array) {
+                    serverEntryEntity.setActive(false, false);
                 }
                 if (currentServerIndex < array.length - 1 && rawCurrentServerIndex > 0) {
                     currentServerIndex++;
@@ -226,8 +225,8 @@ public class JoinGameScene extends UIScene {
                 if (currentServerIndex == 0) {
                     if (rawCurrentServerIndex < -1) {
                         // un-highlight all buttons if the selected button is not in the array
-                        for (int i = 0; i < array.length; i++) {
-                            array[i].setActive(false, false);
+                        for (ServerEntryEntity serverEntryEntity: array) {
+                            serverEntryEntity.setActive(false, false);
                         }
                     }
                     // if the button was put back in the array by moving up, put it at the start
@@ -244,8 +243,8 @@ public class JoinGameScene extends UIScene {
             if (scrollServerIndex < serverList.toArray().length - array.length) {
                 // opposite to KeyCode.UP, the index of the current button must decrease when down arrow is pressed
                 rawCurrentServerIndex--;
-                for (int i = 0; i < array.length; i++) {
-                    array[i].setActive(false, false);
+                for (ServerEntryEntity serverEntryEntity: array) {
+                    serverEntryEntity.setActive(false, false);
                 }
 
                 if (currentServerIndex > 0 && rawCurrentServerIndex < array.length - 1) {
@@ -255,8 +254,8 @@ public class JoinGameScene extends UIScene {
                 }
                 if (currentServerIndex == array.length - 1) {
                     if (rawCurrentServerIndex > array.length) {
-                        for (int i = 0; i < array.length; i++) {
-                            array[i].setActive(false, false);
+                        for (ServerEntryEntity serverEntryEntity: array) {
+                            serverEntryEntity.setActive(false, false);
                         }
                     }
                     if (rawCurrentServerIndex < array.length) {

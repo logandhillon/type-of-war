@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
+import java.util.Objects;
+
 /**
  * A button is a stylized {@link Clickable} entity that can have a label and action that runs when it's clicked.
  * <p>
@@ -20,9 +22,10 @@ import javafx.scene.text.TextAlignment;
  * @see ButtonEntity.Style
  */
 public class ButtonEntity extends Clickable {
-    private static final int STROKE          = 2;
-    private static final int ROUNDING_RADIUS = 16;
-    AudioClip correct = new AudioClip(SentenceEntity.class.getResource("/sound/click_1.wav").toExternalForm());
+    private static final int       STROKE          = 2;
+    private static final int       ROUNDING_RADIUS = 16;
+    private static final AudioClip CORRECT         = new AudioClip(
+            Objects.requireNonNull(SentenceEntity.class.getResource("/sound/click_1.wav")).toExternalForm());
 
     private final String            label;
     private final MouseEventHandler clickHandler;
@@ -60,8 +63,8 @@ public class ButtonEntity extends Clickable {
 
     @Override
     public void onClick(MouseEvent e) {
-        correct.setVolume(0.1);
-        correct.play();
+        CORRECT.setVolume(0.1);
+        CORRECT.play();
         clickHandler.handle(e);
     }
 
@@ -147,7 +150,6 @@ public class ButtonEntity extends Clickable {
      */
     public interface MouseEventHandler {
         void handle(MouseEvent e);
-
     }
 
     /**

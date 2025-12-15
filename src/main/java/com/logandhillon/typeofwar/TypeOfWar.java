@@ -254,7 +254,7 @@ public class TypeOfWar extends Application {
 
         if (client != null) throw new IllegalStateException("Client already exists, cannot establish connection");
 
-        setScene(new MenuQuestionScene(this, "JOINING SERVER...", "CHOOSE A TEAM TO JOIN.",
+        setScene(new MenuQuestionScene("JOINING SERVER...", "CHOOSE A TEAM TO JOIN.",
                                        "TEAM 1", () -> joinGameWithTeam(host, port, 1),
                                        "TEAM 2", () -> joinGameWithTeam(host, port, 2)));
     }
