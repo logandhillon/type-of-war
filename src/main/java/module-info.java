@@ -1,15 +1,14 @@
 module com.logandhillon.typeofwar {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
+    requires javafx.graphics;
 
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
-    requires javafx.graphics;
     requires org.apache.logging.log4j.core;
-    requires jdk.compiler;
     requires com.google.protobuf;
     requires java.desktop;
-    requires javafx.media;
 
     opens com.logandhillon.typeofwar to javafx.fxml;
     exports com.logandhillon.typeofwar;
