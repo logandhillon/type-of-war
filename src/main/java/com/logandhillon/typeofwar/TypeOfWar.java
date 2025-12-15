@@ -167,10 +167,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
 
         if (server != null) {
             t1 = server.getTeam(1)
-                       .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
+                       .map(p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB())))
                        .toList();
             t2 = server.getTeam(2)
-                       .map(p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB())))
+                       .map(p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB())))
                        .toList();
 
             try {
@@ -185,9 +185,9 @@ public class TypeOfWar extends Application implements GameSceneManager {
                     GameInitProto.GameData.newBuilder().setSentence(sentence).setMultiplier(multiplier).build()));
         } else if (client != null) {
             t1 = client.getTeam(1).stream().map(
-                    p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+                    p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB()))).toList();
             t2 = client.getTeam(2).stream().map(
-                    p -> new PlayerObject(p.getName(), Color.rgb(p.getR(), p.getG(), p.getB()))).toList();
+                    p -> new PlayerObject(p.getName(), Color.color(p.getR(), p.getG(), p.getB()))).toList();
         } else {
             throw new IllegalStateException("You cannot start the game without an active server or client!");
         }
@@ -408,9 +408,9 @@ public class TypeOfWar extends Application implements GameSceneManager {
         this.endGameStats = EndGameProto.PlayerStats.newBuilder()
                                                     .setPlayerName(getUserConfig().getName())
                                                     .setTeam(team)
-                                                    .setR((int)(color.getRed() * 255))
-                                                    .setG((int)(color.getGreen() * 255))
-                                                    .setB((int)(color.getBlue() * 255))
+                                                    .setR((float)color.getRed())
+                                                    .setG((float)color.getGreen())
+                                                    .setB((float)color.getBlue())
                                                     .setWpm(stats.getWpm())
                                                     .setAccuracy(stats.getAccuracy())
                                                     .setWords(stats.getCorrectWords())

@@ -79,7 +79,7 @@ public class LobbyGameScene extends UIScene {
      * @param team  player team (1 or 2)
      */
     public void addPlayer(String name, Color color, int team) {
-        LOG.info("Adding player \"{}\" to team {}", name, team);
+        LOG.info("Adding player \"{}\" with color {} to team {}", name, color.toString(), team);
 
         if (team == 1) {
             var p = new LobbyPlayerEntity(color, name, 0); // TODO: impl. ping

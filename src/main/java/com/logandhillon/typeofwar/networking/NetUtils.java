@@ -12,7 +12,6 @@ public class NetUtils {
     public static EndResultEntity endStatProtoToEntity(EndGameProto.PlayerStats p) {
         return new EndResultEntity(
                 p.getWpm(), p.getAccuracy(), p.getWords(),
-                new PlayerObject(p.getPlayerName(), Color.rgb(p.getR(), p.getG(),
-                                                              p.getB())));
+                new PlayerObject(p.getPlayerName(), Color.color(p.getR(), p.getG(), p.getB())));
     }
 }

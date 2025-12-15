@@ -7,9 +7,9 @@ message PlayerData {
   string name = 1;
 
   // player color
-  uint32 r = 2;
-  uint32 g = 3;
-  uint32 b = 4;
+  float r = 2;
+  float g = 3;
+  float b = 4;
 
   uint32 team = 5;
 }

@@ -237,7 +237,8 @@ public class GameServer implements Runnable {
 
             // check if name is already used
             if (data.getName().equals(TypeOfWar.getUserConfig().getName()) || // remote client matches host
-                registeredClients.values().stream().anyMatch(p -> p.name.equals(data.getName()))) { // or remote client matches another client
+                registeredClients.values().stream().anyMatch(
+                        p -> p.name.equals(data.getName()))) { // or remote client matches another client
                 LOG.info(
                         "Denying connection from {} (name '{}' in use)", client.getInetAddress(),
                         packet.payload());
@@ -260,10 +261,10 @@ public class GameServer implements Runnable {
             }
 
             // all good now! register the client
-            Color color = Color.rgb(data.getR(), data.getG(), data.getB());
+            Color color = Color.color(data.getR(), data.getG(), data.getB());
             registeredClients.put(client, new ConnectionDetails(data.getName(), color, data.getTeam(), out));
-            LOG.info("Registered new client '{}' on team {} at {}!",
-                     data.getName(), data.getTeam(), client.getInetAddress());
+            LOG.info("Registered new client '{}' on team {} with color {} at {}!",
+                     data.getName(), data.getTeam(), color, client.getInetAddress());
 
             // update everyone's player list
             propagateLobbyUpdate(lobby);
@@ -318,9 +319,9 @@ public class GameServer implements Runnable {
                                     .filter(d -> d.team == team)
                                     .map(d -> PlayerProto.PlayerData.newBuilder()
                                                                     .setName(d.name)
-                                                                    .setR((int)d.color.getRed() * 255)
-                                                                    .setG((int)d.color.getRed() * 255)
-                                                                    .setB((int)d.color.getRed() * 255)
+                                                                    .setR((float)d.color.getRed())
+                                                                    .setG((float)d.color.getGreen())
+                                                                    .setB((float)d.color.getBlue())
                                                                     .build()
                                     );
 
@@ -330,9 +331,9 @@ public class GameServer implements Runnable {
         if (team == 1) {
             list = Stream.concat(
                     Stream.of(PlayerProto.PlayerData.newBuilder().setName(TypeOfWar.getUserConfig().getName())
-                                                    .setR((int)(color.getRed() * 255))
-                                                    .setG((int)(color.getGreen() * 255))
-                                                    .setB((int)(color.getBlue() * 255)).build()), list);
+                                                    .setR((float)color.getRed())
+                                                    .setG((float)color.getGreen())
+                                                    .setB((float)color.getBlue()).build()), list);
         }
 
         return list;

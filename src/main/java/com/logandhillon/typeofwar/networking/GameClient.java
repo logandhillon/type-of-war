@@ -74,17 +74,19 @@ public class GameClient {
         in = new DataInputStream(socket.getInputStream());
         out = new PacketWriter(socket.getOutputStream());
 
+        String name = TypeOfWar.getUserConfig().getName();
         Color color = UserConfigManager.parseColor(TypeOfWar.getUserConfig());
 
         // ask to connect
+        LOG.info("Asking to connect as '{}' with color {}", name, color);
         out.send(new GamePacket(
                 GamePacket.Type.CLT_REQ_CONN,
                 PlayerProto.PlayerData.newBuilder()
-                                      .setName(TypeOfWar.getUserConfig().getName())
+                                      .setName(name)
                                       .setTeam(team)
-                                      .setR((int)(color.getRed() * 255))
-                                      .setG((int)(color.getGreen() * 255))
-                                      .setB((int)(color.getBlue() * 255))
+                                      .setR((float)color.getRed())
+                                      .setG((float)color.getGreen())
+                                      .setB((float)color.getBlue())
                                       .build()));
 
         new Thread(this::readLoop, "Client-ReadLoop").start();
@@ -143,9 +145,9 @@ public class GameClient {
                 lobby.clearPlayers();
 
                 for (var p: data.getTeam1List())
-                    lobby.addPlayer(p.getName(), Color.rgb(p.getR()*255, p.getG()*255, p.getB()*255), 1);
+                    lobby.addPlayer(p.getName(), Color.color(p.getR(), p.getG(), p.getB()), 1);
                 for (var p: data.getTeam2List())
-                    lobby.addPlayer(p.getName(), Color.rgb(p.getR()*255, p.getG()*255, p.getB()*255), 2);
+                    lobby.addPlayer(p.getName(), Color.color(p.getR(), p.getG(), p.getB()), 2);
 
                 game.setInMenu(true);
 
@@ -188,9 +190,9 @@ public class GameClient {
                         EndGameProto.PlayerStats.newBuilder()
                                                 .setPlayerName(TypeOfWar.getUserConfig().getName())
                                                 .setTeam(team)
-                                                .setR((int)(color.getRed() * 255))
-                                                .setG((int)(color.getGreen() * 255))
-                                                .setB((int)(color.getBlue() * 255))
+                                                .setR((float)color.getRed())
+                                                .setG((float)color.getGreen())
+                                                .setB((float)color.getBlue())
                                                 .setWpm(stats.getWpm())
                                                 .setAccuracy(stats.getAccuracy())
                                                 .setWords(stats.getCorrectWords())
