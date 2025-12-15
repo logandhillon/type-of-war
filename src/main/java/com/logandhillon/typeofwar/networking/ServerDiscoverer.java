@@ -87,7 +87,9 @@ public class ServerDiscoverer {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    LOG.warn("Sleep interrupted, attempting to kill this thread");
+                    Thread.currentThread().interrupt();
+                    return;
                 }
             }
         }, "Discoverer/ServerListUpdater");
