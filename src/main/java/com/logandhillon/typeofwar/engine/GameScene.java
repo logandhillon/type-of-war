@@ -2,14 +2,16 @@ package com.logandhillon.typeofwar.engine;
 
 import com.logandhillon.typeofwar.entity.Entity;
 import javafx.animation.AnimationTimer;
-import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -19,8 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_HEIGHT;
-import static com.logandhillon.typeofwar.TypeOfWar.WINDOW_WIDTH;
+import static com.logandhillon.typeofwar.TypeOfWar.*;
 
 /**
  * A GameScene is the lowest-level of the engine; controlling the game's lifecycle, rendering, and creating a game loop.
@@ -36,10 +37,8 @@ public abstract class GameScene {
     private final ArrayList<Entity>   entities = new ArrayList<>();
     private final List<HandlerRef<?>> handlers = new ArrayList<>();
 
-    private AnimationTimer         lifecycle;
-    private Stage                  stage;
-    private ChangeListener<Number> widthListener;
-    private ChangeListener<Number> heightListener;
+    private AnimationTimer lifecycle;
+    private Stage          stage;
 
     private record HandlerRef<T extends Event>(EventType<T> type, EventHandler<? super T> handler) {}
 
@@ -79,7 +78,7 @@ public abstract class GameScene {
         LOG.debug("Building game scene {} to stage", this);
         this.stage = stage;
 
-        Canvas canvas = new Canvas(WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        Canvas canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
         GraphicsContext g = canvas.getGraphicsContext2D();
 
         // use one-element array as address cannot change once anonymously passed to lifecycle
@@ -98,13 +97,14 @@ public abstract class GameScene {
         };
         lifecycle.start();
 
-        Scene scene = new Scene(new StackPane(canvas), WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        Group parent = new Group(canvas);
+        StackPane root = new StackPane(parent);
+        root.setBackground(Background.fill(Color.BLACK));
+        Scene scene = new Scene(root, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-        // resize canvas when window changes
-        widthListener = (obs, oldV, newV) -> canvas.setWidth(newV.doubleValue());
-        heightListener = (obs, oldV, newV) -> canvas.setHeight(newV.doubleValue());
-        WINDOW_WIDTH.addListener(widthListener);
-        WINDOW_HEIGHT.addListener(heightListener);
+        // update scaling
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> updateScale(scene, parent));
+        scene.heightProperty().addListener((obs, oldVal, newVal) -> updateScale(scene, parent));
 
         // register all event handlers
         for (HandlerRef<?> h: handlers) {
@@ -131,10 +131,6 @@ public abstract class GameScene {
 
         lifecycle.stop();
 
-        // remove window resize listeners from stage
-        stage.widthProperty().removeListener(widthListener);
-        stage.heightProperty().removeListener(heightListener);
-
         // remove all stored event handlers
         for (HandlerRef<?> h: handlers) {
             @SuppressWarnings("unchecked") EventType<Event> t = (EventType<Event>)h.type();
@@ -143,6 +139,38 @@ public abstract class GameScene {
             scene.removeEventHandler(t, eh);
         }
         handlers.clear();
+    }
+
+    /**
+     * Updates the scaling of the canvas wrapper (parent) based on the dimensions of the window (scene)
+     *
+     * @param scene  the {@link Scene} that contains the canvas from {@link GameScene#build(Stage)}
+     * @param parent the parent of the canvas (not the canvas itself) that has the content
+     */
+    private void updateScale(Scene scene, Group parent) {
+        float windowWidth = (float)scene.getWidth();
+        float windowHeight = (float)scene.getHeight();
+        float currentAspect = windowWidth / windowHeight;
+
+        float scale;
+
+        if (currentAspect > ASPECT_RATIO * (1 + SCALING_TOLERANCE)) {
+            // slightly wider than target, allow cropping horizontally
+            scale = windowHeight / CANVAS_HEIGHT;
+        } else if (currentAspect < ASPECT_RATIO * (1 - SCALING_TOLERANCE)) {
+            // slightly taller than target, allow cropping vertically
+            scale = windowWidth / CANVAS_WIDTH;
+        } else {
+            // within tolerance; scale uniformly
+            scale = Math.max(windowWidth / CANVAS_WIDTH, windowHeight / CANVAS_HEIGHT);
+        }
+
+        parent.setScaleX(scale);
+        parent.setScaleY(scale);
+
+        // center the canvas (cropped edges are hidden)
+        parent.setLayoutX((windowWidth - CANVAS_WIDTH * scale) / 2);
+        parent.setLayoutY((windowHeight - CANVAS_HEIGHT * scale) / 2);
     }
 
     /**

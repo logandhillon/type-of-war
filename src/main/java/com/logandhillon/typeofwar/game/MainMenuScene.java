@@ -14,7 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
-import static com.logandhillon.typeofwar.TypeOfWar.*;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_HEIGHT;
+import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
 
 /**
  * The main menu allows the user to navigate to other submenus, play or quit the game, and view game branding.
@@ -39,7 +40,7 @@ public class MainMenuScene extends UIScene {
      */
     public MainMenuScene(TypeOfWar game) {
         this.defaultColor = TypeOfWar.getUserConfig().getColorIdx().getValue();
-        float x = 314;
+        float x = (CANVAS_WIDTH - 652) / 2f;
         int y = 176;
         int dy = 48 + 16; // ∆y per button height
 
@@ -79,7 +80,7 @@ public class MainMenuScene extends UIScene {
     protected void render(GraphicsContext g) {
         // background
         g.setFill(Colors.BG_WINNING);
-        g.fillRect(0, 0, WINDOW_WIDTH.doubleValue(), WINDOW_HEIGHT.doubleValue());
+        g.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         // render all other entities
         super.render(g);
@@ -115,6 +116,6 @@ public class MainMenuScene extends UIScene {
         }
 
         // save the new color to the disk
-        updateUserConfig(ConfigProto.UserConfig.newBuilder().setColorIdx(UInt32Value.of(clickedSkin)).buildPartial());
+        TypeOfWar.updateUserConfig(ConfigProto.UserConfig.newBuilder().setColorIdx(UInt32Value.of(clickedSkin)).buildPartial());
     }
 }

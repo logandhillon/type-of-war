@@ -1,5 +1,6 @@
 package com.logandhillon.typeofwar;
 
+import com.logandhillon.typeofwar.engine.GameEngine;
 import com.logandhillon.typeofwar.engine.GameScene;
 import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
@@ -14,7 +15,6 @@ import com.logandhillon.typeofwar.networking.proto.GameInitProto;
 import com.logandhillon.typeofwar.resource.WordGen;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
@@ -31,30 +31,34 @@ import java.util.List;
  * @see TypeOfWarScene
  */
 public class TypeOfWar extends Application implements GameSceneManager {
-    public static final  String GAME_NAME = "Type of War";
-    private static final Logger LOG       = LoggerContext.getContext().getLogger(TypeOfWar.class);
+    private static final Logger LOG               = LoggerContext.getContext().getLogger(TypeOfWar.class);
+    public static final  String GAME_NAME         = "Type of War";
+    public static final  int    CANVAS_WIDTH      = 1280; // the width of the rendered canvas
+    public static final  int    CANVAS_HEIGHT     = 720; // the height of the rendered canvas
+    public static final  float  ASPECT_RATIO      = (float)CANVAS_WIDTH / CANVAS_HEIGHT;
+    public static final  float  SCALING_TOLERANCE = 0.05f; // % to prefer maximizing size over aspect ratio
 
+    // game engine
     private Stage     stage;
     private GameScene activeScene;
 
+    // game state management
     private volatile int     team;
     private volatile boolean isInMenu;
+    private          float   baseMultiplier;
+    private          String  customSentence;
 
     // used only for end game
     private volatile EndGameProto.PlayerStats endGameStats;
     private volatile boolean                  isGameEndSignalled;
     private volatile int                      winningTeam;
 
+    // networking
     private static GameServer       server;
     private static GameClient       client;
     private static ServerDiscoverer discoverer;
 
     private static ConfigProto.UserConfig userConfig;
-
-    public static ReadOnlyDoubleProperty WINDOW_WIDTH;
-    public static ReadOnlyDoubleProperty WINDOW_HEIGHT;
-    private       float                  baseMultiplier;
-    private       String                 customSentence;
 
     /**
      * Handles communication with JavaFX when this program is signalled to start.
@@ -70,11 +74,10 @@ public class TypeOfWar extends Application implements GameSceneManager {
         isInMenu = true;
 
         stage.setTitle(GAME_NAME);
-        stage.setWidth(1280);
-        stage.setHeight(720);
-
-        WINDOW_WIDTH = stage.widthProperty();
-        WINDOW_HEIGHT = stage.heightProperty();
+        stage.setWidth(CANVAS_WIDTH);
+        stage.setHeight(CANVAS_HEIGHT);
+        stage.setMinWidth(CANVAS_WIDTH / 2f);
+        stage.setMinHeight(CANVAS_HEIGHT / 2f);
 
         setScene(new MainMenuScene(this));
         stage.show();
@@ -107,10 +110,7 @@ public class TypeOfWar extends Application implements GameSceneManager {
      * @param scene the GameScene to switch
      */
     public void setScene(GameScene scene) {
-        LOG.info("Switching scene to {}", scene);
-        if (activeScene != null) activeScene.discard(stage.sceneProperty().get());
-        stage.setScene(scene.build(stage));
-        activeScene = scene;
+        activeScene = GameEngine.setScene(stage, activeScene, scene);
     }
 
     @Override

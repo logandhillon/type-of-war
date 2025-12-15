@@ -19,7 +19,7 @@ public class EndHeaderEntity extends Entity{
     private static final Font FONT_HEADER = Font.font(Fonts.DM_MONO_MEDIUM, 64);
     private boolean win;
     private String text;
-    private final float midScreen = TypeOfWar.WINDOW_WIDTH.floatValue() / 2;
+    private final float midScreen = TypeOfWar.CANVAS_WIDTH / 2;
 
     /**
      *
