@@ -2,22 +2,22 @@ package com.logandhillon.typeofwar;
 
 import com.logandhillon.typeofwar.engine.GameEngine;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.engine.disk.UserConfigManager;
 import com.logandhillon.typeofwar.entity.EndResultEntity;
 import com.logandhillon.typeofwar.entity.GameStatisticsEntity;
 import com.logandhillon.typeofwar.entity.PlayerObject;
-import com.logandhillon.typeofwar.scene.*;
-import com.logandhillon.typeofwar.scene.component.MenuAlertScene;
-import com.logandhillon.typeofwar.scene.component.MenuQuestionScene;
-import com.logandhillon.typeofwar.scene.menu.JoinGameScene;
-import com.logandhillon.typeofwar.scene.menu.LobbyGameScene;
-import com.logandhillon.typeofwar.scene.menu.MainMenuScene;
 import com.logandhillon.typeofwar.networking.*;
 import com.logandhillon.typeofwar.networking.proto.ConfigProto;
 import com.logandhillon.typeofwar.networking.proto.EndGameProto;
 import com.logandhillon.typeofwar.networking.proto.GameInitProto;
 import com.logandhillon.typeofwar.resource.WordGen;
+import com.logandhillon.typeofwar.scene.EndGameScene;
+import com.logandhillon.typeofwar.scene.TypeOfWarScene;
+import com.logandhillon.typeofwar.scene.component.MenuAlertScene;
+import com.logandhillon.typeofwar.scene.component.MenuQuestionScene;
+import com.logandhillon.typeofwar.scene.menu.JoinGameScene;
+import com.logandhillon.typeofwar.scene.menu.LobbyGameScene;
+import com.logandhillon.typeofwar.scene.menu.MainMenuScene;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
@@ -35,7 +35,7 @@ import java.util.List;
  * @author Logan Dhillon
  * @see TypeOfWarScene
  */
-public class TypeOfWar extends Application implements GameSceneManager {
+public class TypeOfWar extends Application {
     private static final Logger LOG               = LoggerContext.getContext().getLogger(TypeOfWar.class);
     public static final  String GAME_NAME         = "Type of War";
     public static final  int    CANVAS_WIDTH      = 1280; // the width of the rendered canvas
@@ -118,7 +118,6 @@ public class TypeOfWar extends Application implements GameSceneManager {
         activeScene = GameEngine.setScene(stage, activeScene, scene);
     }
 
-    @Override
     public void goToMainMenu() {
         this.setScene(new MainMenuScene(this));
         setInMenu(true);

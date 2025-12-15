@@ -1,12 +1,12 @@
 package com.logandhillon.typeofwar.scene.menu;
 
-import com.logandhillon.typeofwar.engine.GameSceneManager;
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.UIScene;
 import com.logandhillon.typeofwar.entity.core.Entity;
+import com.logandhillon.typeofwar.entity.ui.ServerEntryEntity;
 import com.logandhillon.typeofwar.entity.ui.component.DarkMenuButton;
 import com.logandhillon.typeofwar.entity.ui.component.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.component.LabeledModalEntity;
-import com.logandhillon.typeofwar.entity.ui.ServerEntryEntity;
 import com.logandhillon.typeofwar.resource.Colors;
 import com.logandhillon.typeofwar.resource.Fonts;
 import javafx.geometry.VPos;
@@ -50,9 +50,9 @@ public class JoinGameScene extends UIScene {
     private List<ServerEntry> serverList = new ArrayList<>();
 
     /**
-     * @param mgr the {@link GameSceneManager} responsible for switching active scenes.
+     * @param mgr the {@link TypeOfWar} responsible for switching active scenes.
      */
-    public JoinGameScene(GameSceneManager mgr, JoinGameHandler onJoin) {
+    public JoinGameScene(TypeOfWar mgr, JoinGameHandler onJoin) {
         // rect in background for server list
         Entity serverListRect = new Entity(16, 152) {
             @Override

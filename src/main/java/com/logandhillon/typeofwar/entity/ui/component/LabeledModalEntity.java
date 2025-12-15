@@ -1,7 +1,7 @@
 package com.logandhillon.typeofwar.entity.ui.component;
 
+import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.GameScene;
-import com.logandhillon.typeofwar.engine.GameSceneManager;
 import com.logandhillon.typeofwar.entity.core.Entity;
 import com.logandhillon.typeofwar.entity.core.Clickable;
 import com.logandhillon.typeofwar.resource.Colors;
@@ -27,7 +27,7 @@ public class LabeledModalEntity extends ModalEntity {
     private static final int   MARGIN         = 16;
 
     private final String           header;
-    private final GameSceneManager mgr;
+    private final TypeOfWar mgr;
 
     /**
      * Creates an entity at the specified position.
@@ -39,7 +39,7 @@ public class LabeledModalEntity extends ModalEntity {
      * @param w width of modal
      * @param h height of modal
      */
-    public LabeledModalEntity(float x, float y, float w, float h, String header, GameSceneManager mgr,
+    public LabeledModalEntity(float x, float y, float w, float h, String header, TypeOfWar mgr,
                               Entity... entities) {
         super(x, y, w, h, entities);
         this.header = header;
@@ -75,16 +75,16 @@ public class LabeledModalEntity extends ModalEntity {
      * The back button in the top-left of the {@link LabeledModalEntity} that returns to the main menu.
      */
     private static final class BackButtonEntity extends Clickable {
-        private final GameSceneManager mgr;
+        private final TypeOfWar game;
 
         /**
          * Creates a new back button entity
          *
-         * @param mgr game scene manger that can set the scene
+         * @param game game scene manger that can set the scene
          */
-        public BackButtonEntity(float x, float y, GameSceneManager mgr) {
+        public BackButtonEntity(float x, float y, TypeOfWar game) {
             super(x, y, 62, 22);
-            this.mgr = mgr;
+            this.game = game;
         }
 
         /**
@@ -94,7 +94,7 @@ public class LabeledModalEntity extends ModalEntity {
          */
         @Override
         public void onClick(MouseEvent e) {
-            mgr.goToMainMenu();
+            game.goToMainMenu();
         }
 
         @Override
