@@ -1,0 +1,12 @@
+TYPE OF WAR
+An online-multiplayer typing game.
+Published in 2025.
+
+Game Design - Logan Dhillon
+
+Game Development - Logan Dhillon
+Game Development - Jack Ross
+Game Development - Daniel Gisondi
+
+(C) 2025 All rights reserved. Do not distribute!
+License is subject to change.

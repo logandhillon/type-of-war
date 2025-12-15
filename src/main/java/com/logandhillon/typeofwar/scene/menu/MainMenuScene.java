@@ -4,7 +4,7 @@ import com.google.protobuf.UInt32Value;
 import com.logandhillon.typeofwar.TypeOfWar;
 import com.logandhillon.typeofwar.engine.MenuController;
 import com.logandhillon.typeofwar.engine.UIScene;
-import com.logandhillon.typeofwar.entity.ui.*;
+import com.logandhillon.typeofwar.entity.ui.SkinOptionsEntity;
 import com.logandhillon.typeofwar.entity.ui.component.InputBoxEntity;
 import com.logandhillon.typeofwar.entity.ui.component.MenuButton;
 import com.logandhillon.typeofwar.entity.ui.component.ModalEntity;
@@ -27,9 +27,8 @@ import static com.logandhillon.typeofwar.TypeOfWar.CANVAS_WIDTH;
  * @author Logan Dhillon
  */
 public class MainMenuScene extends UIScene {
-    private final InputBoxEntity      userInput;
+    private final InputBoxEntity userInput;
     private final SkinOptionsEntity[] skins;
-    private final int defaultColor;
 
     private static final int[][] SKIN_OPTION_POSITIONS = new int[][]{
             { 638, 320, 730, 328, 806, 328, 882, 328 },
@@ -43,10 +42,10 @@ public class MainMenuScene extends UIScene {
      * @param game the main class that can switch scenes, manage connections, etc.
      */
     public MainMenuScene(TypeOfWar game) {
-        this.defaultColor = TypeOfWar.getUserConfig().getColorIdx().getValue();
+        int defaultColor = TypeOfWar.getUserConfig().getColorIdx().getValue();
         float x = (CANVAS_WIDTH - 652) / 2f;
-        int y = 176;
         int dy = 48 + 16; // ∆y per button height
+        int y = 176;
 
         game.setInMenu(true);
 
@@ -54,9 +53,8 @@ public class MainMenuScene extends UIScene {
                 new MenuButton("Practice", x, y, 256, 48, () -> game.setScene(new PracticeSettingScene(game))),
                 new MenuButton("Host Game", x, y + dy, 256, 48, () -> game.setScene(new HostGameScene(game))),
                 new MenuButton("Join Game", x, y + 2 * dy, 256, 48, game::showJoinGameMenu),
-                new MenuButton("Settings", x, y + 3 * dy, 256, 48, () -> {}),
-                new MenuButton("Credits", x, y + 4 * dy, 256, 48, () -> {}),
-                new MenuButton("Quit", x, y + 5 * dy, 256, 48, () -> System.exit(0))
+                new MenuButton("Credits", x, y + 3 * dy, 256, 48, () -> game.setScene(new CreditsMenuScene(game))),
+                new MenuButton("Quit", x, y + 4 * dy, 256, 48, () -> System.exit(0))
         );
 
         userInput = new InputBoxEntity(16, 47, 316, "YOUR NAME", "YOUR NAME", 20);
@@ -75,9 +73,9 @@ public class MainMenuScene extends UIScene {
             skins[i] = new SkinOptionsEntity(0, 0, Colors.PLAYER_SKINS.get(i), () -> handleSkinClick(idx));
         }
 
-        addEntity(new ModalEntity(618, y, 348, 368, userInput, skinLabel, skins[0], skins[1], skins[2], skins[3]));
+        addEntity(new ModalEntity(618, y, 348, 368 - dy, userInput, skinLabel, skins[0], skins[1], skins[2], skins[3]));
         addEntity(controller); // add the controller AFTER so input in the player configurator has priority
-        skins[this.defaultColor].onPress(); // select the default color
+        skins[defaultColor].onPress(); // select the default color
     }
 
     @Override
@@ -107,6 +105,7 @@ public class MainMenuScene extends UIScene {
         }
 
         // save the new color to the disk
-        TypeOfWar.updateUserConfig(ConfigProto.UserConfig.newBuilder().setColorIdx(UInt32Value.of(clickedSkin)).buildPartial());
+        TypeOfWar.updateUserConfig(
+                ConfigProto.UserConfig.newBuilder().setColorIdx(UInt32Value.of(clickedSkin)).buildPartial());
     }
 }
