@@ -72,7 +72,7 @@ public class CountdownEntity extends Entity {
         g.save();
         g.translate(x, y);
         g.scale(delta, delta);
-        g.setFill(Color.hsb(0, 0, 1, delta));
+        g.setFill(Color.hsb(0, 0, 1, Math.min(delta, 1)));
         g.fillText(currentNumber == 0 ? "GO!" : String.valueOf(currentNumber), 0, 0);
         g.restore();
     }
