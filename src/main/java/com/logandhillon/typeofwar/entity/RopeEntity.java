@@ -14,19 +14,20 @@ import java.util.ArrayList;
  * @see com.logandhillon.typeofwar.scene.TypeOfWarScene
  */
 public class RopeEntity extends BoundEntity<TypeOfWarScene> {
-    private static final float X_CONSTANT     = 5f;
-    private static final int   THICKNESS      = 3;
-    private static final int   WIDTH          = 1280 - 128;
-    private static final int   PLAYER_MARGIN  = 16;
-    private static final int   DIVIDER_HEIGHT = 144;
-    private static final int   FLAG_HEIGHT    = 68;
-    private static final float FLAG_X         = 640;
+    private static final float X_CONSTANT        = 5f;
+    private static final int   THICKNESS         = 3;
+    private static final int   WIDTH             = 1280 - 128;
+    private static final int   PLAYER_MARGIN     = 16;
+    private static final int   DIVIDER_HEIGHT    = 144;
+    private static final int   FLAG_HEIGHT       = 68;
+    private static final float FLAG_X            = 640;
+    private static final float GOALPOST_CENTER_X = 478;
 
-    private float goalpostLeftX = 478;
+    private float goalpostX = GOALPOST_CENTER_X;
 
     private final ArrayList<PlayerObject> leftTeam;
     private final ArrayList<PlayerObject> rightTeam;
-    private float multiplier;
+    private       float                   multiplier;
 
     public RopeEntity(float x, float y) {
         super(x, y);
@@ -36,9 +37,9 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
 
     @Override
     public void onUpdate(float dt) {
-        if (goalpostLeftX + 324 < FLAG_X) {
+        if (goalpostX + 324 < FLAG_X) {
             parent.signalGameEnd(1);
-        } else if (goalpostLeftX > FLAG_X) {
+        } else if (goalpostX > FLAG_X) {
             parent.signalGameEnd(2);
         }
     }
@@ -57,16 +58,16 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
         g.setLineWidth(2);
         g.setLineDashes(8);
         g.strokeLine(
-                goalpostLeftX,
+                goalpostX,
                 (y - DIVIDER_HEIGHT) / 2f,
-                goalpostLeftX,
+                goalpostX,
                 (y + DIVIDER_HEIGHT) / 2f
         );
 
         g.strokeLine(
-                goalpostLeftX + 324,
+                goalpostX + 324,
                 (y - DIVIDER_HEIGHT) / 2f,
-                goalpostLeftX + 324,
+                goalpostX + 324,
                 (y + DIVIDER_HEIGHT) / 2f
         );
 
@@ -136,15 +137,24 @@ public class RopeEntity extends BoundEntity<TypeOfWarScene> {
      */
 
     public void moveRopeL() {
-        goalpostLeftX -= X_CONSTANT * multiplier;
+        goalpostX -= X_CONSTANT * multiplier;
     }
 
     public void moveRopeR() {
-        goalpostLeftX += X_CONSTANT * multiplier;
+        goalpostX += X_CONSTANT * multiplier;
     }
 
     public void setMultiplier(float multiplier) {
         this.multiplier = multiplier;
+    }
+
+    /**
+     * Calculates the current winning team based on ∆pos of rope
+     *
+     * @return LEFT or RIGHT team
+     */
+    public Team getWinningTeam() {
+        return goalpostX < GOALPOST_CENTER_X ? Team.LEFT : Team.RIGHT;
     }
 
     public enum Team {

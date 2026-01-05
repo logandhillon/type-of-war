@@ -136,6 +136,9 @@ public class TypeOfWarScene extends GameScene {
     public void moveRope(boolean team1) {
         if (team1) rope.moveRopeL();
         else rope.moveRopeR();
+
+        this.isWinning =
+                rope.getWinningTeam() == (game.getWinningTeam() == 0 ? RopeEntity.Team.LEFT : RopeEntity.Team.RIGHT);
     }
 
     /**
