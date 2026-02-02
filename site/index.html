@@ -19,7 +19,7 @@
   />
   <link rel="stylesheet"
         type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
   />
 </head>
 
@@ -29,7 +29,7 @@
     <div
       class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-size-[64px_64px] pointer-events-none"></div>
 
-    <div class="relative">
+    <div class="relative" id="hero">
       <div class="container mx-auto px-4 pb-24 pt-16 md:pt-32">
         <div class="mx-auto max-w-4xl text-center flex flex-col items-center gap-6">
           <img src="./public/logo.png" alt="Type of War logo" width="192" height="80" class="mb-6"/>
@@ -48,40 +48,40 @@
           <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <!--                        "platform === "windows" ? (-->
             <!--                        <>-->
-            <!--                        <Button-->
+            <!--                        <button-->
             <!--                                size="lg"-->
             <!--                                class="gap-2 bg-red-600 px-8 text-base hover:bg-red-700"-->
             <!--                        >-->
             <!--                            <Download class="size-5"/>-->
             <!--                            Download for Windows (.exe)-->
-            <!--                        </Button>-->
-            <!--                        <Button-->
+            <!--                        </button>-->
+            <!--                        <button-->
             <!--                                size="lg"-->
             <!--                                variant="bordered"-->
             <!--                                class="gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white"-->
             <!--                        >-->
             <!--                            <Download class="size-5"/>-->
             <!--                            Download JAR (Other)-->
-            <!--                        </Button>-->
+            <!--                        </button>-->
             <!--                    </-->
             <!--                    >-->
             <!--                    ) : (-->
             <!--                    <>-->
-            <!--                    <Button-->
+            <!--                    <button-->
             <!--                            size="lg"-->
             <!--                            class="gap-2 bg-red-600 px-8 text-base hover:bg-red-700"-->
             <!--                    >-->
             <!--                        <Download class="size-5"/>-->
             <!--                        Download JAR-->
-            <!--                    </Button>-->
-            <!--                    <Button-->
+            <!--                    </button>-->
+            <!--                    <button-->
             <!--                            size="lg"-->
             <!--                            variant="bordered"-->
             <!--                            class="gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white"-->
             <!--                    >-->
             <!--                        <Download class="size-5"/>-->
             <!--                        Windows (.exe)-->
-            <!--                    </Button>-->
+            <!--                    </button>-->
             <!--                </-->
             <!--                >-->
             <!--                )"-->
@@ -108,8 +108,8 @@
       </h2>
 
       <div class="grid gap-6 md:grid-cols-2">
-        <Card
-          class="group relative overflow-hidden border-2 border-border bg-card transition-all hover:border-red-500/50">
+        <div
+          class="card group relative overflow-hidden border-2 border-border bg-card transition-all hover:border-red-500/50">
           <div
             class="absolute inset-0 bg-linear-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
           <div class="relative p-8">
@@ -131,10 +131,10 @@
               height="300"
             />
           </div>
-        </Card>
+        </div>
 
-        <Card
-          class="group relative overflow-hidden border-2 border-border bg-card transition-all hover:border-red-500/50">
+        <div
+          class="card group relative overflow-hidden border-2 border-border bg-card transition-all hover:border-red-500/50">
           <div
             class="absolute inset-0 bg-linear-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
           <div class="relative p-8">
@@ -156,7 +156,7 @@
               height="300"
             />
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   </div>
@@ -223,7 +223,7 @@
         Ready to Play
       </h2>
 
-      <Card class="overflow-hidden border-2 border-border">
+      <div class="card overflow-hidden border-2 border-border">
         <div class="bg-muted/50 p-6">
           <h3 class="mb-4 font-mono text-xl font-bold">
             Installation Instructions
@@ -266,16 +266,17 @@
             </div>
           </div>
         </div>
-      </Card>
+      </div>
 
       <div class="mt-12 text-center">
-        <Button
+        <a
           size="lg"
-          class="gap-2 bg-red-600 px-12 text-base hover:bg-red-700"
+          class="button gap-2 bg-red-600 px-12 text-base hover:bg-red-700 text-neutral-50"
+          href="#hero"
         >
           <i class="ph ph-download-simple text-lg"></i>
           Download Now
-        </Button>
+        </a>
       </div>
     </div>
   </div>
@@ -293,7 +294,7 @@
         features, or fork it for your own projects.
       </p>
 
-      <Card class="overflow-hidden border-2 border-border bg-card">
+      <div class="class overflow-hidden border-2 border-border bg-card">
         <div class="p-8 md:p-12">
           <div class="mb-8 flex items-center justify-center gap-3">
             <div class="flex size-12 items-center justify-center rounded-lg bg-red-500/10">
@@ -317,16 +318,18 @@
               </h4>
               <div class="grid gap-3 sm:grid-cols-2">
                 <div class="p-4 flex gap-3 items-center">
-                  <Avatar src="/memoji.jpg" isBordered></Avatar>
+                  <img class="avatar" src="./public/logandhillon_profile.jpg"
+                       alt="Profile picture of @logandhillon on GitHub"/>
                   <div>
-                    <HeroUILink
-                      class="font-semibold flex items-center gap-1"
+                    <a
+                      class="logandhillon-link font-semibold flex items-center gap-1"
                       href="https://logandhillon.com"
-                      underline="hover"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       Logan Dhillon
                       <i class="ph-bold ph-arrow-square-out"></i>
-                    </HeroUILink>
+                    </a>
                     <p class="text-sm text-muted-foreground">
                       Game Design & Development
                     </p>
@@ -334,19 +337,17 @@
                 </div>
 
                 <div class="p-4 flex gap-3 items-center">
-                  <Avatar
-                    src="./public/RossJck_profile.jpg"
-                    isBordered></Avatar>
+                  <img class="avatar" src="./public/RossJck_profile.jpg" alt="Profile picture of @RossJck on GitHub"/>
                   <div>
-                    <HeroUILink
-                      class="font-semibold flex items-center gap-1"
+                    <a
+                      class="logandhillon-link font-semibold flex items-center gap-1"
                       href="https://github.com/RossJck"
-                      underline="hover"
-                      isExternal
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       Jack Ross
                       <i class="ph-bold ph-arrow-square-out"></i>
-                    </HeroUILink>
+                    </a>
                     <p class="text-sm text-muted-foreground">
                       Game Development
                     </p>
@@ -363,32 +364,30 @@
           </div>
 
           <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Button
+            <a
               size="lg"
-              class="gap-2 bg-foreground px-8 text-base text-background hover:bg-foreground/90"
-              as="Link"
-              href="https://github.com/logandhillon./public"
+              class="button gap-2 px-8 bg-red-600 text-neutral-50"
+              href="https://github.com/logandhillon/type-of-war"
               target="_blank"
               rel="noopener noreferrer"
             >
               <i class="text-lg ph ph-github-logo"></i>
               View on GitHub
-            </Button>
+            </a>
 
-            <Button
+            <a
               size="lg"
-              variant="bordered"
-              class="gap-2 px-8 text-base bg-transparent"
-              as="Link"
-              href="https://github.com/logandhillon./public/issues"
+              class="button gap-2 px-8 bg-transparent border-2"
+              href="https://github.com/logandhillon/type-of-war/issues"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Contribute
-            </Button>
+              Request a Change
+              <i class="text-lg ph ph-arrow-square-out"></i>
+            </a>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   </div>
 
