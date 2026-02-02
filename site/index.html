@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./dist.css" rel="stylesheet">
+
+  <title>Type of War - Real-Time Competitive Typing Game</title>
+  <meta name="description"
+        content="Battle with your keyboard. Type faster, think quicker, dominate the arena in this real-time typing strategy game.">
+
+  <link rel="icon" href="./public/favicon.jpg" sizes="any">
+  <link rel="apple-touch-icon" href="./public/favicon.jpg">
+
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"/>
+
+  <script src="./app.js"></script>
+
+  <!-- for SEO purposes -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoGame",
+      "name": "Type of War",
+      "url": "https://logandhillon.com/type-of-war",
+      "genre": "Typing, Real-time Strategy, Multiplayer",
+      "description": "Type of War is a real-time typing strategy game. Battle your friends or AI with every keystroke.",
+      "publisher": {
+        "@type": "Person",
+        "name": "Logan Dhillon",
+        "url": "https://logandhillon.com"
+      }
+    }
+  </script>
+
+  <meta property="og:title" content="Type of War - Real-Time Competitive Typing Game">
+  <meta property="og:description" content="Type faster. Think quicker. A real-time typing strategy game.">
+  <meta property="og:image" content="https://logandhillon.com/type-of-war/public/logo.png">
+  <meta property="og:url" content="https://logandhillon.com/type-of-war">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body>
+<div class="min-h-screen bg-background">
+  <div class="relative overflow-hidden bg-[#0a0a0a] text-white">
+    <div
+      class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-size-[64px_64px] pointer-events-none"></div>
+
+    <div class="relative" id="hero">
+      <div class="container mx-auto px-4 pb-24 pt-16 md:pt-32">
+        <div class="mx-auto max-w-4xl text-center flex flex-col items-center gap-6">
+          <img src="./public/logo.png" alt="Type of War logo" width="192" height="80"
+               class="mb-6 animate-in fade-in slide-in-from-top-20 duration-500"/>
+
+          <h2
+            class="font-mono text-5xl font-bold leading-tight text-balance md:text-7xl animate-in fade-in slide-in-from-top-20 delay-50 duration-500">
+            Battle with your
+            <span class="bg-linear-to-r from-red-500 to-orange-500 bg-clip-text text-transparent"> keyboard</span>
+          </h2>
+
+          <p
+            class="mb-6 text-xl text-gray-400 text-balance leading-relaxed animate-in fade-in slide-in-from-top-20 delay-100 duration-500">
+            Type faster. Think quicker. A real-time typing strategy game
+            where every keystroke counts.
+          </p>
+
+          <div
+            class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center animate-in fade-in slide-in-from-top-20 delay-150 duration-500"
+            id="download-buttons">
+            <a
+              id="primary-download"
+              size="lg"
+              class="button gap-2 bg-red-600 px-8 text-base hover:bg-red-700 text-neutral-50 flex items-center"
+              href="https://github.com/logandhillon/type-of-war/releases/latest"
+              target="_blank">
+              <i id="primary-icon" class="ph ph-download-simple text-lg"></i>
+              <span id="primary-label">Download</span>
+            </a>
+
+            <!-- uncomment this if I ever end up adding direct download links, I like gh releases more atm -->
+            <!--            <div class="relative">-->
+            <!--              <button-->
+            <!--                size="lg"-->
+            <!--                class="button gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white border-2 flex items-center"-->
+            <!--                onclick="document.getElementById('download-dropdown').classList.toggle('hidden')"-->
+            <!--              >-->
+            <!--                Other Platforms-->
+            <!--                <i class="ph ph-caret-down"></i>-->
+            <!--              </button>-->
+
+            <!--              <div id="download-dropdown"-->
+            <!--                   class="absolute z-10 mt-2 w-full rounded-md border border-gray-700 bg-[#0a0a0a] shadow-lg hidden"-->
+            <!--              >-->
+            <!--                &lt;!&ndash; filled by app.js &ndash;&gt;-->
+            <!--              </div>-->
+            <!--            </div>-->
+          </div>
+
+          <p class="mt-6 text-sm text-gray-500">
+            Requires JDK 21 to run JAR files •
+            <a href="#install" class="underline hover:text-gray-400">
+              Installation instructions
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-24">
+    <div class="mx-auto max-w-6xl">
+      <h3 class="mb-4 text-center font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        Game Modes
+      </h3>
+      <h2 class="mb-16 text-center font-mono text-4xl font-bold text-balance md:text-5xl">
+        Choose Your Battlefield
+      </h2>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <div
+          class="card group relative overflow-hidden border-2 border-border bg-card transition-all hover:border-red-500/50">
+          <div
+            class="absolute inset-0 bg-linear-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+          <div class="relative p-8">
+            <div class="mb-4 flex size-12 items-center justify-center rounded-lg bg-red-500/10">
+              <i class="ph ph-trophy text-red-500 text-xl"></i>
+            </div>
+            <h3 class="mb-3 font-mono text-2xl font-bold">
+              Singleplayer Practice
+            </h3>
+            <p class="mb-6 leading-relaxed text-muted-foreground">
+              Sharpen your skills against AI opponents. Perfect your typing
+              speed and accuracy in a risk-free environment.
+            </p>
+            <img
+              src="./public/practice-mode.png"
+              alt="Practice mode gameplay"
+              width="600"
+              height="300"
+            />
+          </div>
+        </div>
+
+        <div
+          class="card group relative overflow-hidden border-2 border-border bg-card transition-all hover:border-red-500/50">
+          <div
+            class="absolute inset-0 bg-linear-to-br from-red-500/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+          <div class="relative p-8">
+            <div class="mb-4 flex size-12 items-center justify-center rounded-lg bg-red-500/10">
+              <i class="ph ph-users text-xl text-red-500"></i>
+            </div>
+            <h3 class="mb-3 font-mono text-2xl font-bold">
+              Multiplayer Arena
+            </h3>
+            <p class="mb-6 leading-relaxed text-muted-foreground">
+              Battle up to 8 players in real-time matches. Host your own
+              games or join existing lobbies for intense typing warfare.
+            </p>
+            <img
+              src="./public/menu-join.png"
+              alt="Multiplayer lobby"
+              width="600"
+              height="300"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-y border-border bg-muted/30 py-24">
+    <div class="container mx-auto px-4">
+      <div class="mx-auto max-w-6xl">
+        <h3 class="mb-4 text-center font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          Built For Performance
+        </h3>
+        <h2 class="mb-16 text-center font-mono text-4xl font-bold text-balance md:text-5xl">
+          Powered by Custom Tech
+        </h2>
+
+        <div class="grid gap-8 md:grid-cols-3">
+          <div class="text-center">
+            <div class="mb-4 inline-flex size-16 items-center justify-center rounded-2xl bg-background">
+              <div class="font-mono text-2xl font-bold text-red-600">
+                8
+              </div>
+            </div>
+            <h4 class="mb-2 font-mono text-lg font-semibold">
+              Players
+            </h4>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Support for up to 8 concurrent players in real-time matches
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div class="mb-4 inline-flex size-16 items-center justify-center rounded-2xl bg-background">
+              <i class="ph ph-cpu text-3xl text-red-600"></i>
+            </div>
+            <h4 class="mb-2 font-mono text-lg font-semibold">
+              Custom Engine
+            </h4>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Built on a custom Java game engine for maximum performance
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div class="mb-4 inline-flex size-16 items-center justify-center rounded-2xl bg-background">
+              <i class="ph ph-lightning text-3xl text-red-600"></i>
+            </div>
+            <h4 class="mb-2 font-mono text-lg font-semibold">
+              Real-Time
+            </h4>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Protocol Buffers networking for instant, synchronized gameplay
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="install" class="container mx-auto px-4 py-24">
+    <div class="mx-auto max-w-3xl">
+      <h3 class="mb-4 text-center font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        Getting Started
+      </h3>
+      <h2 class="mb-12 text-center font-mono text-4xl font-bold text-balance md:text-5xl">
+        Ready to Play
+      </h2>
+
+      <div class="card overflow-hidden border-2 border-border">
+        <div class="bg-muted/50 p-6">
+          <h3 class="mb-4 font-mono text-xl font-bold">
+            Installation Instructions
+          </h3>
+
+          <div class="space-y-6">
+            <div>
+              <h4 class="mb-2 flex items-center gap-2 font-semibold">
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-windows-logo ml-px"></i>
+                </span>
+                Windows (.exe)
+              </h4>
+              <p class="ml-8 text-sm text-muted-foreground leading-relaxed">
+                Download the .exe file and double-click to run. No additional setup required.
+              </p>
+            </div>
+
+            <div>
+              <h4 class="mb-2 flex items-center gap-2 font-semibold">
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-apple-logo ml-px"></i>
+                </span>
+                macOS (.dmg)
+              </h4>
+              <p class="ml-8 text-sm text-muted-foreground leading-relaxed">
+                Download the .dmg file and drag the app to your Applications folder. Requires macOS 10.15 or higher.
+              </p>
+            </div>
+
+            <div>
+              <h4 class="mb-2 flex items-center gap-2 font-semibold">
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-linux-logo ml-px"></i>
+                </span>
+                Linux (.deb)
+              </h4>
+              <div class="ml-8 space-y-2">
+                <p class="text-sm text-muted-foreground leading-relaxed">
+                  For Debian/Ubuntu, download the .deb file and install with:
+                </p>
+                <div class="rounded-lg bg-background p-4">
+                  <code class="font-mono text-sm">
+                    sudo dpkg -i TypeOfWar.deb
+                  </code>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="mb-2 flex items-center gap-2 font-semibold">
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-coffee ml-px"></i>
+                </span>
+                Universal (.jar)
+              </h4>
+              <div class="ml-8 space-y-2">
+                <p class="text-sm text-muted-foreground leading-relaxed">
+                  Your OS wasn't listed here? Play anyway! Run the .jar file (requires JDK 21+):
+                </p>
+                <div class="rounded-lg bg-background p-4">
+                  <code class="font-mono text-sm">
+                    java -jar TypeOfWar.jar
+                  </code>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 text-center">
+        <a
+          size="lg"
+          class="button gap-2 bg-red-600 px-12 text-base hover:bg-red-700 text-neutral-50"
+          href="#hero"
+        >
+          <i class="ph ph-download-simple text-lg"></i>
+          Download Now
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-24">
+    <div class="mx-auto max-w-4xl">
+      <h3 class="mb-4 text-center font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        Open Source
+      </h3>
+      <h2 class="mb-6 text-center font-mono text-4xl font-bold text-balance md:text-5xl">
+        Built in the open
+      </h2>
+      <p class="mb-12 text-center text-lg text-muted-foreground text-balance leading-relaxed">
+        Type of War is free and open source. Explore the code, contribute
+        features, or fork it for your own projects.
+      </p>
+
+      <div class="class overflow-hidden border-2 border-border bg-card">
+        <div class="p-8 md:p-12">
+          <div class="mb-8 flex items-center justify-center gap-3">
+            <div class="flex size-12 items-center justify-center rounded-lg bg-red-500/10">
+              <i class="ph ph-git-branch text-xl text-red-500"></i>
+            </div>
+            <div>
+              <h3 class="font-mono text-xl font-bold">
+                Git Repository
+              </h3>
+              <p class="text-sm text-muted-foreground">
+                View source, report issues, and contribute
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-8 space-y-6 rounded-lg bg-muted/50 p-6">
+            <div>
+              <h4 class="mb-3 flex items-center gap-3 font-mono text-lg font-semibold">
+                <i class="ph-fill ph-heart text-lg text-red-500 mb-0.5"></i>
+                Originally Created By
+              </h4>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div class="p-4 flex gap-3 items-center">
+                  <img class="avatar" src="./public/logandhillon_profile.jpg"
+                       alt="Profile picture of @logandhillon on GitHub"/>
+                  <div>
+                    <a
+                      class="logandhillon-link font-semibold flex items-center gap-1"
+                      href="https://logandhillon.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Logan Dhillon
+                      <i class="ph-bold ph-arrow-square-out"></i>
+                    </a>
+                    <p class="text-sm text-muted-foreground">
+                      Game Design & Development
+                    </p>
+                  </div>
+                </div>
+
+                <div class="p-4 flex gap-3 items-center">
+                  <img class="avatar" src="./public/RossJck_profile.jpg" alt="Profile picture of @RossJck on GitHub"/>
+                  <div>
+                    <a
+                      class="logandhillon-link font-semibold flex items-center gap-1"
+                      href="https://github.com/RossJck"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Jack Ross
+                      <i class="ph-bold ph-arrow-square-out"></i>
+                    </a>
+                    <p class="text-sm text-muted-foreground">
+                      Game Development
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-center text-sm text-muted-foreground leading-relaxed">
+              Special thanks to all open source contributors who have helped
+              improve Type of War. Your contributions make this project
+              better for everyone.
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <a
+              size="lg"
+              class="button gap-2 px-8 bg-red-600 text-neutral-50"
+              href="https://github.com/logandhillon/type-of-war"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="text-lg ph ph-github-logo"></i>
+              View on GitHub
+            </a>
+
+            <a
+              size="lg"
+              class="button gap-2 px-8 bg-transparent border-2"
+              href="https://github.com/logandhillon/type-of-war/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Request a Change
+              <i class="text-lg ph ph-arrow-square-out"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-border py-8 bg-neutral-900 text-neutral-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center text-sm text-neutral-400">
+        <p id="copyright">© 2025-now logandhillon.com. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+</body>
+
+</html>
