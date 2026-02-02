@@ -6,21 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="./dist.css" rel="stylesheet">
 
-  <title>Type of War</title>
+  <title>Type of War - Real-Time Competitive Typing Game</title>
   <meta name="description"
         content="Battle with your keyboard. Type faster, think quicker, dominate the arena in this real-time typing strategy game.">
 
   <link rel="icon" href="./public/favicon.jpg" sizes="any">
   <link rel="apple-touch-icon" href="./public/favicon.jpg">
 
-  <link rel="stylesheet"
-        type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-  />
-  <link rel="stylesheet"
-        type="text/css"
-        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"
-  />
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"/>
 
   <script src="./js/app.js"></script>
 </head>
@@ -47,46 +45,33 @@
             where every keystroke counts.
           </p>
 
-          <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <!--                        "platform === "windows" ? (-->
-            <!--                        <>-->
-            <!--                        <button-->
-            <!--                                size="lg"-->
-            <!--                                class="gap-2 bg-red-600 px-8 text-base hover:bg-red-700"-->
-            <!--                        >-->
-            <!--                            <Download class="size-5"/>-->
-            <!--                            Download for Windows (.exe)-->
-            <!--                        </button>-->
-            <!--                        <button-->
-            <!--                                size="lg"-->
-            <!--                                variant="bordered"-->
-            <!--                                class="gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white"-->
-            <!--                        >-->
-            <!--                            <Download class="size-5"/>-->
-            <!--                            Download JAR (Other)-->
-            <!--                        </button>-->
-            <!--                    </-->
-            <!--                    >-->
-            <!--                    ) : (-->
-            <!--                    <>-->
-            <!--                    <button-->
-            <!--                            size="lg"-->
-            <!--                            class="gap-2 bg-red-600 px-8 text-base hover:bg-red-700"-->
-            <!--                    >-->
-            <!--                        <Download class="size-5"/>-->
-            <!--                        Download JAR-->
-            <!--                    </button>-->
-            <!--                    <button-->
-            <!--                            size="lg"-->
-            <!--                            variant="bordered"-->
-            <!--                            class="gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white"-->
-            <!--                    >-->
-            <!--                        <Download class="size-5"/>-->
-            <!--                        Windows (.exe)-->
-            <!--                    </button>-->
-            <!--                </-->
-            <!--                >-->
-            <!--                )"-->
+          <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center" id="download-buttons">
+            <a
+              id="primary-download"
+              size="lg"
+              class="button gap-2 bg-red-600 px-8 text-base hover:bg-red-700 text-neutral-50 flex items-center"
+              href="#"
+            >
+              <i id="primary-icon" class="ph ph-download-simple text-lg"></i>
+              <span id="primary-label">Download</span>
+            </a>
+
+            <div class="relative">
+              <button
+                size="lg"
+                class="button gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white border-2 flex items-center"
+                onclick="document.getElementById('download-dropdown').classList.toggle('hidden')"
+              >
+                Other Platforms
+                <i class="ph ph-caret-down"></i>
+              </button>
+
+              <div id="download-dropdown"
+                   class="absolute z-10 mt-2 w-full rounded-md border border-gray-700 bg-[#0a0a0a] shadow-lg hidden"
+              >
+                <!-- filled by app.js -->
+              </div>
+            </div>
           </div>
 
           <p class="mt-6 text-sm text-gray-500">
