@@ -1,0 +1,15 @@
+{
+  "name": "type-of-war-site",
+  "version": "0.1.0-dev",
+  "author": {
+    "name": "Logan Dhillon",
+    "url": "logandhillon.com"
+  },
+  "scripts": {
+    "tailwind": "pnpm dlx @tailwindcss/cli -i source.css -o dist.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
+  }
+}
