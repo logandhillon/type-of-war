@@ -20,7 +20,7 @@
   <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"/>
 
-  <script src="./js/app.js"></script>
+  <script src="app.js"></script>
 </head>
 
 <body>
@@ -56,29 +56,30 @@
               <span id="primary-label">Download</span>
             </a>
 
-            <div class="relative">
-              <button
-                size="lg"
-                class="button gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white border-2 flex items-center"
-                onclick="document.getElementById('download-dropdown').classList.toggle('hidden')"
-              >
-                Other Platforms
-                <i class="ph ph-caret-down"></i>
-              </button>
+            <!-- uncomment this if i ever end up adding direct download links, i like gh releases more atm -->
+<!--            <div class="relative">-->
+<!--              <button-->
+<!--                size="lg"-->
+<!--                class="button gap-2 border-gray-700 bg-transparent px-8 text-base text-white hover:bg-gray-900 hover:text-white border-2 flex items-center"-->
+<!--                onclick="document.getElementById('download-dropdown').classList.toggle('hidden')"-->
+<!--              >-->
+<!--                Other Platforms-->
+<!--                <i class="ph ph-caret-down"></i>-->
+<!--              </button>-->
 
-              <div id="download-dropdown"
-                   class="absolute z-10 mt-2 w-full rounded-md border border-gray-700 bg-[#0a0a0a] shadow-lg hidden"
-              >
-                <!-- filled by app.js -->
-              </div>
-            </div>
+<!--              <div id="download-dropdown"-->
+<!--                   class="absolute z-10 mt-2 w-full rounded-md border border-gray-700 bg-[#0a0a0a] shadow-lg hidden"-->
+<!--              >-->
+<!--                &lt;!&ndash; filled by app.js &ndash;&gt;-->
+<!--              </div>-->
+<!--            </div>-->
           </div>
 
           <p class="mt-6 text-sm text-gray-500">
             Requires JDK 21 to run JAR files •
-            <button class="underline hover:text-gray-400">
+            <a href="#install" class="underline hover:text-gray-400">
               Installation instructions
-            </button>
+            </a>
           </p>
         </div>
       </div>
@@ -201,7 +202,7 @@
     </div>
   </div>
 
-  <div class="container mx-auto px-4 py-24">
+  <div id="install" class="container mx-auto px-4 py-24">
     <div class="mx-auto max-w-3xl">
       <h3 class="mb-4 text-center font-mono text-sm font-semibold uppercase tracking-wider text-muted-foreground">
         Getting Started
@@ -219,36 +220,63 @@
           <div class="space-y-6">
             <div>
               <h4 class="mb-2 flex items-center gap-2 font-semibold">
-                    <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
-                      1
-                    </span>
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-windows-logo ml-px"></i>
+                </span>
                 Windows (.exe)
               </h4>
               <p class="ml-8 text-sm text-muted-foreground leading-relaxed">
-                Download the .exe file and double-click to run. No
-                additional setup required.
+                Download the .exe file and double-click to run. No additional setup required.
               </p>
             </div>
 
             <div>
               <h4 class="mb-2 flex items-center gap-2 font-semibold">
-                    <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
-                      2
-                    </span>
-                Other Platforms (.jar)
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-apple-logo ml-px"></i>
+                </span>
+                macOS (.dmg)
+              </h4>
+              <p class="ml-8 text-sm text-muted-foreground leading-relaxed">
+                Download the .dmg file and drag the app to your Applications folder. Requires macOS 10.15 or higher.
+              </p>
+            </div>
+
+            <div>
+              <h4 class="mb-2 flex items-center gap-2 font-semibold">
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-linux-logo ml-px"></i>
+                </span>
+                Linux (.deb)
               </h4>
               <div class="ml-8 space-y-2">
                 <p class="text-sm text-muted-foreground leading-relaxed">
-                  Requires JDK 21 or higher. Download the .jar file and run:
+                  For Debian/Ubuntu, download the .deb file and install with:
+                </p>
+                <div class="rounded-lg bg-background p-4">
+                  <code class="font-mono text-sm">
+                    sudo dpkg -i TypeOfWar.deb
+                  </code>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="mb-2 flex items-center gap-2 font-semibold">
+                <span class="flex size-6 items-center justify-center rounded-full bg-red-600 text-sm text-white">
+                  <i class="ph-fill ph-coffee ml-px"></i>
+                </span>
+                Universal (.jar)
+              </h4>
+              <div class="ml-8 space-y-2">
+                <p class="text-sm text-muted-foreground leading-relaxed">
+                  Your OS wasn't listed here? Play anyway! Run the .jar file (requires JDK 21+):
                 </p>
                 <div class="rounded-lg bg-background p-4">
                   <code class="font-mono text-sm">
                     java -jar TypeOfWar.jar
                   </code>
                 </div>
-                <p class="text-sm text-muted-foreground leading-relaxed">
-                  Make sure your JAVA_HOME points to JDK 21.
-                </p>
               </div>
             </div>
           </div>
