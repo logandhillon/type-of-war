@@ -11,7 +11,7 @@
             <PatternLayout disableAnsi="false" pattern="%style{[%d{HH:mm:ss}]}{bright_blue} %highlight{[%t/%level]}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=magenta, TRACE=blue} %style{(%c{0})}{cyan} %highlight{%msg}{FATAL=red, ERROR=red, WARN=default, INFO=default, DEBUG=bright white, TRACE=bright white}%n"/>
             <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
         </Console>
-        <File name="LatestLog" fileName="logs/latest.log" append="false">
+        <File name="LatestLog" fileName="${sys:LGL_BASE_PATH}/latest.log" append="false">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] (%c{1}) %msg%n"/>
             <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
         </File>
