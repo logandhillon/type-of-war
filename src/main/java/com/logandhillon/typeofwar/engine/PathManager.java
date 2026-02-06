@@ -55,17 +55,6 @@ public class PathManager {
      *
      * @return real I/O path on disk
      */
-    public static Path resolve(Path other) {
-        return BASE.resolve(other);
-    }
-
-    /**
-     * resolves a path in the base path of this game
-     *
-     * @param other path to resolve
-     *
-     * @return real I/O path on disk
-     */
     public static Path resolve(String other) {
         return BASE.resolve(other);
     }

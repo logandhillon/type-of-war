@@ -1,6 +1,7 @@
 package com.logandhillon.typeofwar.engine.disk;
 
 import com.google.protobuf.UInt32Value;
+import com.logandhillon.typeofwar.engine.PathManager;
 import com.logandhillon.typeofwar.networking.proto.ConfigProto.UserConfig;
 import com.logandhillon.typeofwar.resource.Colors;
 import javafx.scene.paint.Color;
@@ -19,7 +20,7 @@ import java.io.IOException;
  */
 public class UserConfigManager {
     private static final Logger     LOG            = LoggerContext.getContext().getLogger(UserConfigManager.class);
-    private static final File       FILE           = new File("typeofwar.dat");
+    private static final File       FILE           = PathManager.getFile("typeofwar.dat");
     private static final UserConfig DEFAULT_CONFIG = UserConfig.newBuilder()
                                                                .setName(System.getProperty("user.name"))
                                                                .setColorIdx(UInt32Value.of(0))
@@ -33,17 +34,21 @@ public class UserConfigManager {
      * @throws RuntimeException if the user config cannot be saved to disk
      */
     public static UserConfig save(UserConfig config) {
-        try (FileOutputStream file = new FileOutputStream(FILE)) {
-            if (FILE.getParent() != null) {
+        try {
+            File parent = FILE.getParentFile();
+            if (parent != null && !parent.exists()) {
                 LOG.warn("Parent directory for user config file doesn't exist, creating folder(s).");
-                new File(FILE.getParent()).mkdirs();
+                //noinspection ResultOfMethodCallIgnored
+                parent.mkdirs();
             }
 
-            LOG.info("Writing user configuration to {}", FILE.getAbsolutePath());
-            config.writeTo(file);
-            return config;
+            try (FileOutputStream file = new FileOutputStream(FILE)) {
+                LOG.info("Writing user configuration to {}", FILE.getAbsolutePath());
+                config.writeTo(file);
+                return config;
+            }
         } catch (IOException e) {
-            LOG.error("Failed to save user configuration to {}", FILE.getAbsolutePath());
+            LOG.error("Failed to save user configuration to {}", FILE.getAbsolutePath(), e);
             throw new RuntimeException(e);
         }
     }
