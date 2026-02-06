@@ -56,6 +56,30 @@ async function getLatestVersion() {
 function onLoad() {
   document.getElementById("copyright").textContent = `© 2025-${new Date().getFullYear()} logandhillon.com. All rights reserved.`;
 
+  // Check URL param for direct download
+  const urlParams = new URLSearchParams(window.location.search);
+  const downloadParam = urlParams.get("download")?.toLowerCase();
+  const validPlatforms = ["windows", "mac", "linux"];
+  if (validPlatforms.includes(downloadParam)) {
+    // fetch latest version and redirect
+    getLatestVersion().then(version => {
+      const links = {
+        windows: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-windows.zip`,
+        mac: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-macos.zip`,
+        linux: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-ubuntu.zip`
+      };
+
+      window.location.href = links[downloadParam];
+    }).catch(err => console.error("Failed to fetch latest version fo r redirect:", err));
+
+    // remove the download param
+    if (window.history.replaceState) {
+      const url = new URL(window.location);
+      url.searchParams.delete("download");
+      window.history.replaceState({}, document.title, url.toString());
+    }
+  }
+
   // get latest ver from gh api, then populate dl btns
   getLatestVersion()
     .then(version => populateDownloadBtns({
@@ -70,7 +94,7 @@ function onLoad() {
       }, linux: {
         label: "Linux (.deb)",
         icon: "ph-bold ph-linux-logo",
-        href: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-linux.zip`
+        href: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-ubuntu.zip`
       }, other: {
         label: "Other", icon: "ph ph-code", href: "https://github.com/logandhillon/type-of-war/releases/latest"
       }
