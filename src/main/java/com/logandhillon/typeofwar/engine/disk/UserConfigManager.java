@@ -22,7 +22,7 @@ public class UserConfigManager {
     private static final Logger     LOG            = LoggerContext.getContext().getLogger(UserConfigManager.class);
     private static final File       FILE           = PathManager.getFile("typeofwar.dat");
     private static final UserConfig DEFAULT_CONFIG = UserConfig.newBuilder()
-                                                               .setName(System.getProperty("user.name"))
+                                                               .setName("Player")
                                                                .setColorIdx(UInt32Value.of(0))
                                                                .build();
 
