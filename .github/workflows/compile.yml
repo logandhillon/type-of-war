@@ -1,0 +1,103 @@
+# (C) 2025-2026 Logan Dhillon (www.logandhillon.com)
+# this CI cleans and links the project to an executable for all platforms.
+
+name: compile for all platforms
+
+permissions:
+  contents: write
+  packages: write
+  actions: read
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    name: build and upload JLink runtime images
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: corretto
+          java-version: 21
+          cache: gradle
+
+      - name: grant execute permission for gradlew
+        if: runner.os != 'Windows'
+        run: chmod +x ./gradlew
+
+      - name: build image and package executable
+        run: ./gradlew clean jlink jpackage
+
+      - name: upload jpackage installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jpackage-${{ matrix.os }}
+          path: build/jpackage
+          retention-days: 30
+
+  attach-to-release:
+    name: attach artifacts to GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: jpackage-ubuntu-latest
+          path: artifacts/ubuntu
+
+      - name: download artifacts (Windows)
+        uses: actions/download-artifact@v4
+        with:
+          name: jpackage-windows-latest
+          path: artifacts/windows
+
+      - name: download artifacts (macOS)
+        uses: actions/download-artifact@v4
+        with:
+          name: jpackage-macos-latest
+          path: artifacts/macos
+
+      - name: zip Ubuntu installer
+        run: |
+          cd artifacts/ubuntu
+          zip -r type-of-war-${{ github.event.release.tag_name }}-ubuntu.zip .
+
+      - name: zip Windows installer
+        run: |
+          cd artifacts/windows
+          zip -r type-of-war-${{ github.event.release.tag_name }}-windows.zip .
+
+      - name: zip macOS installer
+        run: |
+          cd artifacts/macos
+          zip -r type-of-war-${{ github.event.release.tag_name }}-macos.zip .
+
+      - name: create release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          name: ${{ github.event.release.name }}
+          body: ${{ github.event.release.body }}
+          draft: false
+          prerelease: ${{ github.event.release.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          files: artifacts/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

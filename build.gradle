@@ -1,33 +1,33 @@
 plugins {
-  id 'java'
-  id 'application'
-  id 'org.javamodularity.moduleplugin' version '1.8.12'
-  id 'org.openjfx.javafxplugin' version '0.0.13'
-  id 'org.beryx.jlink' version '2.25.0'
-  id "com.google.protobuf" version "0.9.5"
+    id 'java'
+    id 'application'
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '3.0.1'
+    id "com.google.protobuf" version "0.9.5"
 }
 
 group 'com.logandhillon'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 }
 
 ext {
-  junitVersion = '5.10.0'
+    junitVersion = '5.10.0'
 }
 
 sourceCompatibility = '21'
 targetCompatibility = '21'
 
 tasks.withType(JavaCompile) {
-  options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 application {
-  mainModule = 'com.logandhillon.typeofwar'
-  mainClass = 'com.logandhillon.typeofwar.TypeOfWar'
+    mainModule = 'com.logandhillon.typeofwar'
+    mainClass = 'com.logandhillon.typeofwar.TypeOfWar'
 }
 
 tasks.register('runDev') {
@@ -51,24 +51,24 @@ tasks.register('runDev') {
 }
 
 javafx {
-  version = '21'
-  modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
+    version = '21'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 
 dependencies {
-  implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
-    exclude(group: 'org.openjfx')
-  }
-  implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
+    implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
+        exclude(group: 'org.openjfx')
+    }
+    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
 
-  testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 
-  // log4j
-  implementation("org.apache.logging.log4j:log4j-core:2.25.2")
+    // log4j
+    implementation('org.apache.logging.log4j:log4j-core:2.25.3')
 
-  // protobuf
-  implementation('com.google.protobuf:protobuf-java:4.28.2')
+    // protobuf
+    implementation('com.google.protobuf:protobuf-java:4.28.2')
 }
 
 protobuf {
@@ -78,16 +78,47 @@ protobuf {
 }
 
 test {
-useJUnitPlatform()}
+    useJUnitPlatform()
+}
+
+// derive base path for game
+def lglBasePath
+if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
+    lglBasePath = '${user.home}/Library/Application Support/logangamelib/type-of-war'
+} else if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+    lglBasePath = '${env:APPDATA}/logangamelib/type-of-war'
+} else {
+    lglBasePath = '${user.home}/.config/logangamelib/type-of-war'
+}
 
 jlink {
-  imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-  options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-  launcher {
-    name = 'app'
-  }
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+
+    launcher {
+        name = 'type-of-war'
+        jvmArgs = ["-DLGL_BASE_PATH=${lglBasePath}"]
+    }
+
+
+    jpackage {
+        vendor = 'Logan Dhillon'
+        appVersion = project.version
+        installerOptions = ["--license-file", file("LICENSE").absolutePath]
+
+        installerName = {
+            switch (org.gradle.internal.os.OperatingSystem.current()) {
+                case { it.isMacOsX() }: return 'Type of War' // put a space on OSX binaries
+                default: return 'TypeOfWar'
+            }
+        }()
+
+//        imageOptions = ['--icon', 'src/main/resources/icons/app.icns']  // macOS icon
+//        linux = ['--icon', 'src/main/resources/icons/app.png']          // Linux icon
+//        windows = ['--icon', 'src/main/resources/icons/app.ico']        // Windows icon
+    }
 }
 
 jlinkZip {
-  group = 'distribution'
+    group = 'distribution'
 }
