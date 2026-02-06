@@ -1,34 +1,10 @@
-const config = {
-  windows: {
-    label: "Windows (.exe)",
-    icon: "ph-fill ph-windows-logo",
-    href: "https://github.com/logandhillon/type-of-war/releases/latest"
-  },
-  mac: {
-    label: "macOS (.dmg)",
-    icon: "ph-fill ph-apple-logo",
-    href: "https://github.com/logandhillon/type-of-war/releases/latest"
-  },
-  linux: {
-    label: "Linux (.deb)",
-    icon: "ph-bold ph-linux-logo",
-    href: "https://github.com/logandhillon/type-of-war/releases/latest"
-  },
-  other: {
-    label: "Other",
-    icon: "ph ph-code",
-    href: "https://github.com/logandhillon/type-of-war/releases/latest"
-  }
-};
-
-function populateDownloadBtns() {
+function populateDownloadBtns(btns) {
   const platform = navigator.platform.toLowerCase();
 
   let os = "windows";
-  if (platform.includes("mac")) os = "mac";
-  else if (platform.includes("linux")) os = "linux";
+  if (platform.includes("mac")) os = "mac"; else if (platform.includes("linux")) os = "linux";
 
-  const primary = config[os];
+  const primary = btns[os];
 
   const labelEl = document.getElementById("primary-label");
   const iconEl = document.getElementById("primary-icon");
@@ -39,13 +15,12 @@ function populateDownloadBtns() {
   labelEl.textContent = primary.label;
   iconEl.className = "ph ph-download-simple text-lg";
   linkEl.href = primary.href;
-  linkEl.setAttribute("target", "_blank")
 
   // clear dropdown
   dropdown.innerHTML = "";
 
   // populate dropdown with non-primary platforms
-  Object.entries(config).forEach(([key, value]) => {
+  Object.entries(btns).forEach(([key, value]) => {
     if (key === os) return;
 
     const a = document.createElement("a");
@@ -65,11 +40,41 @@ function populateDownloadBtns() {
   });
 }
 
-function onLoad() {
-  document.getElementById("copyright").textContent =
-    `© 2025-${new Date().getFullYear()} logandhillon.com. All rights reserved.`;
+async function getLatestVersion() {
+  const releaseRes = await fetch(`https://api.github.com/repos/logandhillon/type-of-war/releases/latest`, {
+    headers: {
+      "Accept": "application/vnd.github+json",
+    },
+  });
 
-  populateDownloadBtns();
+  if (!releaseRes.ok) throw new Error("Failed to fetch latest release");
+
+  const release = await releaseRes.json();
+  return await release.tag_name;
+}
+
+function onLoad() {
+  document.getElementById("copyright").textContent = `© 2025-${new Date().getFullYear()} logandhillon.com. All rights reserved.`;
+
+  // get latest ver from gh api, then populate dl btns
+  getLatestVersion()
+    .then(version => populateDownloadBtns({
+      windows: {
+        label: "Windows (.exe)",
+        icon: "ph-fill ph-windows-logo",
+        href: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-windows.zip`
+      }, mac: {
+        label: "macOS (.dmg)",
+        icon: "ph-fill ph-apple-logo",
+        href: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-macos.zip`
+      }, linux: {
+        label: "Linux (.deb)",
+        icon: "ph-bold ph-linux-logo",
+        href: `https://github.com/logandhillon/type-of-war/releases/download/${version}/type-of-war-${version}-linux.zip`
+      }, other: {
+        label: "Other", icon: "ph ph-code", href: "https://github.com/logandhillon/type-of-war/releases/latest"
+      }
+    }));
 }
 
 document.addEventListener("DOMContentLoaded", onLoad);
