@@ -50,6 +50,26 @@ tasks.register('runDev') {
     dependsOn tasks.named('run')
 }
 
+tasks.register('runDev') {
+    group = 'application'
+    description = 'Run the game in dev mode using ./run as the LGL base path'
+
+    // Ensure run/ exists
+    def devBasePath = project.layout.projectDirectory.dir('run').asFile
+    devBasePath.mkdirs()
+
+    // If runDev is in the task graph, configure run BEFORE it executes
+    gradle.taskGraph.whenReady { graph ->
+        if (graph.hasTask(tasks.named('run').get())) {
+            tasks.named('run', JavaExec).configure {
+                jvmArgs += "-DLGL_BASE_PATH=${devBasePath.absolutePath}"
+            }
+        }
+    }
+
+    dependsOn tasks.named('run')
+}
+
 javafx {
     version = '21'
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
