@@ -71,17 +71,17 @@ jobs:
       - name: zip Ubuntu installer
         run: |
           cd artifacts/ubuntu
-          zip -r crossing-paths-${{ github.event.release.tag_name }}-ubuntu.zip .
+          zip -r type-of-war-${{ github.event.release.tag_name }}-ubuntu.zip .
 
       - name: zip Windows installer
         run: |
           cd artifacts/windows
-          zip -r crossing-paths-${{ github.event.release.tag_name }}-windows.zip .
+          zip -r type-of-war-${{ github.event.release.tag_name }}-windows.zip .
 
       - name: zip macOS installer
         run: |
           cd artifacts/macos
-          zip -r crossing-paths-${{ github.event.release.tag_name }}-macos.zip .
+          zip -r type-of-war-${{ github.event.release.tag_name }}-macos.zip .
 
       - name: create release assets
         uses: softprops/action-gh-release@v2
